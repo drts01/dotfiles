@@ -1,4 +1,4 @@
-for CONF in *.zsh; do
+for CONF in "${ZDOTDIR}"/*.zsh; do
   source "${CONF}"
 done
 unset CONF
