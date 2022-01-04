@@ -10,6 +10,10 @@
 [push]
 	default = current
 
+[rebase]
+	autoStash = true
+	autosquash = true
+
 ; [url "git@github.com:"]
 ;	insteadOf = "https://github.com/"
 
