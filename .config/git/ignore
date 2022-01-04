@@ -1,9 +1,40 @@
-# OS generated files #
-######################
+# https://github.com/github/gitignore/
+
+#macOS
 .DS_Store
-.DS_Store?
+.AppleDouble
+.LSOverride
 ._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
+
+# Windows
 Thumbs.db
+Thumbs.db:encryptable
+
+# diff
+*.patch
+*.diff
+
+# GPG
+secring.*
+
+#JetBrains
+.idea/
+*.iws
+out/
+.idea_modules/
+
+atlassian-ide-plugin.xml
+cmake-build-*/
+
+# Vim
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+Session.vim
+Sessionx.vim
+.netrwhist
+*~
+tags
+[._]*.un~
