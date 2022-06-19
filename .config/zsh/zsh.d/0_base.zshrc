@@ -12,3 +12,22 @@ setopt HIST_SAVE_NO_DUPS         # Don't write duplicate entries in the history 
 setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording entry.
 setopt HIST_VERIFY               # Don't execute immediately upon history expansion.
 setopt HIST_BEEP                 # Beep when accessing nonexistent history.
+
+# Editors
+type nvim &> /dev/null
+if [ $? -eq 0 ]; then
+  export EDITOR="nvim"
+  export VISUAL="nvim"
+fi
+
+# Less
+type less &> /dev/null
+if [ $? -eq 0 ]; then
+  export PAGER='less'
+  export LESSCHARSET="UTF-8"
+  export LESSHISTFILE='-'
+  export LESS='-F -X -g -i -M -R -S -w -z-4'
+fi
+
+autoload -Uz compinit
+compinit
