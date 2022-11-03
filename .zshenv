@@ -46,6 +46,7 @@ export CARGO_HOME="${XDG_DATA_HOME}/cargo"
 export DOCKER_CONFIG="${XDG_CONFIG_HOME}/docker"
 export MINIKUBE_HOME="${XDG_DATA_HOME}/minikube"
 export K9SCONFIG="${XDG_CONFIG_HOME}/k9s"
+export KUBECONFIG="${XDG_CONFIG_HOME}/kubeconfig"
 
 # Vagrant
 export VAGRANT_HOME="${XDG_DATA_HOME}/vagrant"
