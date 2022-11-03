@@ -1,6 +1,6 @@
 type starship &> /dev/null && eval "$(starship init zsh)"
 
-type pyenv &> /dev/null && eval "$(pyenv init -)"
+type "${PYENV_ROOT}/bin/pyenv" &> /dev/null && eval "$("${PYENV_ROOT}/bin/pyenv" init -)"
 
 type rbenv &> /dev/null && eval "$(rbenv init - zsh)"
 
