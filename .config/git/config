@@ -1,3 +1,12 @@
+[alias]
+	amend = "commit --amend --no-edit"
+	echo = "!echo $@"
+	fixup = "!git log -n 10 --pretty=format:'%h %s' --no-merges | fzf | cut -c -7 | xargs -o git commit --fixup #"
+	fix = "!git log -n 10 --pretty=format:'%h %s' --no-merges | fzf | cut -c -7 | xargs -o git commit --fixup $(for P in $@; do printf ${GIT_PREFIX:-.}${P}' '; done) #"
+	stat = "status --short --branch --show-stash --ahead-behind"
+	l = "log --color --graph --pretty=format:'%C(dim magenta)%h%Creset - %s %C(dim green)(%cr) %C(reset blue)<%an>%Creset%C(yellow)%d%Creset' --abbrev-commit"
+	lmsg = "log --pretty=format:'* %s'"
+
 [advice]
 	detachedHead = false
 	skippedCherryPicks = false
