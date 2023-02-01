@@ -11,3 +11,7 @@ fi
 type jenv &> /dev/null && eval "$(jenv init -)"
 
 type kubectl &> /dev/null && source <(kubectl completion zsh)
+
+[ -f "${RBENV_ROOT}/bin/rbenv" ] && eval "$(${RBENV_ROOT}/bin/rbenv init - zsh)"
+[ -f "${ASDF_DIR}/asdf.sh" ] && . "${ASDF_DIR}/asdf.sh"
+
