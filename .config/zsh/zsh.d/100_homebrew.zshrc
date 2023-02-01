@@ -5,7 +5,7 @@ elif [ -x "${HB_ARM_PREFIX}" ]; then
   eval "$(${HB_ARM_PREFIX} shellenv)"
 fi
 
-if [ -n ${HOMEBREW_PREFIX} ]; then
+if [ -n "${HOMEBREW_PREFIX}" ]; then
   # Autocomplete
   FPATH="${HOMEBREW}/share/zsh/site-functions:${FPATH}"
   autoload -Uz compinit
