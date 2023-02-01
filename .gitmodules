@@ -1,4 +1,4 @@
 [submodule "pyenv"]
-	path = /home/drts/.local/share/pyenv
+	path = .local/share/pyenv
 	url = https://github.com/pyenv/pyenv.git
 	shallow = true
