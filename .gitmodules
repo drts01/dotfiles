@@ -1,4 +1,0 @@
-[submodule "pyenv"]
-	path = .local/share/pyenv
-	url = https://github.com/pyenv/pyenv.git
-	shallow = true
