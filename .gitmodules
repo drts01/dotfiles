@@ -1,3 +1,7 @@
+[submodule "nvm"]
+	path = .local/share/nvm
+	url = https://github.com/nvm-sh/nvm.git
+	shallow = true
 [submodule "pyenv"]
 	path = .local/share/pyenv
 	url = https://github.com/pyenv/pyenv.git
