@@ -1,0 +1,23 @@
+;[credential]
+;	helper = /usr/local/share/gcm-core/git-credential-manager
+;	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential "https://dev.azure.com"]
+	useHttpPath = true
+[credential "https://github.com"]
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = !/opt/homebrew/bin/gh auth git-credential
+
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+
+[url "https://cmeza6_uhg@github.com"]
+	insteadOf = https://github.com
+
+[user]
+	name = Meza, Carlos
+	email = carlos_meza@optum.com
+
