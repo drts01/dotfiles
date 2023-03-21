@@ -24,16 +24,13 @@
 	autoStash = true
 	autosquash = true
 
-; [url "git@github.com:"]
-;	insteadOf = "https://github.com/"
-
 [user]
 	name = Carlos Meza
 	email = carlos@digitalr00ts.com
 
-[includeIf "gitdir:~/git/work/"]
-	path = ~/git/work/.gitconfig
+[includeIf "gitdir/:~/git/github/"]
+	path = ~/git/github/.gitconfig
 
-[includeIf "gitdir:~/git/GitHub/"]
-	path = ~/git/GitHub/.gitconfig
+[includeIf "gitdir:~/git/UHG/"]
+	path = ~/git/work/.gitconfig
 
