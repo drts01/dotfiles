@@ -10,14 +10,8 @@ export HISTSIZE=10000
 export SAVEHIST=10000
 
 # Editors
-export EDITOR=nvim
-export VISUAL=nvim
-export PAGER=less
-
-# Less
-export LESSCHARSET="UTF-8"
-export LESSHISTFILE='-'
-export LESS='-F -X -g -i -M -R -S -w -z-4'
+export EDITOR=vi
+export VISUAL=vi
 
 # readline
 export INPUTRC="${XDG_CONFIG_HOME}/inputrc"
