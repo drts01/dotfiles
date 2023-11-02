@@ -38,3 +38,5 @@ Sessionx.vim
 *~
 tags
 [._]*.un~
+
+.vscode
