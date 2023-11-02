@@ -1,5 +1,5 @@
 [submodule "nvm"]
-	path = /home/drts/.local/share/nvm
+	path = .local/share/nvm
 	url = https://github.com/nvm-sh/nvm.git
 	shallow = true
 [submodule "pyenv"]
