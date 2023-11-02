@@ -17,4 +17,4 @@
 [submodule "spaceship-prompt"]
 	path = .local/share/zsh/themes/spaceship-prompt
 	url = https://github.com/spaceship-prompt/spaceship-prompt.git
-	branch = master
+	shallow = true
