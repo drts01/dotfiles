@@ -39,6 +39,7 @@ export ASDF_DATA_DIR="${XDG_DATA_HOME}/asdf"
 export NVM_DIR="${XDG_DATA_HOME}/nvm"
 export CARGO_HOME="${XDG_DATA_HOME}/cargo"
 export RBENV_ROOT="${XDG_DATA_HOME}/rbenv"
+export SDKMAN_DIR="${XDG_DATA_HOME}/sdkman"
 
 # containers / k8s
 export DOCKER_CONFIG="${XDG_CONFIG_HOME}/docker"
