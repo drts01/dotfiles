@@ -47,8 +47,12 @@ export MINIKUBE_HOME="${XDG_DATA_HOME}/minikube"
 export K9SCONFIG="${XDG_CONFIG_HOME}/k9s"
 export KUBECONFIG="${XDG_CONFIG_HOME}/kubeconfig"
 
+# Terraform
+export TFENV_ROOT="${XDG_DATA_HOME}/tfenv"
+export TOFUENV_ROOT="${XDG_DATA_HOME}/tofu"
+export TENV_ROOT="${XDG_DATA_HOME}/tenv"
+
 # Vagrant
 export VAGRANT_HOME="${XDG_DATA_HOME}/vagrant"
 export VAGRANT_ALIAS_FILE="${XDG_DATA_HOME}/vagrant/aliases"
 
-export TFENV_ROOT="${XDG_DATA_HOME}/tfenv"

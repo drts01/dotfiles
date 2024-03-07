@@ -14,10 +14,6 @@
 	path = .local/share/zsh/themes/spaceship-prompt
 	url = https://github.com/spaceship-prompt/spaceship-prompt.git
 	shallow = true
-[submodule "tfenv"]
-	path = .local/share/tfenv
-	url = https://github.com/tfutils/tfenv.git
-	shallow = true
 [submodule "z.lua"]
 	path = .local/share/zsh/plugins/z.lua
 	url = https://github.com/skywind3000/z.lua.git
