@@ -1,3 +1,7 @@
+[submodule "fast-syntax-highlighting"]
+	path = .local/share/zsh/plugins/fast-syntax-highlighting
+	url = https://github.com/zdharma-continuum/fast-syntax-highlighting.git
+	shallow = true
 [submodule "nvm"]
 	path = .local/share/nvm
 	url = https://github.com/nvm-sh/nvm.git
@@ -6,19 +10,18 @@
 	path = .local/share/pyenv
 	url = https://github.com/pyenv/pyenv.git
 	shallow = true
-[submodule "zsh-autosuggestions"]
-	path = .local/share/zsh/plugins/zsh-autosuggestions
-	url = https://github.com/zsh-users/zsh-autosuggestions.git
-	shallow = true
-[submodule "fast-syntax-highlighting"]
-	path = .local/share/zsh/plugins/fast-syntax-highlighting
-	url = https://github.com/zdharma-continuum/fast-syntax-highlighting.git
-	shallow = true
 [submodule "spaceship-prompt"]
 	path = .local/share/zsh/themes/spaceship-prompt
 	url = https://github.com/spaceship-prompt/spaceship-prompt.git
 	shallow = true
+[submodule "tfenv"]
+	path = .local/share/tfenv
+	url = https://github.com/tfutils/tfenv.git
+	shallow = true
 [submodule "z.lua"]
 	path = .local/share/zsh/plugins/z.lua
 	url = https://github.com/skywind3000/z.lua.git
+[submodule "zsh-autosuggestions"]
+	path = .local/share/zsh/plugins/zsh-autosuggestions
+	url = https://github.com/zsh-users/zsh-autosuggestions.git
 	shallow = true
