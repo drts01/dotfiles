@@ -2,7 +2,7 @@ type starship &> /dev/null && eval "$(starship init zsh)"
 
 test -f /usr/share/fzf/key-bindings.zsh && source /usr/share/fzf/key-bindings.zsh
 
-type zoxide > /dev/null && eval "$(zoxide init "${SHELL##*/}")"
+type zoxide &> /dev/null && eval "$(zoxide init "${SHELL##*/}")"
 
 # if ! type z > /dev/null; then
 #   for lua in lua luajit lua5.4 lua5.3 lua5.2 lua5.1; do

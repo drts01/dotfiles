@@ -31,5 +31,3 @@ if [ $? -eq 0 ]; then
   export LESS='-F -X -g -i -M -R -S -w -z-4'
 fi
 
-autoload -Uz compinit
-compinit
