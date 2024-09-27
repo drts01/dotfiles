@@ -5,7 +5,7 @@ export XDG_STATE_HOME="${HOME}/.local/state"
 
 # zsh
 export ZDOTDIR="${XDG_CONFIG_HOME}/zsh"
-export HISTFILE="${XDG_STATE_HOME}/zsh/history"
+export HISTFILE="${XDG_STATE_HOME}/.zsh_history"
 export HISTSIZE=20000
 export SAVEHIST=20000
 
