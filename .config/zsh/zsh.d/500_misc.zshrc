@@ -20,7 +20,6 @@ type zoxide &> /dev/null && eval "$(zoxide init "${SHELL##*/}")"
 type jenv &> /dev/null && eval "$(jenv init -)"
 [ -s "${SDKMAN_DIR}/bin/sdkman-init.sh" ] && source "${SDKMAN_DIR}/bin/sdkman-init.sh"
 
-type tfenv &> /dev/null && export TFENV_AUTO_INSTALL=true
 type kubectl &> /dev/null && source <(kubectl completion zsh)
 type direnv &> /dev/null && eval "$(direnv hook zsh)"
 
