@@ -23,5 +23,6 @@ type jenv &> /dev/null && eval "$(jenv init -)"
 type kubectl &> /dev/null && source <(kubectl completion zsh)
 type direnv &> /dev/null && eval "$(direnv hook zsh)"
 
+type mise &> /dev/null && eval "$(mise activate ${SHELL##*/})"
 [ -f "${ASDF_DIR}/asdf.sh" ] && . "${ASDF_DIR}/asdf.sh"
 
