@@ -14,7 +14,7 @@ type zoxide &> /dev/null && eval "$(zoxide init "${SHELL##*/}")"
 
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-[ -s "${PYENV_ROOT}/bin/pyenv" ] && eval "$("${PYENV_ROOT}/bin/pyenv" init -)"
+# [ -s "${PYENV_ROOT}/bin/pyenv" ] && eval "$("${PYENV_ROOT}/bin/pyenv" init -)"
 [ -s "${RBENV_ROOT}/bin/rbenv" ] && eval "$(${RBENV_ROOT}/bin/rbenv init - zsh)"
 
 type jenv &> /dev/null && eval "$(jenv init -)"
