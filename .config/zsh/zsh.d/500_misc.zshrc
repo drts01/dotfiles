@@ -1,8 +1,10 @@
-type starship &> /dev/null && eval "$(starship init zsh)"
+has starship && eval "$(starship init "$_shell")"
 
-test -f /usr/share/fzf/key-bindings.zsh && source /usr/share/fzf/key-bindings.zsh
+_fzf_key_bindings="/usr/share/fzf/key-bindings.${_shell}"
+[ -r "$_fzf_key_bindings" ] && . "$_fzf_key_bindings"
+unset _fzf_key_bindings
 
-type zoxide &> /dev/null && eval "$(zoxide init "${SHELL##*/}")"
+has zoxide && eval "$(zoxide init "$_shell")"
 
 # if ! type z > /dev/null; then
 #   for lua in lua luajit lua5.4 lua5.3 lua5.2 lua5.1; do
@@ -12,17 +14,45 @@ type zoxide &> /dev/null && eval "$(zoxide init "${SHELL##*/}")"
 # eval "$("$ZLUA_EXEC" "${XDG_DATA_HOME}/z.lua/z.lua" --init "${SHELL##*/}" enhanced once "$(type fzf &> /dev/null && echo fzf)")"
 # fi
 
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-# [ -s "${PYENV_ROOT}/bin/pyenv" ] && eval "$("${PYENV_ROOT}/bin/pyenv" init -)"
-[ -s "${RBENV_ROOT}/bin/rbenv" ] && eval "$(${RBENV_ROOT}/bin/rbenv init - zsh)"
+# nvm scripts are bash/zsh-oriented; avoid sourcing them in POSIX sh.
+if [ -n "${NVM_DIR-}" ]; then
+  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+  [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
+fi
 
-type jenv &> /dev/null && eval "$(jenv init -)"
-[ -s "${SDKMAN_DIR}/bin/sdkman-init.sh" ] && source "${SDKMAN_DIR}/bin/sdkman-init.sh"
+# Only use pyenv if uv is unavailable
+if ! has uv; then
+  if [ -n "${PYENV_ROOT-}" ] && [ -x "${PYENV_ROOT}/bin/pyenv" ]; then
+    eval "$("${PYENV_ROOT}/bin/pyenv" init -)"
+  fi
+fi
 
-type kubectl &> /dev/null && source <(kubectl completion zsh)
-type direnv &> /dev/null && eval "$(direnv hook zsh)"
+if [ -n "${RBENV_ROOT-}" ] && [ -x "${RBENV_ROOT}/bin/rbenv" ]; then
+  eval "$("${RBENV_ROOT}/bin/rbenv" init - "$_shell")"
+fi
 
-type mise &> /dev/null && eval "$(mise activate ${SHELL##*/})"
-[ -f "${ASDF_DIR}/asdf.sh" ] && . "${ASDF_DIR}/asdf.sh"
+has jenv && eval "$(jenv init -)"
 
+if [ -n "${SDKMAN_DIR-}" ] && [ -r "${SDKMAN_DIR}/bin/sdkman-init.sh" ]; then
+  . "${SDKMAN_DIR}/bin/sdkman-init.sh"
+fi
+
+has kubectl && {
+  # Cache to avoid running `kubectl completion ...` on every startup (can be slow).
+  _kube_comp_cache="${XDG_CACHE_HOME}/kubectl/completion.${_shell}"
+
+  # zsh needs completion system initialized (compdef). If it's not ready, skip quietly.
+  if [ "$_shell" != "zsh" ] || has compdef; then
+    if [ ! -r "$_kube_comp_cache" ] || [ "$_kube_comp_cache" -ot "$(command -v kubectl)" ]; then
+      command mkdir -p "${_kube_comp_cache%/*}" 2>/dev/null || :
+      kubectl completion "$_shell" >| "$_kube_comp_cache" 2>/dev/null || :
+    fi
+    [ -r "$_kube_comp_cache" ] && . "$_kube_comp_cache"
+  fi
+
+  unset _kube_comp_cache
+}
+
+has direnv && eval "$(direnv hook "$_shell")"
+
+[ -n "${ASDF_DIR-}" ] && [ -r "${ASDF_DIR}/asdf.sh" ] && . "${ASDF_DIR}/asdf.sh"
