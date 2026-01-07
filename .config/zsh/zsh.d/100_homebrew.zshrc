@@ -7,7 +7,7 @@ fi
 
 if [ -n "${HOMEBREW_PREFIX}" ]; then
   # Autocomplete
-  FPATH="${HOMEBREW}/share/zsh/site-functions:${FPATH}"
+  FPATH="${HOMEBREW_PREFIX}/share/zsh/site-functions:${FPATH}"
   if ! type compinit &> /dev/null; then
     autoload -Uz compinit
     compinit
