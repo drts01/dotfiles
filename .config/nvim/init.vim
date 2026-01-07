@@ -20,8 +20,8 @@ let mapleader = ","
 
 set list listchars=tab:▷⋅,trail:⋅,nbsp:⋅ " Visualize whitespace characters
 set termguicolors " Enable true-color UI
-set clipboard=unnamedplus " Share registers with the system clipboard
-" set hidden " Allow switching buffers without saving
+" set clipboard=unnamedplus " Share registers with the system clipboard
+set hidden " Allow switching buffers without saving
 set splitbelow " Open horizontal splits below the current window
 set splitright " Open vertical splits to the right
 set wildmode=longest:full,full " Provide a friendlier completion cycle
