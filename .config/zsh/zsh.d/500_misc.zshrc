@@ -56,3 +56,4 @@ has kubectl && {
 has direnv && eval "$(direnv hook "$_shell")"
 
 [ -n "${ASDF_DIR-}" ] && [ -r "${ASDF_DIR}/asdf.sh" ] && . "${ASDF_DIR}/asdf.sh"
+has mise && eval "$(mise activate ${_shell})"
