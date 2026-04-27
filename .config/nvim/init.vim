@@ -10,7 +10,6 @@ Plug 'tpope/vim-fugitive'
 Plug 'scrooloose/syntastic'
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'majutsushi/tagbar'
-Plug 'haya14busa/incsearch.vim'
 Plug 'nvie/vim-flake8'
 " Plug 'Valloric/YouCompleteMe'
 call plug#end()
@@ -54,29 +53,9 @@ let g:airline_theme='serene'
 " get rid of mode indicator (redudent with airline)
 set noshowmode
 
-" incsearch.vim
-map /  <Plug>(incsearch-forward)
-map ?  <Plug>(incsearch-backward)
-map g/ <Plug>(incsearch-stay)
-" :h g:incsearch#auto_nohlsearch
-set hlsearch
-let g:incsearch#auto_nohlsearch = 1
-map n  <Plug>(incsearch-nohl-n)
-map N  <Plug>(incsearch-nohl-N)
-map *  <Plug>(incsearch-nohl-*)
-map #  <Plug>(incsearch-nohl-#)
-map g* <Plug>(incsearch-nohl-g*)
-map g# <Plug>(incsearch-nohl-g#)
-augroup incsearch-keymap
-    autocmd!
-    autocmd VimEnter * call s:incsearch_keymap()
-augroup END
-function! s:incsearch_keymap()
-    " Tab to the next match
-    IncSearchNoreMap <Right> <Over>(incsearch-next)
-    " Shift-Tab to the previous match
-    IncSearchNoreMap <Left>  <Over>(incsearch-prev)
-endfunction
+" Built-in search configuration
+set hlsearch " Highlight search results
+set incsearch " Incremental search
 
 " Disable line number by default
 set nonumber " Start with a clean gutter
