@@ -1,0 +1,302 @@
+" ============================================================================
+" Traditional Vim Configuration (vimrc)
+" Compatible with Vim 8+
+" ============================================================================
+
+" Install vim-plug if not already installed
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+" ============================================================================
+" Plugin Management
+" ============================================================================
+call plug#begin('~/.vim/plugged')
+
+" Essential plugins
+Plug 'tpope/vim-sensible'
+Plug 'tpope/vim-fugitive'
+
+" UI enhancements
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
+" File navigation
+Plug 'preservim/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'ctrlpvim/ctrlp.vim'
+
+" Git integration
+Plug 'airblade/vim-gitgutter'
+
+" Code editing
+Plug 'nathanaelkane/vim-indent-guides'
+Plug 'dense-analysis/ale'              " Async linting and fixing
+
+" Optional: Uncomment if needed
+" Plug 'majutsushi/tagbar'
+" Plug 'nvie/vim-flake8'
+
+call plug#end()
+
+" ============================================================================
+" General Settings
+" ============================================================================
+
+" Leader key
+let mapleader = ","
+
+" UI settings
+if has('termguicolors')
+  set termguicolors                    " Enable true-color UI
+endif
+set cursorline                         " Highlight current line
+set number                             " Show line numbers (can be toggled)
+set relativenumber                     " Relative line numbers for easier navigation
+set noshowmode                         " Hide mode (shown in airline)
+set laststatus=2                       " Always show status line
+set nowrap                             " Don't wrap lines
+
+" Whitespace visualization
+set list listchars=tab:▷⋅,trail:⋅,nbsp:⋅
+
+" Split behavior
+set splitbelow                         " Horizontal splits below
+set splitright                         " Vertical splits right
+
+" Buffer management
+set hidden                             " Allow switching buffers without saving
+
+" Completion menu
+set wildmode=longest:full,full         " Better completion
+set wildmenu                           " Enhanced command-line completion
+
+" Search settings
+set hlsearch                           " Highlight search results
+set incsearch                          " Incremental search
+set ignorecase                         " Case-insensitive search
+set smartcase                          " Case-sensitive if uppercase present
+
+" Indentation
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set noexpandtab                        " Keep literal tabs
+
+" File management
+set backup
+set backupdir=~/.config/vim/backup//
+set directory=~/.config/vim/swap//
+if has('persistent_undo')
+  set undofile
+  set undodir=~/.config/vim/undo//
+  set undolevels=10000
+endif
+
+" Performance
+set lazyredraw                         " Don't redraw during macros
+set updatetime=300                     " Faster completion
+
+" Scrolling
+set scrolloff=8                        " Keep 8 lines visible above/below cursor
+set sidescrolloff=8
+
+" Mouse support
+if has('mouse')
+  set mouse=a                          " Enable mouse support
+endif
+
+" ============================================================================
+" Key Mappings
+" ============================================================================
+
+" NERDTree toggle
+nnoremap <leader>n :NERDTreeToggle<CR>
+
+" Buffer navigation
+nnoremap <F5> :buffers<CR>:buffer<Space>
+
+" Use Q for formatting
+map Q gq
+
+" Clear search highlighting
+nnoremap <leader><space> :nohlsearch<CR>
+
+" Quick save
+nnoremap <leader>w :w<CR>
+
+" Quick quit
+nnoremap <leader>q :q<CR>
+
+" Move between splits
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" ============================================================================
+" Auto Commands
+" ============================================================================
+
+" Trim trailing whitespace on save
+function! s:StripTrailingWhitespaces()
+  let l = line(".")
+  let c = col(".")
+  %s/\s\+$//e
+  call cursor(l, c)
+endfunction
+autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
+
+" Auto-start NERDTree
+augroup nerdtree_start
+  autocmd!
+  autocmd StdinReadPre * let s:std_in=1
+  autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+augroup END
+
+" Exit Vim if only NERDTree remains
+augroup nerdtree_auto_quit
+  autocmd!
+  autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+augroup END
+
+" ============================================================================
+" Plugin Configurations
+" ============================================================================
+
+" --- NERDTree ---
+let NERDTreeIgnore = ['\.swp$', '\.pyc$', '__pycache__', '\.git$']
+let NERDTreeShowHidden = 1
+let NERDTreeMinimalUI = 1
+let NERDTreeDirArrows = 1
+let NERDTreeAutoDeleteBuffer = 1
+
+" --- Airline ---
+let g:airline_theme = 'serene'
+let g:airline_powerline_fonts = 0
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_alt_sep = '|'
+let g:airline#extensions#tabline#formatter = 'unique_tail'
+
+" Airline symbols (if you have powerline fonts, uncomment)
+" let g:airline_powerline_fonts = 1
+
+" --- CtrlP ---
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlP'
+let g:ctrlp_working_path_mode = 'ra'
+let g:ctrlp_show_hidden = 1
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+  \ 'file': '\v\.(exe|so|dll|pyc|swp)$',
+  \ }
+
+" --- GitGutter ---
+let g:gitgutter_enabled = 1
+let g:gitgutter_signs = 1
+let g:gitgutter_highlight_lines = 0
+set signcolumn=yes
+
+" --- ALE (Async Linting) ---
+let g:ale_enabled = 1
+let g:ale_sign_column_always = 1
+let g:ale_sign_error = '✗'
+let g:ale_sign_warning = '⚠'
+
+" Linters by filetype
+let g:ale_linters = {
+\   'python': ['flake8', 'pylint'],
+\   'javascript': ['eslint'],
+\   'typescript': ['eslint', 'tsserver'],
+\   'vim': ['vint'],
+\}
+
+" Fixers by filetype
+let g:ale_fixers = {
+\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\   'python': ['black', 'isort'],
+\   'javascript': ['prettier', 'eslint'],
+\   'typescript': ['prettier', 'eslint'],
+\}
+
+" Fix on save
+let g:ale_fix_on_save = 0  " Set to 1 to enable auto-fix on save
+
+" Navigate between errors
+nmap <silent> [e <Plug>(ale_previous_wrap)
+nmap <silent> ]e <Plug>(ale_next_wrap)
+
+" --- Indent Guides ---
+let g:indent_guides_enable_on_vim_startup = 0
+let g:indent_guides_start_level = 2
+let g:indent_guides_guide_size = 1
+
+" Toggle indent guides
+nnoremap <leader>ig :IndentGuidesToggle<CR>
+
+" ============================================================================
+" Color Scheme and Appearance
+" ============================================================================
+
+" Set background (change to 'light' if preferred)
+set background=dark
+
+" Try to set a nice colorscheme (if available)
+silent! colorscheme desert
+
+" Better colors for search highlighting
+highlight Search ctermbg=yellow ctermfg=black guibg=yellow guifg=black
+highlight IncSearch ctermbg=green ctermfg=black guibg=green guifg=black
+
+" ============================================================================
+" Additional Useful Settings
+" ============================================================================
+
+" Enable syntax highlighting
+syntax on
+
+" Enable filetype detection and plugins
+filetype plugin indent on
+
+" Better backspace behavior
+set backspace=indent,eol,start
+
+" Show matching brackets
+set showmatch
+
+" Command history
+set history=1000
+
+" Tab completion
+set wildignore=*.o,*.obj,*~,*.pyc,*.swp
+
+" No annoying sound on errors
+set noerrorbells
+set novisualbell
+set t_vb=
+set tm=500
+
+" ============================================================================
+" Additional Notes
+" ============================================================================
+
+" After saving this file, run:
+"   :PlugInstall - Install all plugins
+"   :source ~/.config/vim/vimrc - Reload configuration
+"
+" Key mappings summary:
+"   <leader>n     - Toggle NERDTree
+"   <leader><space> - Clear search highlighting
+"   <leader>w     - Quick save
+"   <leader>q     - Quick quit
+"   <leader>ig    - Toggle indent guides
+"   <C-p>         - Open CtrlP fuzzy finder
+"   <C-hjkl>      - Navigate between splits
+"   [e / ]e       - Navigate between ALE errors
+"   <F5>          - List and switch buffers
+"
+" To use this config, ensure you have set VIMINIT in your shell:
+"   export VIMINIT='source ~/.config/vim/vimrc'
