@@ -1,0 +1,30 @@
+# Handle line endings automatically
+text=auto eol=lf
+
+# Ensure scripts always use LF (Linux/macOS style)
+*.sh text eol=lf
+
+# Ensure Windows batch files always use CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# See metadata changes if 'exiftool' is installed
+*.png diff=exif
+*.jpg diff=exif
+*.jpeg diff=exif
+
+# Common binary formats (prevents Git from trying to "fix" line endings)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.psd binary
+*.mov binary
+*.mp4 binary
+*.mp3 binary
+*.zip binary
+*.gz binary
+*.7z binary
+

@@ -11,8 +11,53 @@
 	detachedHead = false
 	skippedCherryPicks = false
 
+[color]
+	ui = true
+
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
+	whitespace = red reverse
+
+[core]
+	attributesfile = ~/.config/git/attributes
+	pager = less -RFX
+	editor = nvim || vim || vi
+
+[credential "https://github.com"]
+	helper =
+	helper = !gh auth git-credential
+
+[credential "https://gist.github.com"]
+	helper =
+	helper = !gh auth git-credential
+
+[diff]
+	tool = smartdiff
+
+[diff "exif"]
+	textconv = exiftool
+
+[difftool]
+	prompt = false
+
+[difftool "smartdiff"]
+	cmd = nvim -d "$LOCAL" "$REMOTE" || vimdiff || diff --color --context "$LOCAL" "$REMOTE"
+
 [init]
 	defaultBranch = trunk
+
+[interactive]
+	diffFilter = pygmentize -l diff || cat
+
+[merge]
+    conflictstyle = zdiff3
+	tool = smartmerge
+
+[mergetool "smartmerge"]
+	cmd = nvim -d "$LOCAL" "$REMOTE" || vimdiff || diff --color --context "$LOCAL" "$REMOTE"
 
 [pull]
 	rebase = true
@@ -33,4 +78,3 @@
 
 [includeIf "gitdir:~/git/UHG/"]
 	path = ~/git/UHG/.gitconfig
-
