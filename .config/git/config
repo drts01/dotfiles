@@ -6,6 +6,7 @@
 	stat = "status --short --branch --show-stash --ahead-behind"
 	l = "log --color --graph --pretty=format:'%C(dim magenta)%h%Creset - %s %C(dim green)(%cr) %C(reset blue)<%an>%Creset%C(yellow)%d%Creset' --abbrev-commit"
 	lmsg = "log --pretty=format:'* %s'"
+	wd = diff --word-diff=color --word-diff-regex='[^[:space:]]'
 
 [advice]
 	detachedHead = false
@@ -24,7 +25,7 @@
 [core]
 	attributesfile = ~/.config/git/attributes
 	pager = less -RFX
-	editor = nvim || vim || vi
+	# editor = nvim || vim || vi
 
 [credential "https://github.com"]
 	helper =
@@ -36,15 +37,16 @@
 
 [diff]
 	tool = smartdiff
+	relative = true
 
 [diff "exif"]
-	textconv = exiftool
+	textconv = exiftool || file $0
 
 [difftool]
 	prompt = false
 
 [difftool "smartdiff"]
-	cmd = nvim -d "$LOCAL" "$REMOTE" || vimdiff || diff --color --context "$LOCAL" "$REMOTE"
+	cmd = nvim -d "$LOCAL" "$REMOTE" || vimdiff || diff --color --context 3 "$LOCAL" "$REMOTE"
 
 [init]
 	defaultBranch = trunk
@@ -57,13 +59,14 @@
 	tool = smartmerge
 
 [mergetool "smartmerge"]
-	cmd = nvim -d "$LOCAL" "$REMOTE" || vimdiff || diff --color --context "$LOCAL" "$REMOTE"
+	cmd = nvim -d "$LOCAL" "$REMOTE" || vimdiff || diff --color --context 3 "$LOCAL" "$REMOTE"
 
 [pull]
 	rebase = true
 
 [push]
 	default = current
+	autoSetupRemote = true
 
 [rebase]
 	autoStash = true
