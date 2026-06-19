@@ -1,0 +1,278 @@
+---
+paths:
+  - "**/README.md"
+  - "content/**/*.md"
+  - "docs/**/*.md"
+---
+
+# Technical Writing Standards
+
+## [File Scope: README.md, content/**/*.md, docs/**/*.md]
+
+These rules apply strictly when creating, editing, or reviewing README files and any Markdown under `content/` or `docs/`.
+
+### 1. Active Voice
+
+**MUST** make the subject perform the action. Rewrite passive constructions so the actor comes first.
+
+| ❌ Avoid | ✅ Use |
+|---|---|
+| The config is loaded by the server. | The server loads the config. |
+| Errors are reported by the agent. | The agent reports errors. |
+
+### 2. Imperative Mood for Instructions
+
+**MUST** start every step-by-step instruction with a direct verb. **MUST NOT** prefix with "You should" or "You need to."
+
+```markdown
+<!-- Bad -->
+You should run the install command first.
+
+<!-- Good -->
+Run the install command.
+```
+
+### 3. Simple Tenses — Avoid `-ing` Constructions
+
+**MUST** use present tense for general truths and current behavior. **MUST** use future tense (`will`) only for actions that occur after a prior step completes. **MUST NOT** use continuous tenses: rewrite `-ing` verb forms as simple present or simple future.
+
+| ❌ Avoid | ✅ Use |
+|---|---|
+| The pipeline is running the tests. | The pipeline runs the tests. |
+| After deploying, you will be seeing logs. | After you deploy, logs appear in CloudWatch. |
+
+### 4. Definitive Modals
+
+**MUST** replace vague modals with definitive ones.
+
+| ❌ Avoid | ✅ Use |
+|---|---|
+| might / may | can (ability) or will (certainty) |
+| should | must (required) or can (optional) |
+| could | can |
+
+### 5. Sentence Length
+
+**MUST** keep sentences short. Target an average of **15–20 words**. Split compound sentences at conjunctions when the result exceeds 25 words.
+
+### 6. Positive Phrasing
+
+**MUST** tell the user what to do. Frame instructions as actions, not prohibitions.
+
+| ❌ Avoid | ✅ Use |
+|---|---|
+| Do not leave the field blank. | Enter a value in the field. |
+| Don't use spaces in the name. | Use hyphens instead of spaces. |
+
+### 7. Acronym Definition on First Use
+
+**MUST** spell out every acronym the first time it appears in a document, followed by the abbreviation in parentheses.
+
+```markdown
+<!-- First use -->
+The Elastic Container Service (ECS) task definition controls resource limits.
+
+<!-- Subsequent uses -->
+Update the ECS task definition.
+```
+
+### 8. Unambiguous Pronouns
+
+**MUST NOT** use vague pronouns (`it`, `they`, `this`, `that`). Replace them with the explicit noun they reference.
+
+| ❌ Avoid | ✅ Use |
+|---|---|
+| After the build finishes, it uploads the artifact. | After the build finishes, the pipeline uploads the artifact. |
+| This causes the timeout. | The missing health-check endpoint causes the timeout. |
+
+### 9. Oxford (Serial) Comma
+
+**MUST** include the Oxford comma in lists of three or more items to prevent ambiguity in technical steps.
+
+| ❌ Avoid | ✅ Use |
+|---|---|
+| Configure the VPC, subnets and security groups. | Configure the VPC, subnets, and security groups. |
+
+### 10. Numbered and Bulleted Lists
+
+**MUST** use numbered lists for sequential, ordered procedures. **MUST** use bulleted lists for non-sequential items, options, or feature lists. **MUST NOT** mix numbering and bullets within the same list level.
+
+```markdown
+<!-- Ordered procedure -->
+1. Clone the repository.
+2. Install dependencies.
+3. Run the dev server.
+
+<!-- Non-sequential options -->
+- `DEBUG` — verbose output
+- `INFO` — default log level
+- `ERROR` — errors only
+```
+
+### 11. Scan-Friendly Formatting
+
+**MUST** format content for scanning, not linear reading.
+
+- **Bold** key terms, critical warnings, and action verbs on first appearance.
+- Use tables to compare options, flags, or parameters.
+- Keep paragraphs to **3–4 sentences maximum**.
+- Add headers generously to create navigable sections.
+- Prefer lists over dense prose for any set of three or more related items.
+
+### 12. Lead with the Answer
+
+**MUST** put the core resolution or conclusion in the **first sentence** of every section. Provide supporting context after.
+
+```markdown
+<!-- Bad — buries the answer -->
+The deployment pipeline has several stages. First it builds the image, then it pushes to ECR,
+and finally it updates the ECS service. If any stage fails, the deployment stops.
+
+<!-- Good — leads with the answer -->
+A failed deployment stops at the first failing stage. The pipeline builds the image, pushes it
+to Amazon ECR, then updates the ECS service.
+```
+
+### 13. Principle of Least Astonishment (POLA)
+
+**MUST** document unexpected behaviors, common gotchas, and non-typical edge cases immediately after the relevant step or section. Use a `> [!WARNING]` or `> [!NOTE]` callout block.
+
+```markdown
+> [!WARNING]
+> The `--force` flag bypasses approval gates in all environments, including production.
+```
+
+### 14. Aggressive Hyperlinking
+
+**MUST** link to external tools, prerequisites, and referenced concepts on first mention. **MUST NOT** force the reader to search for them.
+
+```markdown
+Install [AWS CLI v2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) before proceeding.
+```
+
+### 15. Full Code Examples
+
+**MUST** provide complete, runnable request and response blocks for technical audiences. **MUST NOT** use ellipses (`...`) or fragments. **MUST** declare the language in every code fence.
+
+```markdown
+<!-- Bad -->
+Send a POST request with the payload... and you'll get a response.
+
+<!-- Good -->
+Send a POST request:
+
+```bash
+curl -X POST https://api.example.com/deploy \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"service": "my-app", "environment": "prod"}'
+```
+
+Expected response:
+
+```json
+{
+  "deploymentId": "d-ABC123",
+  "status": "IN_PROGRESS",
+  "createdAt": "2026-06-19T18:00:00Z"
+}
+```
+
+### 16. Diátaxis Framework
+
+**MUST NOT** mix content types on the same page. Each type serves a distinct stage of the user journey. Mixing them confuses readers and degrades findability.
+
+Place content in the correct directory:
+- Tutorials → `content/tutorials/`
+- How-to guides → `content/how-to/`
+- Reference → `content/reference/`
+- Explanations → `content/explanation/`
+
+#### 16a. Tutorials (Learning-Oriented)
+- **Goal:** Help a beginner achieve a small, successful outcome to build confidence.
+- **Grammar & Tone:** Use friendly, encouraging language. Guide the user through a single linear path.
+- **MUST NOT** explain *why* things work. Focus strictly on *doing*. End with a clear, observable success state.
+
+#### 16b. How-To Guides (Goal-Oriented)
+- **Goal:** Help an experienced user complete a specific, real-world task.
+- **Grammar & Tone:** Use strict imperative mood ("Click X," "Run Y"). Every step starts with a direct verb.
+- **MUST NOT** include introductory or conceptual content. Assume the reader has basic knowledge.
+
+#### 16c. Reference Material (Information-Oriented)
+- **Goal:** Provide accurate, complete facts about the system (e.g., API parameters, configuration keys, specifications).
+- **Grammar & Tone:** Strict, neutral, and descriptive. Avoid narrative or conversational filler.
+- **MUST** optimize for scanning, copying, and pasting. Use tables and consistent structure throughout.
+
+#### 16d. Explanations (Understanding-Oriented)
+- **Goal:** Illuminate the bigger picture — architecture, history, design choices, and trade-offs.
+- **Grammar & Tone:** Discursive and expository. Use a broader vocabulary and compound sentences where clarity demands it.
+- **MUST NOT** include installation steps, CLI commands, or procedural coding tasks. Use Mermaid diagrams to visualize concepts.
+
+### 17. Mermaid Diagrams
+
+**MUST** use [Mermaid](https://mermaid.js.org/) for all visual content. **MUST NOT** use static images or ASCII art for diagrams.
+
+| Diagram use case | ✅ Use |
+|---|---|
+| Architecture & topology | `graph TD` or `graph LR` |
+| Request/response & auth flows | `sequenceDiagram` |
+| State machines & pipelines | `stateDiagram-v2` or `flowchart` |
+
+**MUST** update diagrams immediately when the underlying system logic changes.
+
+```mermaid
+graph LR
+  A[Client] --> B[API Gateway]
+  B --> C[ECS Service]
+  C --> D[(RDS)]
+```
+
+```mermaid
+sequenceDiagram
+  participant Client
+  participant API
+  participant Auth
+  Client->>API: POST /login
+  API->>Auth: Validate token
+  Auth-->>API: 200 OK
+  API-->>Client: JWT
+```
+
+### 18. Strategic Emoji Use
+
+**MUST NOT** use emoji as decoration. Use emoji only as functional visual anchors to accelerate scanning.
+
+| Context | ✅ Use | ❌ Avoid |
+|---|---|---|
+| Binary comparisons in tables | `✅` / `❌` | Emoji in prose sentences |
+| Critical callout blocks | `🚨` for danger, `💡` for tips, `✅` for success | Emoji in section headings |
+| Tutorial completion | `🎉` at the end of a completed tutorial only | Emoji mid-step |
+| Status indicators | In changelogs and checklists | In Reference or Explanation pages |
+
+- **MUST NOT** use emoji in Reference (`content/reference/`) or Explanation (`content/explanation/`) pages — they undermine the neutral, authoritative tone required by those Diátaxis types.
+- **MUST NOT** place emoji inside prose sentences.
+- **MUST NOT** use more than one emoji per section heading.
+- **SHOULD** restrict emoji to callout blocks, binary table markers, and tutorial success states.
+
+## Quick-Reference Checklist
+
+Run through this checklist before publishing any document.
+
+- [ ] Every sentence has an active subject performing the action.
+- [ ] Every instruction step starts with a direct verb (imperative mood).
+- [ ] No `-ing` verb forms in general truths or current-behavior descriptions.
+- [ ] No vague modals: `might`, `should`, `could` replaced with `must`, `will`, or `can`.
+- [ ] Average sentence length stays between 15 and 20 words.
+- [ ] Instructions state what to do, not what to avoid.
+- [ ] Every acronym is spelled out on first use.
+- [ ] No vague pronouns (`it`, `they`, `this`, `that`) without an explicit referent.
+- [ ] Oxford comma present in all lists of three or more items.
+- [ ] Procedures use numbered lists; non-sequential items use bullets.
+- [ ] Key terms are bolded; paragraphs are 3–4 sentences maximum.
+- [ ] Each section opens with the answer or resolution, not background context.
+- [ ] Gotchas and edge cases appear immediately after the relevant step, in a callout block.
+- [ ] External tools and prerequisites are hyperlinked on first mention.
+- [ ] Code examples are complete and runnable; all fences declare a language.
+- [ ] The page belongs to exactly one Diátaxis type and lives in the correct directory.
+- [ ] All diagrams use Mermaid syntax and reflect the current system state.
+- [ ] Emoji appear only as functional markers (✅/❌ in tables, callout anchors, tutorial completion).
