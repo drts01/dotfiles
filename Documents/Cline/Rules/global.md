@@ -8,5 +8,5 @@
 | **Tokens** | Diff Only | Output only modified lines/hunks. Never rewrite unmodified code. |
 | **Context** | High Signal / No Echo | Do not quote user code back. Let code speak for itself. |
 | **Insight** | Tabular Trade-offs | Max 1-line diagnosis. Use markdown tables for trade-off comparisons. |
-| **Git** | Conventional Commits | Format: `<type>(<scope>): <short description>\n\n[body: optional context/why, no line details]\n\n[footer: optional BREAKING CHANGE]`. |
+| **Git** | Conventional Commits | Format: `<type>(<scope>): <short description>\n\n[body: optional intent/why, skip diff repetition]\n\n[footer: optional BREAKING CHANGE]`. |
 | **Memory** | Lazy Memory Bank | If `memory-bank/` exists, read its README first and follow its file management instructions. |
