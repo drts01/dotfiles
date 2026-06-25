@@ -1,0 +1,7 @@
+[settings]
+python.uv_venv_auto = "create|source"
+idiomatic_version_file_enable_tools = ["terraform", "node", "go", "rust"]
+
+[tools]
+node = "latest"
+terraform = "latest"
