@@ -16,6 +16,7 @@ export VISUAL=vi
 
 # readline
 export INPUTRC="${XDG_CONFIG_HOME}/inputrc"
+export KEYTIMEOUT=1
 
 # Screen
 export SCREENRC="${XDG_CONFIG_HOME}/screenrc"
