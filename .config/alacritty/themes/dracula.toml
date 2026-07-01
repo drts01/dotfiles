@@ -26,6 +26,7 @@ cursor = "CellForeground"
 [colors.selection]
 
 text = "CellForeground"
+# text = "#f8f8f2"       # Explicit Dracula light gray text
 background = "#44475a"
 
 [colors.normal]
