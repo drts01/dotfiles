@@ -98,3 +98,7 @@
 	path = .config/nvim/pack/plugins/start/LuaSnip
 	url = https://github.com/L3MON4D3/LuaSnip
 	shallow = true
+[submodule "neovim_theme_dracula"]
+	path = .config/nvim/pack/plugins/start/theme_dracula
+	url = https://github.com/Mofiqul/dracula.nvim.git
+	shallow = true

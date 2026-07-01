@@ -113,6 +113,15 @@ local function plugin_exists(plugin_path)
   return vim.fn.isdirectory(full_path) == 1
 end
 
+if plugin_exists('dracula') then
+  require("dracula").setup({
+    style = "default", -- options: "default", "soft"
+  })
+end
+
+-- Load the colorscheme
+vim.cmd([[colorscheme dracula]])
+
 -- Lualine setup
 if plugin_exists('lualine.nvim') then
   require('lualine').setup({
@@ -402,6 +411,30 @@ if plugin_exists('nvim-lint') then
     end,
   })
 end
+
+-- ============================================================================
+-- Configure Ruff for warnings and errors
+-- ============================================================================
+-- local lspconfig = require('lspconfig')
+--
+-- lspconfig.ruff.setup({
+--   on_attach = function(client, bufnr)
+--     -- Disable hover in favor of Pyright
+--     client.server_capabilities.hoverProvider = false
+--   end,
+-- })
+--
+-- local conform = require("conform")
+--
+-- conform.setup({
+--   formatters_by_ft = {
+--     python = { "ruff_format" },
+--   },
+--   format_on_save = {
+--     timeout_ms = 500,
+--     lsp_fallback = true,
+--   },
+-- })
 
 -- ============================================================================
 -- Installation Instructions
