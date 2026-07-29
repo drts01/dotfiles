@@ -13,6 +13,8 @@ if [ -n "${HOMEBREW_PREFIX}" ]; then
     compinit
   fi
 
+  export HOMEBREW_AUTO_UPDATE_SECS="86400" HOMEBREW_NO_ANALYTICS=1
+
   # fzf
   [[ $- == *i* ]] && source "${HOMEBREW_PREFIX}/opt/fzf/shell/completion.zsh" 2> /dev/null
   command -v fzf > /dev/null && source "${HOMEBREW_PREFIX}/opt/fzf/shell/key-bindings.zsh"
