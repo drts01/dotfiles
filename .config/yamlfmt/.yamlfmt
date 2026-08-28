@@ -1,0 +1,15 @@
+---
+formatter:
+  type: basic
+  array_indent: 2
+  bracket_spacing: true
+  eof_newline: true
+  force_quote_style: single
+  gitignore_excludes: true
+  include_document_start: true
+  line_ending: lf
+  pad_line_comments: 1
+  retain_line_breaks: true
+  scan_folded_as_literal: true
+  strip_trailing_whitespace: true
+
