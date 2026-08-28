@@ -1,2 +1,3 @@
 [update]
 cooldown_days = 3
+freeze        = true
