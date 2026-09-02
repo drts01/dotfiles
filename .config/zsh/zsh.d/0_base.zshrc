@@ -30,4 +30,3 @@ if [ $? -eq 0 ]; then
   export LESSHISTFILE='-'
   export LESS='-F -X -g -i -M -R -S -w -z-4'
 fi
-

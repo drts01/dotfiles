@@ -3,7 +3,7 @@ Memory resets every session. Read all files in `memory-bank/` before every task.
 
 ## 1. File Lifecycle (Lazy Creation)
 - **Phase 1** — Single `activeContext.md` until it exceeds 100 lines
-- **Phase 2** — Spawn `systemPatterns.md` for static architecture 
+- **Phase 2** — Spawn `systemPatterns.md` for static architecture
 - Extra files only under `memory-bank/features/` or `memory-bank/integrations/` if genuinely needed
 - Do not touch this README.
 

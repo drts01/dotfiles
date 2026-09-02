@@ -5,4 +5,3 @@ ZSH_PROMPTS="${XDG_DATA_HOME}/zsh/themes"
 source "$ZSH_PLUGINS/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
 source "$ZSH_PLUGINS/zsh-autosuggestions/zsh-autosuggestions.zsh"
 source "$ZSH_PLUGINS/z.lua/z.lua.plugin.zsh"
-
