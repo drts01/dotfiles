@@ -1,0 +1,39 @@
+name: CI
+
+on: [push, workflow_call]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  PREKFILE: .config/dotfiles/prek.toml
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          submodules: true
+      - name: Setup uv
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          cache-suffix: lint
+          cache-dependency-glob: ${{ env. PREKFILE }}
+      - name: Cache prek environments
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/prek
+          key: lint-${{ hashFiles(env.PREKFILE) }}
+          restore-keys: |
+            lint-
+      - name: Run prek
+        run: uvx --managed-python
+          prek run --config "$PREKFILE" --show-diff-on-failure --color=always --all-files
