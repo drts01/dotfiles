@@ -28,16 +28,26 @@ else
 fi
 
 echo "Syncing submodules..."
-df submodule update --init --rebase --recommend-shallow --remote --single-branch
 
-echo "==> Initializing hooks..."
-mkdir -p "$DEST_DIR/hooks"
-ln -sf "$HOME/.config/dotfiles/pre-commit" "$DEST_DIR/hooks/pre-commit"
+df config core.worktree "$HOME"
+df submodule update --init
 
+echo "Initializing git hooks..."
+# Not sure if we need to set core.bare for pre-commit hooks to function
+# df config core.bare false
+HOOK_PATH="$DEST_DIR/hooks/pre-commit"
 if command -v prek >/dev/null 2>&1; then
-    prek install --config "$(cd "$(dirname "$0")" && pwd)/prek.toml" --git-dir "$DEST_DIR" --prepare-hooks
+    prek install --config "$(cd "$(dirname "$0")" && pwd)/prek.toml" --git-dir "$DEST_DIR"
+	INJECTION="export GIT_DIR=\"$HOME/.local/share/dotfiles\" GIT_WORK_TREE=\"$HOME\""
+	if grep -q "INJECTION" "$HOOK_PATH"; then
+		echo "Pre-commit hook already patched."
+	else
+		echo "Patching prek pre-commit hook..."
+		NEW_HOOK=$(awk "NR==2{print \"$INJECTION\"}1" "")
+		echo "$NEW_HOOK" > "$HOOK_PATH"
+	fi
 else
-    echo "Warning: 'prek' not found. Skipping hook installation."
+    echo "Warning: 'prek' not found. Skipping git hooks installation."
 fi
 
 echo "Dotfiles bootstrap complete."
