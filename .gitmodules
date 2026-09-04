@@ -1,104 +1,156 @@
 [submodule "fast-syntax-highlighting"]
 	path = .local/share/zsh/plugins/fast-syntax-highlighting
 	url = https://github.com/zdharma-continuum/fast-syntax-highlighting.git
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "nvm"]
 	path = .local/share/nvm
 	url = https://github.com/nvm-sh/nvm.git
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "pyenv"]
 	path = .local/share/pyenv
 	url = https://github.com/pyenv/pyenv.git
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "spaceship-prompt"]
 	path = .local/share/zsh/themes/spaceship-prompt
 	url = https://github.com/spaceship-prompt/spaceship-prompt.git
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "z.lua"]
 	path = .local/share/z.lua
 	url = https://github.com/skywind3000/z.lua.git
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "zsh-autosuggestions"]
 	path = .local/share/zsh/plugins/zsh-autosuggestions
 	url = https://github.com/zsh-users/zsh-autosuggestions.git
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "neovim_nvim-treesitter"]
 	path = .config/nvim/pack/plugins/start/nvim-treesitter
 	url = https://github.com/nvim-treesitter/nvim-treesitter
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "neovim_telescope.nvim"]
 	path = .config/nvim/pack/plugins/start/telescope.nvim
 	url = https://github.com/nvim-telescope/telescope.nvim
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "neovim_mason-lspconfig.nvim"]
 	path = .config/nvim/pack/plugins/start/mason-lspconfig.nvim
 	url = https://github.com/williamboman/mason-lspconfig.nvim
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "neovim_indent-blankline.nvim"]
 	path = .config/nvim/pack/plugins/start/indent-blankline.nvim
 	url = https://github.com/lukas-reineke/indent-blankline.nvim
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "neovim_cmp-nvim-lsp"]
 	path = .config/nvim/pack/plugins/start/cmp-nvim-lsp
 	url = https://github.com/hrsh7th/cmp-nvim-lsp
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "neovim_cmp-path"]
 	path = .config/nvim/pack/plugins/start/cmp-path
 	url = https://github.com/hrsh7th/cmp-path
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "neovim_cmp_luasnip"]
 	path = .config/nvim/pack/plugins/start/cmp_luasnip
 	url = https://github.com/saadparwaiz1/cmp_luasnip
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "neovim_plenary.nvim"]
 	path = .config/nvim/pack/plugins/start/plenary.nvim
 	url = https://github.com/nvim-lua/plenary.nvim
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "neovim_nvim-lint"]
 	path = .config/nvim/pack/plugins/start/nvim-lint
 	url = https://github.com/mfussenegger/nvim-lint
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "neovim_nvim-tree.lua"]
 	path = .config/nvim/pack/plugins/start/nvim-tree.lua
 	url = https://github.com/nvim-tree/nvim-tree.lua
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "neovim_nvim-web-devicons"]
 	path = .config/nvim/pack/plugins/start/nvim-web-devicons
 	url = https://github.com/nvim-tree/nvim-web-devicons
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "neovim_lualine.nvim"]
 	path = .config/nvim/pack/plugins/start/lualine.nvim
 	url = https://github.com/nvim-lualine/lualine.nvim
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "neovim_cmp-buffer"]
 	path = .config/nvim/pack/plugins/start/cmp-buffer
 	url = https://github.com/hrsh7th/cmp-buffer
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "neovim_telescope-fzf-native.nvim"]
 	path = .config/nvim/pack/plugins/start/telescope-fzf-native.nvim
 	url = https://github.com/nvim-telescope/telescope-fzf-native.nvim
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "neovim_nvim-cmp"]
 	path = .config/nvim/pack/plugins/start/nvim-cmp
 	url = https://github.com/hrsh7th/nvim-cmp
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "neovim_mason.nvim"]
 	path = .config/nvim/pack/plugins/start/mason.nvim
 	url = https://github.com/williamboman/mason.nvim
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "neovim_nvim-lspconfig"]
 	path = .config/nvim/pack/plugins/start/nvim-lspconfig
 	url = https://github.com/neovim/nvim-lspconfig
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "neovim_gitsigns.nvim"]
 	path = .config/nvim/pack/plugins/start/gitsigns.nvim
 	url = https://github.com/lewis6991/gitsigns.nvim
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "neovim_LuaSnip"]
 	path = .config/nvim/pack/plugins/start/LuaSnip
 	url = https://github.com/L3MON4D3/LuaSnip
+	ignore = dirty
+	update = rebase
 	shallow = true
 [submodule "neovim_theme_dracula"]
 	path = .config/nvim/pack/plugins/start/theme_dracula
 	url = https://github.com/Mofiqul/dracula.nvim.git
+	ignore = dirty
+	update = rebase
 	shallow = true
