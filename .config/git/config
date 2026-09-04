@@ -67,6 +67,7 @@
 [push]
 	default = current
 	autoSetupRemote = true
+	recurseSubmodules = check
 
 [rebase]
 	autoStash = true
