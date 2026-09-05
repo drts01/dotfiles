@@ -11,6 +11,7 @@ permissions:
 
 env:
   PREKFILE: .config/dotfiles/prek.toml
+  UV_CONFIG_FILE: .config/uv/uv.toml
 
 jobs:
   lint:
