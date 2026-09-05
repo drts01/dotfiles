@@ -1,12 +1,12 @@
 [[repos]]
-repo = "meta"
+repo  = "meta"
 hooks = [
   { id = "check-hooks-apply" },
   { id = "check-useless-excludes" },
 ]
 
 [[repos]]
-repo = "builtin"
+repo  = "builtin"
 hooks = [
   { id = "check-added-large-files" },
   { id = "check-case-conflict" },
@@ -19,49 +19,54 @@ hooks = [
   { id = "check-yaml" },
   { id = "check-vcs-permalinks" },
   { id = "end-of-file-fixer" },
-  { id = "trailing-whitespace", args = ["--markdown-linebreak-ext=md"] },
-  { id = "mixed-line-ending", args = ["--fix=lf"] },
+  { id = "trailing-whitespace", args = [ "--markdown-linebreak-ext=md" ] },
+  { id = "mixed-line-ending", args = [ "--fix=lf" ] },
 ]
 
 [[repos]]
-repo = "https://github.com/crate-ci/typos"
-rev = "d43b6c087ac471e2ea7b8af622ff15f05c0c365b"  # frozen: v1.50.1
+repo  = "https://github.com/crate-ci/typos"
+rev   = "d43b6c087ac471e2ea7b8af622ff15f05c0c365b"                                          # frozen: v1.50.1
 hooks = [
-  { id = "typos", args = ["--write-changes"], stages = ["pre-commit", "commit-msg"]},
+  { id = "typos", args = [ "--write-changes" ], stages = [ "pre-commit", "commit-msg" ] },
 ]
 
 [[repos]]
-repo = "https://github.com/scop/pre-commit-shfmt"
-rev = "05c1426671b9237fb5e1444dd63aa5731bec0dfb"  # frozen: v3.13.1-1
+repo  = "https://github.com/scop/pre-commit-shfmt"
+rev   = "05c1426671b9237fb5e1444dd63aa5731bec0dfb"            # frozen: v3.13.1-1
 hooks = [
-  { id = "shfmt", args = ["-w", "-s", "-i", "2", "-sr"] },
+  { id = "shfmt", args = [ "-w", "-s", "-i", "2", "-sr" ] },
 ]
 
 [[repos]]
-repo = "https://github.com/shellcheck-py/shellcheck-py"
-rev = "a6564f5d57444e123433a5c9af733e3975c77229"  # frozen: v0.11.0.1-1
+repo  = "https://github.com/shellcheck-py/shellcheck-py"
+rev   = "a6564f5d57444e123433a5c9af733e3975c77229"        # frozen: v0.11.0.1-1
+hooks = [ { id = "shellcheck" } ]
+
+[[repos]]
+repo  = "https://github.com/tombi-toml/tombi-pre-commit"
+rev   = "1c6e088eb48854d65499ae12c0e7ec2f1737d0f8"        # frozen: v1.5.0
 hooks = [
-    { id = "shellcheck" }
+  { id = "tombi-format" },                                # Tombi does not have a way to pass a custom path for the configuration
 ]
 
 [[repos]]
 repo = "https://github.com/owenlamont/ryl-pre-commit"
-rev = "052aa238c11fa01a9324706955746b77761e89a3"  # frozen: v0.21.0
+rev  = "052aa238c11fa01a9324706955746b77761e89a3"      # frozen: v0.21.0
 
-  [[repos.hooks]]
-  id = "ryl-markdown"
-  name = "ryl"
-  alias = "ryl"
-  args = ["--config-file", ".config/ryl/ryl.toml", "--fix"]
-  types_or = ["yaml", "markdown"]
-  files = '.*\.(ya?ml|md|markdown|mdx|qmd|Rmd)$'
-  stages = ["pre-commit"]
+[[repos.hooks]]
+id       = "ryl-markdown"
+name     = "ryl"
+alias    = "ryl"
+args     = [ "--config-file", ".config/ryl/ryl.toml", "--fix" ]
+types_or = [ "yaml", "markdown" ]
+files    = '.*\.(ya?ml|md|markdown|mdx|qmd|Rmd)$'
+stages   = [ "pre-commit" ]
 
-  [[repos.hooks]]
-  id = "ryl-markdown"
-  name = "ryl github"
-  alias = "ryl-github"
-  args = ["--config-file", ".config/ryl/ryl.toml", "--format=github"]
-  types_or = ["yaml", "markdown"]
-  files = '.*\.(ya?ml|md|markdown|mdx|qmd|Rmd)$'
-  stages = ["manual"]
+[[repos.hooks]]
+id       = "ryl-markdown"
+name     = "ryl github"
+alias    = "ryl-github"
+args     = [ "--config-file", ".config/ryl/ryl.toml", "--format=github" ]
+types_or = [ "yaml", "markdown" ]
+files    = '.*\.(ya?ml|md|markdown|mdx|qmd|Rmd)$'
+stages   = [ "manual" ]
