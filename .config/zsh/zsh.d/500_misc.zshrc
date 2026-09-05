@@ -14,13 +14,6 @@ has zoxide && eval "$(zoxide init "$_shell")"
 # eval "$("$ZLUA_EXEC" "${XDG_DATA_HOME}/z.lua/z.lua" --init "${SHELL##*/}" enhanced once "$(type fzf &> /dev/null && echo fzf)")"
 # fi
 
-# Only use pyenv if uv is unavailable
-if ! has uv; then
-  if [ -n "${PYENV_ROOT-}" ] && [ -x "${PYENV_ROOT}/bin/pyenv" ]; then
-    eval "$("${PYENV_ROOT}/bin/pyenv" init -)"
-  fi
-fi
-
 if [ -n "${RBENV_ROOT-}" ] && [ -x "${RBENV_ROOT}/bin/rbenv" ]; then
   eval "$("${RBENV_ROOT}/bin/rbenv" init - "$_shell")"
 fi

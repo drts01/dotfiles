@@ -4,12 +4,6 @@
 	ignore = dirty
 	update = rebase
 	shallow = true
-[submodule "pyenv"]
-	path = .local/share/pyenv
-	url = https://github.com/pyenv/pyenv.git
-	ignore = dirty
-	update = rebase
-	shallow = true
 [submodule "spaceship-prompt"]
 	path = .local/share/zsh/themes/spaceship-prompt
 	url = https://github.com/spaceship-prompt/spaceship-prompt.git
