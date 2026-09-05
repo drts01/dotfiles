@@ -2,6 +2,7 @@
 set -eu
 REPO_URL="https://github.com/drts01/dotfiles"
 DEST_DIR="$HOME/.local/share/dotfiles"
+BASEDIR="$(cd "$(dirname "$0")" && pwd)"
 
 df() { git --git-dir="$DEST_DIR" --work-tree="$HOME" "$@"; }
 
@@ -32,12 +33,14 @@ echo "Syncing submodules..."
 df config core.worktree "$HOME"
 df submodule update --init
 
+"$BASEDIR/uvfile.sh"
+
 echo "Initializing git hooks..."
 # Not sure if we need to set core.bare for pre-commit hooks to function
 # df config core.bare false
 HOOK_PATH="$DEST_DIR/hooks/pre-commit"
 if command -v prek >/dev/null 2>&1; then
-    prek install --config "$(cd "$(dirname "$0")" && pwd)/prek.toml" --git-dir "$DEST_DIR"
+    prek install --config "$BASEDIR/prek.toml" --git-dir "$DEST_DIR"
 	INJECTION="export GIT_DIR=\"$HOME/.local/share/dotfiles\" GIT_WORK_TREE=\"$HOME\""
 	if grep -q "INJECTION" "$HOOK_PATH"; then
 		echo "Pre-commit hook already patched."
