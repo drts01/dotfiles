@@ -43,3 +43,25 @@ rev = "a6564f5d57444e123433a5c9af733e3975c77229"  # frozen: v0.11.0.1-1
 hooks = [
     { id = "shellcheck" }
 ]
+
+[[repos]]
+repo = "https://github.com/owenlamont/ryl-pre-commit"
+rev = "052aa238c11fa01a9324706955746b77761e89a3"  # frozen: v0.21.0
+
+  [[repos.hooks]]
+  id = "ryl-markdown"
+  name = "ryl"
+  alias = "ryl"
+  args = ["--config-file", ".config/ryl/ryl.toml", "--fix"]
+  types_or = ["yaml", "markdown"]
+  files = '.*\.(ya?ml|md|markdown|mdx|qmd|Rmd)$'
+  stages = ["pre-commit"]
+
+  [[repos.hooks]]
+  id = "ryl-markdown"
+  name = "ryl github"
+  alias = "ryl-github"
+  args = ["--config-file", ".config/ryl/ryl.toml", "--format=github"]
+  types_or = ["yaml", "markdown"]
+  files = '.*\.(ya?ml|md|markdown|mdx|qmd|Rmd)$'
+  stages = ["manual"]
