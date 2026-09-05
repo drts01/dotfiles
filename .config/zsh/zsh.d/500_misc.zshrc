@@ -14,12 +14,6 @@ has zoxide && eval "$(zoxide init "$_shell")"
 # eval "$("$ZLUA_EXEC" "${XDG_DATA_HOME}/z.lua/z.lua" --init "${SHELL##*/}" enhanced once "$(type fzf &> /dev/null && echo fzf)")"
 # fi
 
-# nvm scripts are bash/zsh-oriented; avoid sourcing them in POSIX sh.
-if [ -n "${NVM_DIR-}" ]; then
-  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-  [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
-fi
-
 # Only use pyenv if uv is unavailable
 if ! has uv; then
   if [ -n "${PYENV_ROOT-}" ] && [ -x "${PYENV_ROOT}/bin/pyenv" ]; then
