@@ -22,3 +22,17 @@ hooks = [
   { id = "trailing-whitespace", args = ["--markdown-linebreak-ext=md"] },
   { id = "mixed-line-ending", args = ["--fix=lf"] },
 ]
+
+[[repos]]
+repo = "https://github.com/scop/pre-commit-shfmt"
+rev = "05c1426671b9237fb5e1444dd63aa5731bec0dfb"  # frozen: v3.13.1-1
+hooks = [
+  { id = "shfmt", args = ["-w", "-s", "-i", "2", "-sr"] },
+]
+
+[[repos]]
+repo = "https://github.com/shellcheck-py/shellcheck-py"
+rev = "a6564f5d57444e123433a5c9af733e3975c77229"  # frozen: v0.11.0.1-1
+hooks = [
+    { id = "shellcheck" }
+]
