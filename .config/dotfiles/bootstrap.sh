@@ -38,7 +38,7 @@ if command -v curl > /dev/null 2>&1; then
 elif command -v wget > /dev/null 2>&1; then
   wget --no-hsts -qO- https://mise.run | MISE_INSTALL_SKIP_IF_EXISTS=1 sh
 else
-  echo "ERROR: Could not install uv. Neither curl nor wget found." >&2
+  echo "ERROR: Could not install mise. Neither curl nor wget found." >&2
   exit 1
 fi
 
