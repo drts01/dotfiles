@@ -48,8 +48,12 @@
 [difftool "smartdiff"]
 	cmd = nvim -d "$LOCAL" "$REMOTE" || vimdiff || diff --color --context 3 "$LOCAL" "$REMOTE"
 
+[extensions]
+	compatObjectFormat = sha1
+
 [init]
 	defaultBranch = trunk
+	defaultObjectFormat = sha256
 
 [interactive]
 	diffFilter = pygmentize -l diff || cat
