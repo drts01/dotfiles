@@ -44,7 +44,7 @@ hooks = [ { id = "shellcheck" } ]
 
 [[repos]]
 repo  = "https://github.com/tombi-toml/tombi-pre-commit"
-rev   = "1c6e088eb48854d65499ae12c0e7ec2f1737d0f8"        # frozen: v1.5.0
+rev   = "84223797550a899b3a0d89179934e5f91b8ee4d1"        # frozen: v1.5.1
 hooks = [
   { id = "tombi-format" },                                # Tombi does not have a way to pass a custom path for the configuration
 ]
