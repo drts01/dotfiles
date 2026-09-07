@@ -1,6 +1,6 @@
 [format.rules]
-array-bracket-space-width = 1
+array-bracket-space-width       = 1
 key-value-equals-sign-alignment = true
-line-width = 120
-trailing-comment-alignment = true
-trailing-comment-space-width = 2
+line-width                      = 120
+trailing-comment-alignment      = true
+trailing-comment-space-width    = 2

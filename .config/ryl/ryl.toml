@@ -1,26 +1,26 @@
 [files]
-yaml = [ "*.yaml", "*.yml", ".yamllint", ".yamlfmt" ]
+yaml     = [ "*.yaml", "*.yml", ".yamllint", ".yamlfmt" ]
 markdown = [ "**/*.md" ]
 
 [rules]
-anchors = "enable"
-brackets = "enable"
-colons = "enable"
-commas = "enable"
-empty-lines = "enable"
-empty-values = "enable"
-hyphens = "enable"
-key-ordering = "disable"
-octal-values = "enable"
-merge-keys = "enable"
+anchors                 = "enable"
+brackets                = "enable"
+colons                  = "enable"
+commas                  = "enable"
+empty-lines             = "enable"
+empty-values            = "enable"
+hyphens                 = "enable"
+key-ordering            = "disable"
+octal-values            = "enable"
+merge-keys              = "enable"
 new-line-at-end-of-file = "enable"
-new-lines = "enable"
-trailing-spaces = "enable"
-truthy = "enable"
-unicode-line-breaks = "enable"
+new-lines               = "enable"
+trailing-spaces         = "enable"
+truthy                  = "enable"
+unicode-line-breaks     = "enable"
 
 [rules.braces]
-max-spaces-inside = 1
+max-spaces-inside       = 1
 max-spaces-inside-empty = 2
 min-spaces-inside-empty = 0
 
@@ -40,28 +40,28 @@ present = false
 require-numeral-before-decimal = true
 
 [rules.indentation]
-spaces = 2
+spaces           = 2
 indent-sequences = true
 
 [rules.key-duplicates]
 forbid-duplicated-merge-keys = true
-check-canonical = true
-forbid-merge-key-shadowing = true
+check-canonical              = true
+forbid-merge-key-shadowing   = true
 
 [rules.line-length]
 max = 120
 
 [rules.quoted-strings]
-quote-type = "single"
-required = "only-when-needed"
-allow-quoted-quotes = true
+quote-type                       = "single"
+required                         = "only-when-needed"
+allow-quoted-quotes              = true
 allow-double-quotes-for-escaping = true
 
 [rules.tags]
-forbid-unsafe-tags = true
+forbid-unsafe-tags   = true
 forbid-removed-types = true
 
 [[per-line-ignores]]
-path = "**/.github/workflows/*.y*ml"
+path  = "**/.github/workflows/*.y*ml"
 regex = "^on:"
 rules = [ "truthy" ]
