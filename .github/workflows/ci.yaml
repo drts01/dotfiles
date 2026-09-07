@@ -12,7 +12,7 @@ permissions:
 
 env:
   PREKFILE: .config/dotfiles/prek.toml
-  UV_CONFIG_FILE: .config/uv/uv.toml
+  UV_CONFIG_FILE: ${{ github.workspace }}/.config/uv/uv.toml
 
 jobs:
   lint:
