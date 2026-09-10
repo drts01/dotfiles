@@ -1,5 +1,8 @@
+[settings]
+minimum_release_age = "3d"
+
 [tools]
-zola = "0.23.4"
+zola = "latest"
 prek = "latest"
 
 [tasks."install-hooks"]
