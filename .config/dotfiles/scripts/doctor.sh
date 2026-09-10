@@ -1,6 +1,5 @@
 #!/bin/sh
 set -eu
-BASEDIR="${BASEDIR:-$(cd "$(dirname "$0")/.." && pwd)}"
 DEST_DIR="$HOME/.local/share/dotfiles"
 HOOK_PATH="$DEST_DIR/hooks/pre-commit"
 FAIL=0
@@ -43,20 +42,6 @@ else
   echo "FAIL pre-commit hook missing or not executable at $HOOK_PATH" >&2
   FAIL=1
 fi
-
-echo "Checking uvfile.txt tools..."
-while read -r line || [ -n "$line" ]; do
-  case "$line" in '' | \#*) continue ;; esac
-  # shellcheck disable=SC2086 # intentional word-splitting: "tool [--with pkgs...]"
-  set -- $line
-  tool=$1
-  if uv tool list 2> /dev/null | grep -q "^$tool "; then
-    echo "OK   uv tool '$tool' installed"
-  else
-    echo "FAIL uv tool '$tool' not installed" >&2
-    FAIL=1
-  fi
-done < "$BASEDIR/uvfile.txt"
 
 if [ "$FAIL" -eq 0 ]; then
   echo "All checks passed."

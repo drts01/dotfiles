@@ -11,8 +11,8 @@ Rust-based pre-commit-compatible runner — configured in
 
 `prek` is a drop-in replacement for the Python `pre-commit` tool with the
 same `.pre-commit-config.yaml`-style hook definitions (here in TOML), but
-faster and installed as a single binary via `uv tool install` — see
-[Bootstrap](/docs/bootstrap/#uv-tools).
+faster and installed as a versioned `mise` tool — see
+[Bootstrap](/docs/bootstrap/#prek).
 
 ## Configured hooks
 

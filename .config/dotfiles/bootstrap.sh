@@ -48,6 +48,6 @@ else
 fi
 
 echo "Running post-clone setup..."
-mise run --cwd "$BASEDIR" setup
+mise run --cd "$BASEDIR" bootstrap
 
 echo "Dotfiles bootstrap complete."

@@ -1,30 +1,24 @@
 [tools]
-uv   = "0.12.11"
 zola = "0.23.4"
-
-[tasks."uv-tools"]
-description = "Install uv-managed CLI tools from uvfile.txt"
-run         = "{{config_root}}/scripts/uv-tools.sh"
-env         = { BASEDIR = "{{config_root}}" }
+prek = "latest"
 
 [tasks."install-hooks"]
 description = "Install prek pre-commit hooks patched for the bare repo"
 run         = "{{config_root}}/scripts/install-hooks.sh"
 env         = { BASEDIR = "{{config_root}}" }
 
-[tasks.setup]
-description = "Full post-clone setup: uv tools + git hooks"
-depends     = [ "uv-tools", "install-hooks" ]
+[tasks.bootstrap]
+description = "Full post-clone setup: tools + git hooks"
+depends     = [ "install-hooks" ]
 
 [tasks.doctor]
-description = "Verify bootstrap succeeded: tools, hooks, and uv-installed CLIs"
+description = "Verify bootstrap succeeded: tools and hooks"
 run         = "{{config_root}}/scripts/doctor.sh"
-env         = { BASEDIR = "{{config_root}}" }
 
 [tasks.update]
-description  = "Pull latest dotfiles, sync submodules, and re-run setup"
+description  = "Pull latest dotfiles, sync submodules, and re-run bootstrap"
 run          = "{{config_root}}/scripts/update.sh"
-depends_post = [ "setup" ]
+depends_post = [ "bootstrap" ]
 
 [tasks."docs:serve"]
 description = "Preview documentation site locally"

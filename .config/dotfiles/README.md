@@ -13,12 +13,12 @@ curl -sL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfile
 This clones the bare repo to `~/.local/share/dotfiles`, checks out the tracked
 files into `$HOME` (backing up any conflicting pre-existing files to
 `~/.df-bak`), installs [mise](https://mise.jdx.dev), and runs the post-clone
-setup tasks (`uv`-managed CLI tools, `prek` git hooks).
+bootstrap tasks (mise-managed CLI tools, `prek` git hooks).
 
 Verify the install succeeded:
 
 ```bash
-mise run --cwd ~/.config/dotfiles doctor
+mise run --cd ~/.config/dotfiles doctor
 ```
 
 ## Usage
@@ -34,18 +34,18 @@ dotfiles push
 
 ### Updating
 
-Pull the latest dotfiles, sync submodules, and re-run setup:
+Pull the latest dotfiles, sync submodules, and re-run bootstrap:
 
 ```bash
-mise run --cwd ~/.config/dotfiles update
+mise run --cd ~/.config/dotfiles update
 ```
 
 ### Available mise tasks
 
 | Task | Description |
 | --- | --- |
-| `setup` | Install `uv`-managed CLI tools and `prek` git hooks (runs automatically during bootstrap) |
-| `update` | Pull latest changes, sync submodules, and re-run `setup` |
+| `bootstrap` | Install mise-managed CLI tools and `prek` git hooks (runs automatically during install) |
+| `update` | Pull latest changes, sync submodules, and re-run `bootstrap` |
 | `doctor` | Verify required tools, the bare repo, and git hooks are correctly installed |
 
 ## Documentation
@@ -56,13 +56,13 @@ and git hooks) is built with [Zola](https://www.getzola.org) and the
 `.config/dotfiles/docs/`. Preview it locally:
 
 ```bash
-mise run --cwd ~/.config/dotfiles docs:serve
+mise run --cd ~/.config/dotfiles docs:serve
 ```
 
 Or build the static site:
 
 ```bash
-mise run --cwd ~/.config/dotfiles docs:build
+mise run --cd ~/.config/dotfiles docs:build
 ```
 
 ## License

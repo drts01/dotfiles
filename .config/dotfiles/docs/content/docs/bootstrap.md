@@ -16,7 +16,7 @@ before `mise` exists:
    exists), backing up any conflicting pre-existing files to `~/.df-bak`.
 2. Syncs submodules.
 3. Installs [mise](https://mise.jdx.dev).
-4. Hands off to `mise run setup`, defined in `.config/dotfiles/mise.toml`.
+4. Hands off to `mise run bootstrap`, defined in `.config/dotfiles/mise.toml`.
 
 ## mise tasks
 
@@ -25,8 +25,8 @@ All post-clone work lives in `.config/dotfiles/mise.toml` and
 
 | Task | Description |
 | --- | --- |
-| `setup` | Install `uv`-managed CLI tools ([`uv-tools`](#uv-tools)) and `prek` git hooks ([`install-hooks`](#install-hooks)) |
-| `update` | Pull latest changes, sync submodules, and re-run `setup` |
+| `bootstrap` | Install mise-managed CLI tools ([`prek`](#prek)) and git hooks ([`install-hooks`](#install-hooks)) |
+| `update` | Pull latest changes, sync submodules, and re-run `bootstrap` |
 | `doctor` | Verify required tools, the bare repo, and git hooks are correctly installed |
 
 Run any task with:
@@ -35,11 +35,10 @@ Run any task with:
 mise run --cwd ~/.config/dotfiles <task>
 ```
 
-### `uv-tools`
+### `prek`
 
-Installs every tool listed in `.config/dotfiles/uvfile.txt` via
-`uv tool install`. The `uv` version itself is pinned in `mise.toml`
-(`[tools] uv = "..."`).
+Installed as a versioned tool via `[tools] prek = "..."` in `mise.toml`,
+same as `uv` and `zola`.
 
 ### `install-hooks`
 
@@ -54,5 +53,5 @@ mise run --cwd ~/.config/dotfiles doctor
 ```
 
 Checks that `git`, `mise`, `uv`, and `prek` are on `PATH`, the bare repo
-exists, `dotfiles status` runs clean, the pre-commit hook is installed and
-executable, and every tool in `uvfile.txt` is actually installed.
+exists, `dotfiles status` runs clean, and the pre-commit hook is installed
+and executable.
