@@ -37,14 +37,16 @@ echo "Syncing submodules..."
 df config core.worktree "$HOME"
 df submodule update --init
 
-echo 'Installing mise'
-if command -v curl > /dev/null 2>&1; then
-  curl -LsSf --retry 3 https://mise.run | MISE_INSTALL_SKIP_IF_EXISTS=1 sh
-elif command -v wget > /dev/null 2>&1; then
-  wget --no-hsts --tries=3 -qO- https://mise.run | MISE_INSTALL_SKIP_IF_EXISTS=1 sh
-else
-  echo "ERROR: Could not install mise. Neither curl nor wget found." >&2
-  exit 1
+if ! command -v mise > /dev/null 2> %1; then
+  echo 'Installing mise'
+  if command -v curl > /dev/null 2>&1; then
+    curl -LsSf --retry 3 https://mise.run | MISE_INSTALL_SKIP_IF_EXISTS=1 sh
+  elif command -v wget > /dev/null 2>&1; then
+    wget --no-hsts --tries=3 -qO- https://mise.run | MISE_INSTALL_SKIP_IF_EXISTS=1 sh
+  else
+    echo "ERROR: Could not install mise. Neither curl nor wget found." >&2
+    exit 1
+  fi
 fi
 
 echo "Running post-clone setup..."
