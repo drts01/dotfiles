@@ -47,3 +47,7 @@ mise run --cwd ~/.config/dotfiles update
 | `setup` | Install `uv`-managed CLI tools and `prek` git hooks (runs automatically during bootstrap) |
 | `update` | Pull latest changes, sync submodules, and re-run `setup` |
 | `doctor` | Verify required tools, the bare repo, and git hooks are correctly installed |
+
+## License
+
+Licensed under the [Apache License, Version 2.0](LICENSE).
