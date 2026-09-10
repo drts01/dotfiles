@@ -1,0 +1,26 @@
+[tools]
+uv = "0.12.11"
+
+[tasks."uv-tools"]
+description = "Install uv-managed CLI tools from uvfile.txt"
+run         = "{{config_root}}/scripts/uv-tools.sh"
+env         = { BASEDIR = "{{config_root}}" }
+
+[tasks."install-hooks"]
+description = "Install prek pre-commit hooks patched for the bare repo"
+run         = "{{config_root}}/scripts/install-hooks.sh"
+env         = { BASEDIR = "{{config_root}}" }
+
+[tasks.setup]
+description = "Full post-clone setup: uv tools + git hooks"
+depends     = [ "uv-tools", "install-hooks" ]
+
+[tasks.doctor]
+description = "Verify bootstrap succeeded: tools, hooks, and uv-installed CLIs"
+run         = "{{config_root}}/scripts/doctor.sh"
+env         = { BASEDIR = "{{config_root}}" }
+
+[tasks.update]
+description  = "Pull latest dotfiles, sync submodules, and re-run setup"
+run          = "{{config_root}}/scripts/update.sh"
+depends_post = [ "setup" ]

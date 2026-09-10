@@ -2,7 +2,7 @@
 set -eu
 REPO_URL="https://github.com/drts01/dotfiles"
 DEST_DIR="$HOME/.local/share/dotfiles"
-BASEDIR="$(cd "$(dirname "$0")" && pwd)"
+BASEDIR="$HOME/.config/dotfiles"
 
 df() { git --git-dir="$DEST_DIR" --work-tree="$HOME" "$@"; }
 
@@ -24,7 +24,12 @@ if [ ! -d "$DEST_DIR" ]; then
   fi
 else
   echo "Pulling latest changes..."
-  df pull origin "$(df symbolic-ref --short HEAD)"
+  BRANCH="$(df symbolic-ref --short HEAD 2> /dev/null || true)"
+  if [ -n "$BRANCH" ]; then
+    df pull origin "$BRANCH"
+  else
+    echo "Warning: HEAD is detached; skipping pull." >&2
+  fi
 fi
 
 echo "Syncing submodules..."
@@ -34,41 +39,15 @@ df submodule update --init
 
 echo 'Installing mise'
 if command -v curl > /dev/null 2>&1; then
-  curl -LsSf https://mise.run | MISE_INSTALL_SKIP_IF_EXISTS=1 sh
+  curl -LsSf --retry 3 https://mise.run | MISE_INSTALL_SKIP_IF_EXISTS=1 sh
 elif command -v wget > /dev/null 2>&1; then
-  wget --no-hsts -qO- https://mise.run | MISE_INSTALL_SKIP_IF_EXISTS=1 sh
+  wget --no-hsts --tries=3 -qO- https://mise.run | MISE_INSTALL_SKIP_IF_EXISTS=1 sh
 else
   echo "ERROR: Could not install mise. Neither curl nor wget found." >&2
   exit 1
 fi
 
-command -v uv > /dev/null 2>&1 || mise use --global uv@latest
-
-echo 'Installing uv tools'
-while read -r line || [ -n "$line" ]; do
-  case "$line" in '' | \#*) continue ;; esac
-  set -- "$line"
-  tool=$1
-  shift
-  uv tool install "$tool" ${1:+--with "$@"}
-done < "$UVFILE"
-
-echo "Initializing git hooks..."
-# Not sure if we need to set core.bare for pre-commit hooks to function
-# df config core.bare false
-HOOK_PATH="$DEST_DIR/hooks/pre-commit"
-if command -v prek > /dev/null 2>&1; then
-  prek install --config "$BASEDIR/prek.toml" --git-dir "$DEST_DIR"
-  INJECTION="export GIT_DIR=\"$HOME/.local/share/dotfiles\" GIT_WORK_TREE=\"$HOME\""
-  if grep -q "INJECTION" "$HOOK_PATH"; then
-    echo "Pre-commit hook already patched."
-  else
-    echo "Patching prek pre-commit hook..."
-    NEW_HOOK=$(awk "NR==2{print \"$INJECTION\"}1" "")
-    echo "$NEW_HOOK" > "$HOOK_PATH"
-  fi
-else
-  echo "Warning: 'prek' not found. Skipping git hooks installation."
-fi
+echo "Running post-clone setup..."
+mise run --cwd "$BASEDIR" setup
 
 echo "Dotfiles bootstrap complete."
