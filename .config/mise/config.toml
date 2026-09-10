@@ -3,6 +3,7 @@ python.uv_venv_auto                 = "create|source"
 idiomatic_version_file_enable_tools = [ "terraform", "node", "go", "rust" ]
 auto_env                            = true                                   # Starting with mise 2027.6.0 it will default to true
 http_timeout                        = "10s"
+minimum_release_age                 = "3d"
 
 [tools]
 node      = "latest"
