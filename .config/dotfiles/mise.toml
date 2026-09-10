@@ -24,3 +24,13 @@ env         = { BASEDIR = "{{config_root}}" }
 description  = "Pull latest dotfiles, sync submodules, and re-run setup"
 run          = "{{config_root}}/scripts/update.sh"
 depends_post = [ "setup" ]
+
+[tasks."docs:serve"]
+description = "Preview documentation site locally"
+dir         = "{{config_root}}/docs"
+run         = "uv run zensical serve --open"
+
+[tasks."docs:build"]
+description = "Build static documentation site"
+dir         = "{{config_root}}/docs"
+run         = "uv run zensical build --clean"

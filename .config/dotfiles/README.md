@@ -48,6 +48,23 @@ mise run --cwd ~/.config/dotfiles update
 | `update` | Pull latest changes, sync submodules, and re-run `setup` |
 | `doctor` | Verify required tools, the bare repo, and git hooks are correctly installed |
 
+## Documentation
+
+Full documentation (setup, `mise` tasks, per-config guides for Neovim, Zsh,
+and git hooks) is built with [Zensical](https://zensical.org) from
+`.config/dotfiles/docs/`. Preview it locally:
+
+```bash
+mise run --cwd ~/.config/dotfiles docs:serve
+```
+
+Or build the static site:
+
+```bash
+mise run --cwd ~/.config/dotfiles docs:build
+```
+
 ## License
+
 
 Licensed under the [Apache License, Version 2.0](LICENSE).
