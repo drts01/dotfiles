@@ -1,8 +1,7 @@
----
-icon: lucide/rocket
----
-
-# Bootstrap
++++
+title = "Bootstrap"
+weight = 1
++++
 
 ## Installation
 
@@ -46,7 +45,7 @@ Installs every tool listed in `.config/dotfiles/uvfile.txt` via
 
 Runs `prek install` against `.config/dotfiles/prek.toml` and patches the
 generated pre-commit hook so it targets the bare repo's `GIT_DIR`/
-`GIT_WORK_TREE` instead of a normal working copy. See [Git hooks](prek.md).
+`GIT_WORK_TREE` instead of a normal working copy. See [Git hooks](/docs/prek/).
 
 ## Verifying an install
 

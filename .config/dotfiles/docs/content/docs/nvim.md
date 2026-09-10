@@ -1,8 +1,7 @@
----
-icon: lucide/pencil
----
-
-# Neovim
++++
+title = "Neovim"
+weight = 2
++++
 
 Configuration lives in `.config/nvim/init.lua`, using Neovim's native package
 manager — no plugin manager (no vim-plug/lazy.nvim). Plugins are tracked as

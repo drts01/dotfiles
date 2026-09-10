@@ -1,0 +1,40 @@
+base_url           = "https://drts01.github.io/dotfiles/"
+title              = "drts01/dotfiles"
+description        = "Personal dotfiles managed via a Git bare repository, bootstrapped with mise."
+theme              = "devlab-theme"
+compile_sass       = true
+build_search_index = true
+
+[search]
+index_format        = "elasticlunr_javascript"
+include_title       = true
+include_description = true
+include_content     = true
+
+[markdown.highlighting]
+light_theme = "github-light"
+dark_theme  = "github-dark"
+
+[extra.devlab.brand]
+logo_text      = "dotfiles"
+footer_text    = "digitalroots"
+show_logo_mark = false
+
+[extra.devlab.footer]
+show = true
+note = "Copyright © 2026 digitalroots"
+
+[extra.devlab.navigation]
+links = [
+  { name = "Home", path = "/" },
+  { name = "Docs", kind = "docs" },
+]
+
+[extra.devlab.docs]
+section          = "docs/_index.md"
+path             = "/docs/"
+get_started_path = "/docs/bootstrap/"
+
+[extra.devlab.appearance]
+default_mode = "system"
+show_toggle  = true

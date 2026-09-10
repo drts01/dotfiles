@@ -1,8 +1,7 @@
----
-icon: lucide/git-branch
----
-
-# Git hooks (prek)
++++
+title = "Git hooks (prek)"
+weight = 4
++++
 
 Hooks are managed with [`prek`](https://github.com/j178/prek) — a fast,
 Rust-based pre-commit-compatible runner — configured in
@@ -13,7 +12,7 @@ Rust-based pre-commit-compatible runner — configured in
 `prek` is a drop-in replacement for the Python `pre-commit` tool with the
 same `.pre-commit-config.yaml`-style hook definitions (here in TOML), but
 faster and installed as a single binary via `uv tool install` — see
-[Bootstrap](bootstrap.md#uv-tools).
+[Bootstrap](/docs/bootstrap/#uv-tools).
 
 ## Configured hooks
 

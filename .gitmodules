@@ -142,3 +142,9 @@
 	ignore = dirty
 	update = rebase
 	shallow = true
+[submodule ".config/dotfiles/docs/themes/devlab-theme"]
+	path = .config/dotfiles/docs/themes/devlab-theme
+	url = https://codeberg.org/RiPetitor/devlab-theme
+	branch = v0.7.0
+	ignore = dirty
+	update = rebase

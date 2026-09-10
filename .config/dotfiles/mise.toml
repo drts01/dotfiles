@@ -1,5 +1,6 @@
 [tools]
-uv = "0.12.11"
+uv   = "0.12.11"
+zola = "0.23.4"
 
 [tasks."uv-tools"]
 description = "Install uv-managed CLI tools from uvfile.txt"
@@ -28,9 +29,9 @@ depends_post = [ "setup" ]
 [tasks."docs:serve"]
 description = "Preview documentation site locally"
 dir         = "{{config_root}}/docs"
-run         = "uv run zensical serve --open"
+run         = "zola serve --open"
 
 [tasks."docs:build"]
 description = "Build static documentation site"
 dir         = "{{config_root}}/docs"
-run         = "uv run zensical build --clean"
+run         = "zola build"

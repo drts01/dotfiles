@@ -1,8 +1,7 @@
----
-icon: lucide/terminal
----
-
-# Zsh
++++
+title = "Zsh"
+weight = 3
++++
 
 Configuration lives under `.config/zsh/zsh.d/`, split into numbered files
 loaded in order (lower numbers first):
@@ -23,10 +22,11 @@ alias dotfiles='git --git-dir=$HOME/.local/share/dotfiles --work-tree=$HOME'
 ```
 
 This is the primary way to interact with the tracked dotfiles — see
-[Overview](index.md#interact-with-the-repo).
+[Overview](/#interact-with-the-repo).
 
 ## Submodule-based plugins
 
 `fast-syntax-highlighting`, `zsh-autosuggestions`, `spaceship-prompt`, and
 `z.lua` are tracked as git submodules under `.local/share/zsh/` and
-`.local/share/z.lua`, kept in sync the same way as [Neovim](nvim.md) plugins.
+`.local/share/z.lua`, kept in sync the same way as [Neovim](/docs/nvim/)
+plugins.

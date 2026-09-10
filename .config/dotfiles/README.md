@@ -51,7 +51,8 @@ mise run --cwd ~/.config/dotfiles update
 ## Documentation
 
 Full documentation (setup, `mise` tasks, per-config guides for Neovim, Zsh,
-and git hooks) is built with [Zensical](https://zensical.org) from
+and git hooks) is built with [Zola](https://www.getzola.org) and the
+[devlab-theme](https://codeberg.org/RiPetitor/devlab-theme) from
 `.config/dotfiles/docs/`. Preview it locally:
 
 ```bash
