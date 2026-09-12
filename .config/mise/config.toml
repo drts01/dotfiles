@@ -6,6 +6,5 @@ http_timeout                        = "10s"
 minimum_release_age                 = "3d"
 
 [tools]
-node      = "lts"
-terraform = "latest"
-uv        = "latest"
+node = "lts"
+uv   = "latest"
