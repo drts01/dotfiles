@@ -1,9 +1,12 @@
-base_url           = "https://drts01.github.io/dotfiles/"
-title              = "drts01/dotfiles"
-description        = "Personal dotfiles managed via a Git bare repository, bootstrapped with mise."
-theme              = "devlab-theme"
-compile_sass       = true
-build_search_index = true
+base_url                           = "https://drts01.github.io/dotfiles/"
+title                              = "drts01/dotfiles"
+description                        = "Personal dotfiles managed via a Git bare repository."
+theme                              = "devlab-theme"
+compile_sass                       = true
+build_search_index                 = true
+generate_feeds                     = true
+feed_filenames                     = [ "atom.xml" ]
+exclude_paginated_pages_in_sitemap = "all"
 
 [search]
 index_format        = "elasticlunr_javascript"
@@ -34,6 +37,13 @@ links = [
 section          = "docs/_index.md"
 path             = "/docs/"
 get_started_path = "/docs/bootstrap/"
+
+[extra.devlab.docs.page_actions]
+show_last_updated = true
+show_copy_link    = true
+edit_url          = "https://github.com/drts01/dotfiles/edit/trunk/.config/dotfiles/docs/content/"
+report_url        = "https://github.com/drts01/dotfiles/issues/new"
+date_format       = "%Y-%m-%d"
 
 [extra.devlab.appearance]
 default_mode = "system"
