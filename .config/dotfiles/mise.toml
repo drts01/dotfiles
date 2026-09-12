@@ -1,13 +1,13 @@
 [settings]
+enable_tools        = [ "prek", "zola" ]  # Prevents tool install from other configurations
+locked              = true
+lockfile            = true
+lockfile_mode       = "generate"
 minimum_release_age = "3d"
-task_handlers       = [ "sh", "file" ]  # Enables standard features
-
-[tools]
-zola = "latest"
-prek = "latest"
 
 [tasks."install-hooks"]
 description = "Install prek pre-commit hooks patched for the bare repo"
+tools       = { prek = "latest" }
 run         = "install-hooks.sh"
 env         = { BASEDIR = "{{config_root}}" }
 
@@ -26,10 +26,12 @@ depends_post = [ "bootstrap" ]
 
 [tasks."docs:serve"]
 description = "Preview documentation site locally"
+tools       = { zola = "latest" }
 dir         = "{{config_root}}/docs"
 run         = "zola serve --open"
 
 [tasks."docs:build"]
 description = "Build static documentation site"
+tools       = { zola = "latest" }
 dir         = "{{config_root}}/docs"
 run         = "zola build"
