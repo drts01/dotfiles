@@ -1,5 +1,6 @@
 [settings]
 minimum_release_age = "3d"
+task_handlers       = [ "sh", "file" ]  # Enables standard features
 
 [tools]
 zola = "latest"
@@ -7,7 +8,7 @@ prek = "latest"
 
 [tasks."install-hooks"]
 description = "Install prek pre-commit hooks patched for the bare repo"
-run         = "{{config_root}}/scripts/install-hooks.sh"
+run         = "install-hooks.sh"
 env         = { BASEDIR = "{{config_root}}" }
 
 [tasks.bootstrap]
@@ -16,11 +17,11 @@ depends     = [ "install-hooks" ]
 
 [tasks.doctor]
 description = "Verify bootstrap succeeded: tools and hooks"
-run         = "{{config_root}}/scripts/doctor.sh"
+run         = "doctor.sh"
 
 [tasks.update]
 description  = "Pull latest dotfiles, sync submodules, and re-run bootstrap"
-run          = "{{config_root}}/scripts/update.sh"
+run          = "update.sh"
 depends_post = [ "bootstrap" ]
 
 [tasks."docs:serve"]

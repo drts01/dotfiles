@@ -12,19 +12,28 @@ if [ ! -d "$DEST_DIR" ]; then
   df config --local status.showUntrackedFiles no
 
   echo "Checking out dotfiles..."
-  if ! df checkout; then
+  if ! df checkout 2>&1; then
     BACKUP_DIR="$HOME/.df-bak"
     echo "Backing up pre-existing system dotfiles to $BACKUP_DIR..."
-    df checkout 2>&1 | awk '/^\s/{print $1}' | while read -r f; do
-      mkdir -p "$HOME/.df-bak/$(dirname "$f")"
-      mv "$HOME/$f" "$HOME/.df-bak/$f"
+    df checkout 2>&1 | while read -r line; do
+      TAB=$(printf '\t')
+      case "$line" in
+      [" $TAB"]*) # Match lines starting with spaces or tabs (conflicting files)
+        f=$(echo "$line" | sed 's/^[[:space:]]*//')
+        if [ -f "$HOME/$f" ] || [ -L "$HOME/$f" ]; then
+          mkdir -p "$BACKUP_DIR/$(dirname "$f")"
+          mv "$HOME/$f" "$BACKUP_DIR/$f"
+        fi
+        ;;
+      esac
     done
+
     echo "Retry Checking out dotfiles..."
     df checkout
   fi
 else
   echo "Pulling latest changes..."
-  BRANCH="$(df symbolic-ref --short HEAD 2> /dev/null || true)"
+  BRANCH="$(df symbolic-ref -q --short HEAD)"
   if [ -n "$BRANCH" ]; then
     df pull origin "$BRANCH"
   else
@@ -33,12 +42,11 @@ else
 fi
 
 echo "Syncing submodules..."
-
 df config core.worktree "$HOME"
 df submodule update --init
 
-if ! command -v mise > /dev/null 2> %1; then
-  echo 'Installing mise'
+if ! command -v mise > /dev/null 2>&1; then
+  echo 'Installing mise...'
   if command -v curl > /dev/null 2>&1; then
     curl -LsSf --retry 3 https://mise.run | MISE_INSTALL_SKIP_IF_EXISTS=1 sh
   elif command -v wget > /dev/null 2>&1; then
