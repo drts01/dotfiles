@@ -1,5 +1,6 @@
 +++
 title = "Zsh"
+updated = 2026-09-12
 weight = 3
 +++
 
