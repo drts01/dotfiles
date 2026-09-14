@@ -1,7 +1,6 @@
 [settings]
 enable_tools        = [ "prek", "zola" ]  # Prevents tool install from other configurations
 locked              = true
-lockfile            = true
 lockfile_mode       = "generate"
 minimum_release_age = "3d"
 
