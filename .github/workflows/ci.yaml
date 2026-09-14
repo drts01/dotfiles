@@ -11,8 +11,8 @@ permissions:
   contents: read
 
 env:
-  PREKFILE: .config/dotfiles/prek.toml
-  UV_CONFIG_FILE: ${{ github.workspace }}/.config/uv/uv.toml
+  MISE_GLOBAL_CONFIG_FILE: ${{ github.workspace }}/.config/dotfiles/mise.toml
+  PREKFILE: ${{ github.workspace }}/.config/dotfiles/prek.toml
 
 jobs:
   lint:
@@ -24,11 +24,10 @@ jobs:
         with:
           persist-credentials: false
           submodules: true
-      - name: Setup uv
-        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+      - name: Install mise
+        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
         with:
-          cache-suffix: lint
-          cache-dependency-glob: ${{ env. PREKFILE }}
+          install: false
       - name: Cache prek environments
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
@@ -36,6 +35,7 @@ jobs:
           key: lint-${{ hashFiles(env.PREKFILE) }}
           restore-keys: |
             lint-
+      - name: Install prek
+        run: mise use --global prek
       - name: Run prek
-        run: uvx --managed-python
-          prek run --config "$PREKFILE" --show-diff-on-failure --color=always --all-files
+        run: prek run --config "$PREKFILE" --show-diff-on-failure --color=always --all-files
