@@ -2,7 +2,7 @@
 set -eu
 
 BASEDIR="${MISE_PROJECT_ROOT:-$(pwd)}"
-DEST_DIR="$HOME/.local/share/dotfiles"
+DEST_DIR="${DEST_DIR:-$HOME/.local/share/dotfiles}"
 HOOK_PATH="$DEST_DIR/hooks/pre-commit"
 
 echo "Checking pre-commit hooks execution environment..."

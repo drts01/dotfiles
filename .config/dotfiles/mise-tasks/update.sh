@@ -1,6 +1,7 @@
 #!/bin/sh
 set -eu
-DEST_DIR="$HOME/.local/share/dotfiles"
+
+BASEDIR="${BASEDIR:-$HOME/.config/dotfiles}"
 
 df() { git --git-dir="$DEST_DIR" --work-tree="$HOME" "$@"; }
 
@@ -15,3 +16,6 @@ fi
 
 echo "Syncing submodules..."
 df submodule update --init --recursive
+
+echo "Update from global mise configuration..."
+mise --cd "$HOME/.config/mise" bootstrap

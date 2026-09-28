@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-DEST_DIR="$HOME/.local/share/dotfiles"
+DEST_DIR="${DEST_DIR:-$HOME/.local/share/dotfiles}"
 HOOK_PATH="$DEST_DIR/hooks/pre-commit"
 FAIL=0
 

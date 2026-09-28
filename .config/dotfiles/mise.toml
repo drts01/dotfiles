@@ -4,23 +4,24 @@ locked              = true
 lockfile_mode       = "generate"
 minimum_release_age = "3d"
 
+[env]
+DEST_DIR = "{{ env.HOME }}/.local/share/dotfiles"  # Bare git repository
+
 [tasks."install-hooks"]
 description = "Install prek pre-commit hooks patched for the bare repo"
 tools       = { prek = "latest" }
 env         = { BASEDIR = "{{config_root}}" }
 
 [tasks.bootstrap]
-description = "Full post-clone setup: tools + git hooks"
-depends     = [ "install-hooks" ]
+description = "Bootstrap dotfiles"
 
 [tasks.doctor]
 description = "Verify bootstrap succeeded: tools and hooks"
 run         = "doctor.sh"
 
 [tasks.update]
-description  = "Pull latest dotfiles, sync submodules, and re-run bootstrap"
-run          = "update.sh"
-depends_post = [ "bootstrap" ]
+description = "Pull latest dotfiles, sync submodules, and run mise bootstrap from global config"
+run         = "update.sh"
 
 [tasks."docs:serve"]
 description = "Preview documentation site locally"
