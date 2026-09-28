@@ -7,7 +7,6 @@ minimum_release_age = "3d"
 [tasks."install-hooks"]
 description = "Install prek pre-commit hooks patched for the bare repo"
 tools       = { prek = "latest" }
-run         = "install-hooks.sh"
 env         = { BASEDIR = "{{config_root}}" }
 
 [tasks.bootstrap]
