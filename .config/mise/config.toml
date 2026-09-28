@@ -6,6 +6,12 @@ auto_env                            = true                                   # S
 http_timeout                        = "10s"
 minimum_release_age                 = "3d"
 
+[settings.node]
+mirror_url = "https://centraluhg.jfrog.io/artifactory/glb-generic-nodejs-rem/dist/"
+
 [tools]
-node = "lts"
-uv   = "latest"
+"github:ClementTsang/bottom" = "latest"  # Replacement for top
+"github:dalance/procs"       = "latest"  # Replacement for ps
+"github:tobi/disktree"       = "latest"  # Disk space visualizer
+node                         = "lts"
+uv                           = "latest"
