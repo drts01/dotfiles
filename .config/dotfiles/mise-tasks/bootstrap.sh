@@ -47,9 +47,12 @@ echo "Syncing submodules..."
 df config core.worktree "$HOME"
 df submodule update --init
 
+echo "Running post-clone setup..."
 if ! command -v mise > /dev/null 2>&1; then
-  echo "Running post-clone setup..."
+  # Running mise tasks ensures tools are available.
   mise --cd "$BASEDIR" task run install-hooks
+else
+  "$(cd "$(dirname "$0")" && pwd)/install-hooks.sh"
 fi
 
 echo "Dotfiles bootstrap complete."
