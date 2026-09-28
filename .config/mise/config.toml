@@ -6,12 +6,39 @@ auto_env                            = true                                   # S
 http_timeout                        = "10s"
 minimum_release_age                 = "3d"
 
-[settings.node]
-mirror_url = "https://centraluhg.jfrog.io/artifactory/glb-generic-nodejs-rem/dist/"
-
 [tools]
-"github:ClementTsang/bottom" = "latest"  # Replacement for top
-"github:dalance/procs"       = "latest"  # Replacement for ps
-"github:tobi/disktree"       = "latest"  # Disk space visualizer
-node                         = "lts"
-uv                           = "latest"
+# --- Core Navigation & Layouts ---
+eza    = "latest"  # Feature-rich 'ls' replacement with inline Git statuses
+yazi   = "latest"  # Asynchronous terminal file manager with visual preview
+# starship = "latest"  # Ultra-fast, customizable cross-shell status prompt
+zoxide = "latest"  # Smarter directory jumper that tracks your path history
+
+# --- Search, Inspection, & Filtering ---
+bat     = "latest"  # 'cat' clone with syntax highlighting and Git delta flags
+fd      = "latest"  # Sane, rapid alternative to 'find' that honors .gitignore
+jnv     = "latest"  # Interactive terminal JSON filter and visualization UI
+ripgrep = "latest"  # The fastest string search utility (grep) available
+
+# --- System & Code Optimization ---
+bottom                 = "latest"  # Visual system resource monitor (graphical top/htop clone)
+dust                   = "latest"  # Visual breakdown of disk usage (du -sh replacement)
+"aqua:dalance/procs"   = "latest"  # Modern 'ps' command with clean columns and port search
+"github:tobi/disktree" = "latest"  # Disk space GUI
+
+# --- Fuzzy Searching ---
+skim = "latest"  # Fuzzy finder alternative to fzf (provides 'sk' binary)
+fzf  = "latest"  # Industry standard fuzzy finder (highly recommended alongside skim)
+
+# --- Git Tools ---
+# delta = "latest"     # Syntax-highlighted side-by-side terminal git diff pager
+prek = "latest"  # Git hook manager (pre-commit configuration compatible)
+
+# --- Linters & Formatters ---
+ruff                  = "latest"  # Python linters and formatters
+rumdl                 = "latest"  # Markdown formatter
+tombi                 = "latest"  # TOML formatter
+"aqua:owenlamont/ryl" = "latest"  # YAMLlint replacement and formatter
+
+# --- Development Tools ---
+uv   = "latest"
+node = "lts"
