@@ -13,3 +13,10 @@ enter_accept = false
 
 # Hide the help bottom row once you know the shortcuts to save screen space
 # show_help = false
+
+history_filter = [
+  "^clear$",
+  "^exit$",
+  "^rehash$",
+  ".* (aws_access_key_id|aws_session_token) .*",
+]
