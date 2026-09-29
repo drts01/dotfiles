@@ -1,11 +1,5 @@
 has starship && eval "$(starship init "$_shell")"
 
-_fzf_key_bindings="/usr/share/fzf/key-bindings.${_shell}"
-[ -r "$_fzf_key_bindings" ] && . "$_fzf_key_bindings"
-unset _fzf_key_bindings
-
-has zoxide && eval "$(zoxide init "$_shell")"
-
 # if ! type z > /dev/null; then
 #   for lua in lua luajit lua5.4 lua5.3 lua5.2 lua5.1; do
 #     ZLUA_EXEC="$(command -v "$lua")"
@@ -30,7 +24,7 @@ has kubectl && {
 
   # zsh needs completion system initialized (compdef). If it's not ready, skip quietly.
   if [ "$_shell" != "zsh" ] || has compdef; then
-    if [ ! -r "$_kube_comp_cache" ] || [ "$_kube_comp_cache" -ot "$(command -v kubectl)" ]; then
+    if [ ! -r "$_kube_comp_cache" ] || [ "$_kube_comp_cache" -ot "$(command -v kubectl)" ]; then # typos: ignore
       command mkdir -p "${_kube_comp_cache%/*}" 2>/dev/null || :
       kubectl completion "$_shell" >| "$_kube_comp_cache" 2>/dev/null || :
     fi
@@ -39,8 +33,3 @@ has kubectl && {
 
   unset _kube_comp_cache
 }
-
-has direnv && eval "$(direnv hook "$_shell")"
-
-[ -n "${ASDF_DIR-}" ] && [ -r "${ASDF_DIR}/asdf.sh" ] && . "${ASDF_DIR}/asdf.sh"
-has mise && eval "$(mise activate ${_shell})"

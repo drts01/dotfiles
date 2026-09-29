@@ -1,5 +1,7 @@
+has mise && eval "$(mise activate ${_shell})"
+
 HB_ARM_PREFIX='/opt/homebrew/bin/brew'  # Default path for ARM
-if command -v brew &> /dev/null; then
+has brew &> /dev/null; then
   eval "$(brew shellenv)"
 elif [ -x "${HB_ARM_PREFIX}" ]; then
   eval "$(${HB_ARM_PREFIX} shellenv)"
@@ -14,8 +16,4 @@ if [ -n "${HOMEBREW_PREFIX}" ]; then
   fi
 
   export HOMEBREW_AUTO_UPDATE_SECS="86400" HOMEBREW_NO_ANALYTICS=1
-
-  # fzf
-  [[ $- == *i* ]] && source "${HOMEBREW_PREFIX}/opt/fzf/shell/completion.zsh" 2> /dev/null
-  command -v fzf > /dev/null && source "${HOMEBREW_PREFIX}/opt/fzf/shell/key-bindings.zsh"
 fi
