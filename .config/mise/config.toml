@@ -19,7 +19,7 @@ fd      = "latest"  # Sane, rapid alternative to 'find' that honors .gitignore
 jnv     = "latest"  # Interactive terminal JSON filter and visualization UI
 ripgrep = "latest"  # The fastest string search utility (grep) available
 
-# --- System & Code Optimization ---
+# --- Core System Utilities ---
 bottom                 = "latest"  # Visual system resource monitor (graphical top/htop clone)
 dust                   = "latest"  # Visual breakdown of disk usage (du -sh replacement)
 "aqua:dalance/procs"   = "latest"  # Modern 'ps' command with clean columns and port search
@@ -38,6 +38,10 @@ ruff                  = "latest"  # Python linters and formatters
 rumdl                 = "latest"  # Markdown formatter
 tombi                 = "latest"  # TOML formatter
 "aqua:owenlamont/ryl" = "latest"  # YAMLlint replacement and formatter
+
+# --- Unsorted ---
+atuin  = "latest"  # Fuzzy-searchable shell history database
+zellij = "latest"  # Feature-rich terminal multiplexer and workspace manager
 
 # --- Development Tools ---
 uv   = "latest"
