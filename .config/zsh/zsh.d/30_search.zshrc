@@ -22,5 +22,5 @@ elif has fzf; then
     source <(fzf "--$_shell" )
 fi
 
-has atuin && eval "$(atuin init "$_shell")"
+# has atuin && eval "$(atuin init "$_shell")"
 has zoxide && eval "$(zoxide init "$_shell")"
