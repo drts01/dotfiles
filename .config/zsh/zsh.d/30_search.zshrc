@@ -3,7 +3,7 @@
 if has sk; then
     export FZF_DEFAULT_COMMAND="sk"
     # export SKIM_DEFAULT_OPTIONS="--height 40% --layout=reverse --inline-info --color=light"
-    source <(sk "--shell $_shell")
+    source <(sk --shell "$_shell")
     alias fzf="sk"
 
 elif has fzf; then
