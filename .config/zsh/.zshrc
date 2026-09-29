@@ -4,7 +4,13 @@ case "$-" in
 *) return 0 2> /dev/null || exit 0 ;;
 esac
 
-has() { command -v "$1" > /dev/null 2>&1; }
+has() {
+  if [ "$_shell" -eq 'zsh' ]; then
+    (("+commands[$1]"))
+  else
+    command -v "$1" > /dev/null 2>&1
+  fi
+}
 
 if [ -n "${ZSH_VERSION-}" ]; then
   _shell=zsh
