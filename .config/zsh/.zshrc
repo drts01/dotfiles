@@ -5,8 +5,8 @@ case "$-" in
 esac
 
 has() {
-  if [ "$_shell" -eq 'zsh' ]; then
-    (("+commands[$1]"))
+  if [ "$_shell" = 'zsh' ]; then
+    ((+commands["$1"]))
   else
     command -v "$1" > /dev/null 2>&1
   fi
