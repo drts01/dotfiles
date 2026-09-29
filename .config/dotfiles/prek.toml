@@ -43,9 +43,13 @@ hooks = [
 
 [[repos]]
 repo  = "https://github.com/crate-ci/typos"
-rev   = "d43b6c087ac471e2ea7b8af622ff15f05c0c365b"                                          # frozen: v1.50.1
+rev   = "d43b6c087ac471e2ea7b8af622ff15f05c0c365b"                            # frozen: v1.50.1
 hooks = [
-  { id = "typos", args = [ "--write-changes" ], stages = [ "pre-commit", "commit-msg" ] },
+  {
+    id     = "typos",
+    args   = [ "--write-changes", "--config=.config/dotfiles/.typos.toml" ],
+    stages = [ "pre-commit", "commit-msg" ]
+  },
 ]
 
 [[repos]]

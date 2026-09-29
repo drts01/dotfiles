@@ -1,0 +1,8 @@
+[default]
+extend-ignore-re = [
+  # Bypasses the specific line containing "// typos: ignore"
+  "(?m)^.*(//|#)\\s*typos:\\s*ignore.*$",
+
+  # Bypasses the line immediately AFTER "// typos: ignore-next-line"
+  "(?m)^.*(//|#)\\s*typos:\\s*ignore-next-line.*\\n.*$"
+]
