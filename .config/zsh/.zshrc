@@ -6,7 +6,7 @@ esac
 
 has() {
   if [ "$_shell" = 'zsh' ]; then
-    ((+commands["$1"]))
+    ((${+commands[$1]}))
   else
     command -v "$1" > /dev/null 2>&1
   fi
@@ -14,6 +14,7 @@ has() {
 
 if [ -n "${ZSH_VERSION-}" ]; then
   _shell=zsh
+  zmodload zsh/parameter
 else
   _shell=bash
 fi
