@@ -1,0 +1,15 @@
+update_check = false
+search_mode  = "fuzzy"
+
+# Change what Enter does.
+# true = executes the command immediately on Enter
+# false = drops it onto your prompt so you can edit it first (Tab will run it instead)
+enter_accept = false
+
+# inline_height = 40
+
+# Switch to a dense, minimal interface layout
+# style = "compact"
+
+# Hide the help bottom row once you know the shortcuts to save screen space
+# show_help = false
