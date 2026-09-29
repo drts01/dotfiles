@@ -1,0 +1,4 @@
+# Set the color theme (use 'bat --list-themes' to see choices)
+--theme=Dracula
+--style=plain
+--paging=never
