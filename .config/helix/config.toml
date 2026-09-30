@@ -26,7 +26,7 @@ skip-levels = 1     # Don't draw a line on the very first level of indentation
 left   = [ "mode", "spacer", "spinner", "spacer", "file-name", "file-modification-indicator" ]
 center = []
 # Replaces 'lualine.nvim' with a data-dense layout including git and diagnostics
-right  = [ "diagnostics", "selections", "position", "file-encoding", "file-type", "version", "version-control" ]
+right  = [ "diagnostics", "selections", "position", "file-encoding", "file-type", "version-control" ]
 
 [keys.normal]
 # Muscle memory safety net: maps standard Vim keys to Helix's native pickers
