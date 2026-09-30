@@ -1,14 +1,14 @@
 theme = "dracula"
 
 [editor]
-line-number = "relative"  # Matches modern Neovim line numbering
-mouse       = true        # Keeps mouse support active
-cursorline  = true        # Highlights the line the cursor is on
-bufferline  = "multiple"  # Shows open buffers at the top (like tabline/bufferline)
+cursorline               = true        # Highlights the line the cursor is on
+bufferline               = "multiple"  # Shows open buffers at the top (like tabline/bufferline)
+text-width               = 120
+trim-trailing-whitespace = true
 
 [editor.cursor-shape]
 insert = "bar"        # Thin vertical line in insert mode
-normal = "block"      # Standard block in normal mode
+# normal = "block"      # Standard block in normal mode
 select = "underline"  # Underline in visual/selection mode
 
 [editor.file-picker]
@@ -19,16 +19,17 @@ display-messages = true  # Shows LSP progress messages in the statusline
 
 [editor.indent-guides]
 render      = true  # Replaces 'indent-blankline.nvim'
-character   = "│"   # Clean vertical line character for indentation
 skip-levels = 1     # Don't draw a line on the very first level of indentation
 
 [editor.statusline]
-left   = [ "mode", "spacer", "spinner", "spacer", "file-name", "file-modification-indicator" ]
-center = []
-# Replaces 'lualine.nvim' with a data-dense layout including git and diagnostics
-right  = [ "diagnostics", "selections", "position", "file-encoding", "file-type", "version-control" ]
+left  = [ "mode", "spacer", "spinner", "spacer", "file-name", "read-only-indicator", "file-modification-indicator" ]
+# center = []
+right = [ "diagnostics", "selections", "register", "position", "file-encoding", "file-type", "version-control" ]
+
+[editor.whitespace]
+render = "all"
 
 [keys.normal]
-# Muscle memory safety net: maps standard Vim keys to Helix's native pickers
+# Maps standard Vim keys to Helix's native pickers
 "C-p" = "file_picker"    # Replaces Telescope's Ctrl+p (find_files)
 "C-f" = "global_search"  # Replaces Telescope's live_grep
