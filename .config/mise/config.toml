@@ -40,10 +40,11 @@ tombi                 = "latest"  # TOML formatter
 "aqua:owenlamont/ryl" = "latest"  # YAMLlint replacement and formatter
 
 # --- Unsorted ---
-atuin                = "latest"                              # Fuzzy-searchable shell history database
-zellij               = "latest"                              # Feature-rich terminal multiplexer and workspace manager
-"aqua:Canop/dysk"    = { version = "latest", os = "linux" }  # Like df but better
-"aqua:ouch-org/ouch" = "latest"                              # Obvious Unified Compression Helper
+atuin                        = "latest"                              # Fuzzy-searchable shell history database
+zellij                       = "latest"                              # Feature-rich terminal multiplexer and workspace manager
+"github:balovess/aria2_rust" = "latest"                              # Lightweight downloader
+"aqua:Canop/dysk"            = { version = "latest", os = "linux" }  # Like df but better
+"aqua:ouch-org/ouch"         = "latest"                              # Obvious Unified Compression Helper
 
 # --- Development Tools ---
 uv   = "latest"
