@@ -29,5 +29,6 @@ center = []
 right  = [ "diagnostics", "selections", "position", "file-encoding", "file-type", "version", "version-control" ]
 
 [keys.normal]
-# Muscle memory safety net: maps standard Vim keys to Helix's file picker
-"C-p" = ":file-picker"  # Replaces Telescope's Ctrl+p behavior
+# Muscle memory safety net: maps standard Vim keys to Helix's native pickers
+"C-p" = "file_picker"    # Replaces Telescope's Ctrl+p (find_files)
+"C-f" = "global_search"  # Replaces Telescope's live_grep
