@@ -41,6 +41,7 @@ tombi                 = "latest"  # TOML formatter
 
 # --- Unsorted ---
 atuin                        = "latest"                              # Fuzzy-searchable shell history database
+helix                        = "latest"                              # Text editor
 zellij                       = "latest"                              # Feature-rich terminal multiplexer and workspace manager
 "github:balovess/aria2_rust" = "latest"                              # Lightweight downloader
 "aqua:Canop/dysk"            = { version = "latest", os = "linux" }  # Like df but better
