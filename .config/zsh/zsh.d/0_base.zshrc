@@ -15,16 +15,14 @@ setopt HIST_BEEP                 # Beep when accessing nonexistent history.
 
 set -o vi  # Enable vim bindings
 
-# Editors
-type nvim &> /dev/null
-if [ $? -eq 0 ]; then
-  export EDITOR="nvim"
-  export VISUAL="nvim"
-fi
+if has hx; then export VISUAL="hx"
+elif has nvim; then export VISUAL="nvim"
+elif has vim; then export VISUAL="vim"
+else export VISUAL="vi"; fi
 
-# Less
-type less &> /dev/null
-if [ $? -eq 0 ]; then
+export EDITOR="$VISUAL"
+
+if has less; then
   export PAGER='less'
   export LESSCHARSET="UTF-8"
   export LESSHISTFILE='-'
