@@ -7,6 +7,53 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "ui_font_size": 15.0,
+  "buffer_font_size": 13.0,
+  "markdown_preview": {
+
+  },
+  "agent_buffer_font_size": 12.0,
+  "agent": {
+    "dock": "right",
+    "button": true,
+    "favorite_models": [],
+    "model_parameters": []
+  },
+  "collaboration_panel": {
+    "button": false
+  },
+  "git_panel": {
+    "dock": "left",
+    "starts_open": false
+  },
+  "outline_panel": {
+    "dock": "left",
+    "multi_buffer_hide_symbols": false
+  },
+  "terminal": {
+    "show_count_badge": false
+  },
+  "use_system_window_tabs": false,
+  "tab_bar": {
+    "show_pinned_tabs_in_separate_row": false
+  },
+  "tabs": {
+    "file_icons": false,
+    "git_status": false
+  },
+  "title_bar": {
+    "button_layout": "platform_default"
+  },
+  "project_panel": {
+    "dock": "left",
+    "hide_hidden": false,
+    "bold_folder_labels": false,
+    "hide_root": false,
+    "git_status_indicator": true,
+    "entry_spacing": "standard",
+    "button": true
+  },
+  "autosave": "on_focus_change",
   "vim_mode": false,
   "helix_mode": true,
   "session": {
@@ -30,8 +77,6 @@
       "type": "registry"
     }
   },
-  "ui_font_size": 16,
-  "buffer_font_size": 15,
   "theme": {
     "mode": "dark",
     "light": "One Light",
