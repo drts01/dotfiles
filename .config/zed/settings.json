@@ -14,6 +14,10 @@
   },
   "agent_buffer_font_size": 12.0,
   "agent": {
+    "play_sound_when_agent_done": "when_hidden",
+    "threads_sidebar": {
+      "position": "right"
+    },
     "dock": "right",
     "button": true,
     "favorite_models": [],
