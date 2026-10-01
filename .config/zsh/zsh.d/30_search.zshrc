@@ -19,7 +19,7 @@ elif has fzf; then
       unset _fzf_key_bindings
     fi
 
-    source <(fzf "--$_shell" )
+    source <(fzf --shell "$_shell" )
 fi
 
 [ ! "$_shell" = "zsh" ] && has atuin && eval "$(atuin init "$_shell")"
