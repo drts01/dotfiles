@@ -1,8 +1,10 @@
-update_check           = false
-workspaces             = true
-command_chaining       = true
-prefers_reduced_motion = true
-history_filter         = [
+update_check                       = false
+workspaces                         = true
+command_chaining                   = true
+prefers_reduced_motion             = true
+enter_accept                       = true         # Pressing enter immediately executes the command; tab to edit command
+inline_height_shell_up_key_binding = 4
+history_filter                     = [
   "^clear$",
   "^exit$",
   "^rehash$",
