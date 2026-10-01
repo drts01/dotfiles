@@ -22,5 +22,5 @@ elif has fzf; then
     source <(fzf --shell "$_shell" )
 fi
 
-[ ! "$_shell" = "zsh" ] && has atuin && eval "$(atuin init "$_shell")"
+[ ! "$_shell" = "zsh" ] && has atuin && eval "$(atuin init "$_shell" --disable-up-arrow)"
 has zoxide && eval "$(zoxide init "$_shell")"

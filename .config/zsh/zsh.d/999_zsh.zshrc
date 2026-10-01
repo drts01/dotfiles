@@ -13,10 +13,10 @@ ZSH_PROMPTS="${XDG_DATA_HOME}/zsh/themes"
 if (( ${+zvm_after_init_commands} )); then
     # If the zsh-vi-mode plugin is loaded
     # shellcheck disable=SC2016
-    zvm_after_init_commands+=('eval "$(atuin init zsh)"')
+    zvm_after_init_commands+=('eval "$(atuin init zsh --disable-up-arrow)"')
 else
     # Fallback to initializing Atuin
-    eval "$(atuin init zsh)"
+    eval "$(atuin init zsh --disable-up-arrow)"
 fi
 
 # shellcheck disable=SC2034
