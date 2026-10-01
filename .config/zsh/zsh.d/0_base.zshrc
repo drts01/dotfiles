@@ -14,6 +14,7 @@ setopt HIST_VERIFY               # Don't execute immediately upon history expans
 setopt HIST_BEEP                 # Beep when accessing nonexistent history.
 
 set -o vi  # Enable vim bindings
+export KEYTIMEOUT=1 # Reduces escape key delay for switching modes
 
 if has hx; then export VISUAL="hx"
 elif has nvim; then export VISUAL="nvim"
