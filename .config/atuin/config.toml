@@ -1,8 +1,6 @@
 update_check           = false
 workspaces             = true
 command_chaining       = true
-keymap_mode            = "vim-insert"
-keymap_cursor          = { emacs = "blink-block", vim_insert = "blink-block", vim_normal = "steady-block" }
 prefers_reduced_motion = true
 history_filter         = [
   "^clear$",
@@ -13,6 +11,9 @@ history_filter         = [
 
 [logs]
 enabled = false
+
+[theme]
+name = "dracula"
 
 [ui]
 columns = [ "duration", "datetime", "exit", "command" ]

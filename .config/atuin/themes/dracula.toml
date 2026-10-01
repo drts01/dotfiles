@@ -1,0 +1,19 @@
+[theme]
+name = "dracula"
+
+[colors]
+AlertInfo      = "#8be9fd"
+AlertWarn      = "#f1fa8c"
+AlertError     = "#ff5555"
+Annotation     = "#6272a4"
+Base           = "#f8f8f2"
+Guidance       = "#bd93f9"
+Important      = "#ff79c6"
+Title          = "#50fa7b"
+Muted          = "#6272a4"
+SyntaxCommand  = "#50fa7b"
+SyntaxFlag     = "#ff79c6"
+SyntaxString   = "#f1fa8c"
+SyntaxVariable = "#8be9fd"
+SyntaxOperator = "#ff79c6"
+SyntaxComment  = "#6272a4"
