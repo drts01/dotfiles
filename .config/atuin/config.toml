@@ -1,22 +1,18 @@
-update_check = false
-search_mode  = "fuzzy"
-
-# Change what Enter does.
-# true = executes the command immediately on Enter
-# false = drops it onto your prompt so you can edit it first (Tab will run it instead)
-enter_accept = false
-
-# inline_height = 40
-
-# Switch to a dense, minimal interface layout
-# style = "compact"
-
-# Hide the help bottom row once you know the shortcuts to save screen space
-# show_help = false
-
-history_filter = [
+update_check           = false
+workspaces             = true
+command_chaining       = true
+keymap_mode            = "vim-insert"
+keymap_cursor          = { emacs = "blink-block", vim_insert = "blink-block", vim_normal = "steady-block" }
+prefers_reduced_motion = true
+history_filter         = [
   "^clear$",
   "^exit$",
   "^rehash$",
   ".* (aws_access_key_id|aws_session_token) .*",
 ]
+
+[logs]
+enabled = false
+
+[ui]
+columns = [ "duration", "datetime", "exit", "command" ]
