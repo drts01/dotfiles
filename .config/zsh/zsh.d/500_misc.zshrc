@@ -23,7 +23,7 @@ has kubectl && {
   _kube_comp_cache="${XDG_CACHE_HOME}/kubectl/completion.${_shell}"
 
   # zsh needs completion system initialized (compdef). If it's not ready, skip quietly.
-  if [ "$_shell" != "zsh" ] || command -v compdef > /dev/null 2&>1; then
+  if [ "$_shell" != "zsh" ] || command -v compdef > /dev/null 2>&1; then
     if [ ! -r "$_kube_comp_cache" ] || [ "$_kube_comp_cache" -ot "$(command -v kubectl)" ]; then # typos: ignore
       command mkdir -p "${_kube_comp_cache%/*}" 2>/dev/null || :
       kubectl completion "$_shell" >| "$_kube_comp_cache" 2>/dev/null || :
