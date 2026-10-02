@@ -47,6 +47,12 @@ zellij                       = "latest"                              # Feature-r
 "aqua:Canop/dysk"            = { version = "latest", os = "linux" }  # Like df but better
 "aqua:ouch-org/ouch"         = "latest"                              # Obvious Unified Compression Helper
 
+# --- Language Servers ---
+"npm:bash-language-server" = "latest"
+"npm:yaml-language-server" = "latest"
+marksman                   = "latest"
+ty                         = "latest"
+
 # --- Development Tools ---
 uv   = "latest"
 node = "lts"
