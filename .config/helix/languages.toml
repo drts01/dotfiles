@@ -1,0 +1,24 @@
+[[language]]
+name             = "yaml"
+language-servers = [
+  { name = "ryl", only-features = [ "format", "diagnostics" ] },
+  { name = "yaml-language-server", except-features = [ "format" ] },
+  { name = "ansible-language-server" },
+]
+
+[[language]]
+name             = "markdown"
+language-servers = [
+  { name = "rumdl", only-features = [ "format", "diagnostics" ] },
+  { name = "marksman", except-features = [ "format" ] },
+  { name = "markdown-oxide" },
+  { name = "ryl", only-features = [ "diagnostics" ] },
+]
+
+[language-server.ryl]
+command = "ryl"
+args    = [ "server" ]
+
+[language-server.rumdl]
+command = "rumdl"
+args    = [ "server" ]
