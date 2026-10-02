@@ -88,4 +88,44 @@
     "light": "One Light",
     "dark": "Dracula",
   },
+  "lsp": {
+    "ryl": {
+      "command": "ryl",
+      "arguments": ["server"]
+    },
+    "tombi": {
+      "command": "tombi",
+      "arguments": ["server"]
+    },
+    "rumdl": {
+      "command": "rumdl",
+      "arguments": ["server"]
+    }
+  },
+  "languages": {
+    "TOML": {
+      "language_servers": ["tombi"],
+      "formatter": {
+        "language_server": {
+          "name": "tombi"
+        }
+      }
+    },
+    "Markdown": {
+      "language_servers": ["rumdl", "..."],
+      "formatter": {
+        "language_server": {
+          "name": "rumdl"
+        }
+      }
+    },
+    "YAML": {
+      "language_servers": ["ryl", "..."],
+      "formatter": {
+        "language_server": {
+          "name": "ryl"
+        }
+      }
+    }
+  }
 }
