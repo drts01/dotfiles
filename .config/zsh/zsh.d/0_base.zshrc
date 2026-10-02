@@ -23,9 +23,11 @@ else export VISUAL="vi"; fi
 
 export EDITOR="$VISUAL"
 
+has bat && export PAGER="bat --plain"
+
 if has less; then
-  export PAGER='less'
+  [ -z "PAGER" ] && export PAGER='less'
   export LESSCHARSET="UTF-8"
   export LESSHISTFILE='-'
-  export LESS='-F -X -g -i -M -R -S -w -z-4'
+  export LESS=-FXgiMRSwz-4
 fi
