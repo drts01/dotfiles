@@ -4,9 +4,10 @@
 	fixup = "!git log -n 10 --pretty=format:'%h %s' --no-merges | fzf | cut -c -7 | xargs -o git commit --fixup #"
 	fix = "!git log -n 10 --pretty=format:'%h %s' --no-merges | fzf | cut -c -7 | xargs -o git commit --fixup $(for P in $@; do printf ${GIT_PREFIX:-.}${P}' '; done) #"
 	stat = "status --short --branch --show-stash --ahead-behind"
-	l = "log --color --graph --pretty=format:'%C(dim magenta)%h%Creset - %s %C(dim green)(%cr) %C(reset blue)<%an>%Creset%C(yellow)%d%Creset' --abbrev-commit"
+	l = "log -10 --color --graph --pretty=format:'%C(dim magenta)%h%Creset - %s %C(dim green)(%cr) %C(reset blue)<%an>%Creset%C(yellow)%d%Creset' --abbrev-commit"
 	lmsg = "log --pretty=format:'* %s'"
 	wd = diff --word-diff=color --word-diff-regex='[^[:space:]]'
+	diff-side = -c delta.side-by-side=true diff
 
 [advice]
 	detachedHead = false
@@ -15,17 +16,9 @@
 [color]
 	ui = true
 
-[color "diff"]
-	meta = yellow bold
-	frag = magenta bold
-	old = red bold
-	new = green bold
-	whitespace = red reverse
-
 [core]
 	attributesfile = ~/.config/git/attributes
-	pager = less -RFX
-	# editor = nvim || vim || vi
+	pager = "if command -v delta >/dev/null 2>&1; then delta; elif command -v bat >/dev/null 2>&1; then bat; else less -RFX; fi"
 
 [credential "https://github.com"]
 	helper =
@@ -35,9 +28,21 @@
 	helper =
 	helper = !gh auth git-credential
 
+[delta]
+	features =  diff-so-fancy
+	file-decoration-style = ul yellow
+	hunk-header-decoration-style = none
+	line-numbers = true
+	navigate = true
+	hyperlinks = true
+	syntax-theme = Dracula
+	grep-match-line-style = syntax bold auto
+	grep-context-line-style = syntax auto
+
 [diff]
-	tool = smartdiff
+	colorMoved = default
 	relative = true
+	tool = smartdiff
 
 [diff "exif"]
 	textconv = exiftool || file $0
@@ -46,24 +51,29 @@
 	prompt = false
 
 [difftool "smartdiff"]
-	cmd = nvim -d "$LOCAL" "$REMOTE" || vimdiff || diff --color --context 3 "$LOCAL" "$REMOTE"
+	cmd = "if command -v nvim >/dev/null 2>&1; then nvim -d \"$LOCAL\" \"$REMOTE\"; elif command -v vim >/dev/null 2>&1; then vim -d \"$LOCAL\" \"$REMOTE\"; else diff --color --context 3 "$LOCAL" "$REMOTE" fi"
 
 [extensions]
+	objectFormat = sha256
 	compatObjectFormat = sha1
+
+[grep]
+	lineNumber = true
+	column = true
 
 [init]
 	defaultBranch = trunk
 	defaultObjectFormat = sha256
 
 [interactive]
-	diffFilter = pygmentize -l diff || cat
+	diffFilter = "if command -v delta >/dev/null 2>&1; then delta --color-only; elif command -v bat >/dev/null 2>&1; then bat; else internal; fi"
 
 [merge]
-    conflictstyle = zdiff3
+	conflictstyle = zdiff3
 	tool = smartmerge
 
 [mergetool "smartmerge"]
-	cmd = nvim -d "$LOCAL" "$REMOTE" || vimdiff || diff --color --context 3 "$LOCAL" "$REMOTE"
+	cmd = "if command -v nvim >/dev/null 2>&1; then nvim -d -c \"wincmd J\" \"$MERGED\" \"$LOCAL\" \"$REMOTE\"; elif command -v vim >/dev/null 2>&1; then vim -d -c \"wincmd J\" \"$MERGED\" \"$LOCAL\" \"$REMOTE\"; else diff --color --context 3 "$LOCAL" "$REMOTE";fi"
 
 [pull]
 	rebase = true
