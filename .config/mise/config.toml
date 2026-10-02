@@ -30,8 +30,8 @@ skim = "latest"  # Fuzzy finder alternative to fzf (provides 'sk' binary)
 fzf  = "latest"  # Industry standard fuzzy finder (highly recommended alongside skim)
 
 # --- Git Tools ---
-# delta = "latest"     # Syntax-highlighted side-by-side terminal git diff pager
-prek = "latest"  # Git hook manager (pre-commit configuration compatible)
+delta = "latest"  # Syntax-highlighted side-by-side terminal git diff pager
+prek  = "latest"  # Git hook manager (pre-commit configuration compatible)
 
 # --- Linters & Formatters ---
 ruff                  = "latest"  # Python linters and formatters
