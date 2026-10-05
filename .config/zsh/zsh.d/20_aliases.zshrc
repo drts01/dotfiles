@@ -6,7 +6,7 @@ if has eza; then
     for arg in "$@"; do
       case "$arg" in
         *-[a-zA-Z0-9]*[l1]* | "--long" | "-l" | "-1" )
-          eza_icons="--icons"
+          eza_icons="--icons=auto"
           break
           ;;
       esac
