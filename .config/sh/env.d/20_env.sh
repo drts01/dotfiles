@@ -1,5 +1,8 @@
 # shellcheck disable=SC2148
 
+add_path "$HOME/.bin"
+add_path "$HOME/.local/bin"
+
 # shellcheck disable=SC2154
 has mise && eval "$(mise activate "${_shell}" --shims)"
 
