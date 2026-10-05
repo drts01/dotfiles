@@ -17,7 +17,7 @@ fi
 
 readonly _shell
 
-SH_CONF="$XDG_CONFIG_HOME/sh/env.d"
+SH_CONF="$XDG_CONFIG_HOME/sh/profile.d"
 # shellcheck disable=SC1091
 if [ -z "$_PROFILE_SOURCED" ]; then
   export _PROFILE_SOURCED=1

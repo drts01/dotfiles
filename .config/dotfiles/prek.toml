@@ -55,9 +55,9 @@ hooks = [
 
 [[repos]]
 repo  = "https://github.com/scop/pre-commit-shfmt"
-rev   = "05c1426671b9237fb5e1444dd63aa5731bec0dfb"                                                          # frozen: v3.13.1-1
+rev   = "05c1426671b9237fb5e1444dd63aa5731bec0dfb"                                                              # frozen: v3.13.1-1
 hooks = [
-  { id = "shfmt", args = [ "-w", "-s", "-i", "2", "-sr" ], exclude = ".config/sh/env.d/10_functions.sh" },
+  { id = "shfmt", args = [ "-w", "-s", "-i", "2", "-sr" ], exclude = ".config/sh/profile.d/10_functions.sh" },
 ]
 
 [[repos]]
