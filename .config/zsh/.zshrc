@@ -14,6 +14,5 @@ for file in "${ZDOTDIR}"/zsh.d/*.zshrc; do
   # shellcheck disable=SC1090
   source "$file"
 done
-unset CONF
 
 [[ -n $ZSH_PROFILE ]] && zprof
