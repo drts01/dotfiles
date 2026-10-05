@@ -23,5 +23,24 @@ fi
 {
     ZSH_AUTOSUGGEST_STRATEGY=(atuin history)
     ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#555555"
-    bindkey -M viins '^[[C' autosuggest-accept  # Allow the Right Arrow key to accept suggestions in Vi Insert mode
+    (( ${+autosuggest-accept} )) && bindkey -M viins '^[[C' autosuggest-accept  # Allow the Right Arrow key to accept suggestions in Vi Insert mode
+}
+
+# Speed up Zsh startup by loading a byte-compiled autocomplete cache
+{
+  # Define the completion cache path if not already set by a framework
+  [[ -z "$ZSH_COMPDUMP" ]] && ZSH_COMPDUMP="$XDG_CACHE_HOME/zsh/.zcompdump"
+
+  # Load compinit and check cache age (only regenerate once a day)
+  autoload -Uz compinit
+  if [[ -s "$ZSH_COMPDUMP" && (! -f "$ZSH_COMPDUMP.zwc" || "$ZSH_COMPDUMP" -nt "$ZSH_COMPDUMP.zwc") ]]; then
+    # -C bypasses filesystem rescans; -i silences insecure folder warnings
+    compinit -i -C -d "$ZSH_COMPDUMP"
+    # Byte-compile the dump file in the background for next time
+    zcompile "$ZSH_COMPDUMP" & disown
+  else
+    # If the dump file doesn't exist or is stale, rebuild it normally
+    compinit -i -d "$ZSH_COMPDUMP"
+    zcompile "$ZSH_COMPDUMP" & disown
+  fi
 }

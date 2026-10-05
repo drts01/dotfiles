@@ -1,26 +1,19 @@
-# Fast exit for non-interactive shells (e.g., bash -c, remote commands, scripts).
+# Stop execution here for non-interactive tasks (prevents scp/rsync/cron errors)
+# shellcheck disable=SC2317
 case "$-" in
 *i*) : ;;
 *) return 0 2> /dev/null || exit 0 ;;
 esac
 
-has() {
-  if [ "$_shell" = 'zsh' ]; then
-    ((${+commands[$1]}))
-  else
-    command -v "$1" > /dev/null 2>&1
-  fi
-}
+zmodload zsh/parameter
 
-if [ -n "${ZSH_VERSION-}" ]; then
-  _shell=zsh
-  zmodload zsh/parameter
-else
-  _shell=bash
-fi
-readonly _shell
+# shellcheck disable=SC1090
+. "$ENV"
 
-for CONF in "${ZDOTDIR}"/zsh.d/*.zshrc; do
-  source "${CONF}"
+for file in "${ZDOTDIR}"/zsh.d/*.zshrc; do
+  # shellcheck disable=SC1090
+  source "$file"
 done
 unset CONF
+
+[[ -n $ZSH_PROFILE ]] && zprof

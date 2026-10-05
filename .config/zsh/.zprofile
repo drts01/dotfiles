@@ -1,0 +1,23 @@
+[[ -n $ZSH_PROFILE ]] && zmodload zsh/zprof
+
+{
+  HB_ARM_PREFIX='/opt/homebrew/bin/brew' # Default path for ARM
+  if ((${+commands[brew]})); then
+    eval "$(brew shellenv)"
+  elif [ -x "${HB_ARM_PREFIX}" ]; then
+    eval "$(${HB_ARM_PREFIX} shellenv)"
+  fi
+
+  if [ -n "${HOMEBREW_PREFIX}" ]; then
+    # Autocomplete
+    FPATH="${HOMEBREW_PREFIX}/share/zsh/site-functions:${FPATH}"
+    if ! type compinit &> /dev/null; then
+      autoload -Uz compinit
+      compinit
+    fi
+
+    export HOMEBREW_AUTO_UPDATE_SECS="86400" HOMEBREW_NO_ANALYTICS=1
+  fi
+}
+
+. "$HOME/.profile"

@@ -1,0 +1,8 @@
+# Stop execution here for non-interactive tasks (prevents scp/rsync/cron errors)
+case "$-" in
+  *i*) : ;;
+*) return 0 2> /dev/null || exit 0 ;;
+esac
+
+# shellcheck disable=SC2154
+has mise && eval "$(mise activate "${_shell}")"
