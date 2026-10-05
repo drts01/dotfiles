@@ -27,4 +27,4 @@ fi
 
 # Set ENV for interactive POSIX shells
 # Strict POSIX-compliant shell (like sh, dash, or ksh) does not automatically look for an RC file
-export ENV="$XDG_CONFIG_HOME/.shrc"
+export ENV="$XDG_CONFIG_HOME/sh/.shrc"
