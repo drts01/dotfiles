@@ -1,3 +1,4 @@
+# shellcheck shell=sh
 alias dotfiles='git --git-dir=$HOME/.local/share/dotfiles --work-tree=$HOME -c diff.relative=false'
 
 if has eza; then
@@ -5,10 +6,10 @@ if has eza; then
     eza_icons=""
     for arg in "$@"; do
       case "$arg" in
-        *-[a-zA-Z0-9]*[l1]* | "--long" | "-l" | "-1" )
-          eza_icons="--icons=auto"
-          break
-          ;;
+      *-[a-zA-Z0-9]*[l1]* | "--long" | "-l" | "-1")
+        eza_icons="--icons=auto"
+        break
+        ;;
       esac
     done
 
@@ -16,7 +17,7 @@ if has eza; then
     unset eza_icons arg
   }
 
-  ll()   { ls --long --header "$@"; }
+  ll() { ls --long --header "$@"; }
   tree() { eza --tree --header --all --icons "$@"; }
 else
   alias ls='ls -FA --color=auto'
