@@ -1,5 +1,16 @@
 # shellcheck disable=SC2148
 
+if [ -n "${ZSH_VERSION-}" ]; then
+  _shell=zsh
+elif [ -n "${BASH_VERSION-}" ]; then
+  _shell=bash
+else
+  # shellcheck disable=SC2209
+  _shell=sh
+fi
+
+readonly _shell
+
 path_add() {
     # Prefix variables with function name to prevent global pollution
     _pa_dir="$1"
