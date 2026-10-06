@@ -16,3 +16,7 @@ for file in "${ZDOTDIR}"/zsh.d/*.zshrc; do
 done
 
 [[ -n $ZSH_PROFILE ]] && zprof
+
+if [ -z "$ZELLIJ" ] && [ "$TERM_PROGRAM" != "zellij" ] && has zellij; then
+  zellij attach -c default || zellij
+fi
