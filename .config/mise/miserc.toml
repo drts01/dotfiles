@@ -1,0 +1,3 @@
+# Early load settings
+auto_env   = true  # Default starting mise 2027.6.0
+env_conf_d = true  # opt-in until mise 2027.8.10.

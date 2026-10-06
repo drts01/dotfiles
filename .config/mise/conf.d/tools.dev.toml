@@ -1,0 +1,26 @@
+[settings]
+pipx.uvx                            = true
+python.uv_venv_auto                 = "create|source"
+idiomatic_version_file_enable_tools = [
+  # "terraform",
+  "node",
+  "go",
+  # "rust",
+  #
+]
+
+[tools]
+"npm:bash-language-server" = "latest"
+"npm:yaml-language-server" = "latest"
+delta                      = "latest"                                  # Syntax-highlighted side-by-side terminal git diff pager
+gh                         = "latest"                                  # GitHub CLI
+jnv                        = "latest"                                  # Interactive terminal JSON filter and visualization UI
+lima                       = { version = "latest", os = [ "macos" ] }  # Lightweight VM manager
+prek                       = "latest"                                  # Git hook manager (pre-commit configuration compatible)
+ty                         = "latest"                                  # Python type-checker
+uv                         = "latest"
+node                       = "lts"
+
+# --- AI coding assistants ---
+"npm:cline" = "latest"
+opencode    = "latest"

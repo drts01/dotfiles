@@ -1,0 +1,36 @@
+[tools]
+# --- Core Navigation & Layouts ---
+eza    = "latest"  # Feature-rich 'ls' replacement with inline Git statuses
+yazi   = "latest"  # Asynchronous terminal file manager with visual preview
+# starship = "latest"  # Ultra-fast, customizable cross-shell status prompt
+zoxide = "latest"  # Smarter directory jumper that tracks your path history
+
+# --- Search, Inspection, & Filtering ---
+bat     = "latest"  # 'cat' clone with syntax highlighting and Git delta flags
+fd      = "latest"  # Sane, rapid alternative to 'find' that honors .gitignore
+ripgrep = "latest"  # The fastest string search utility (grep) available
+
+# --- Core System Utilities ---
+bottom                 = "latest"  # Visual system resource monitor (graphical top/htop clone)
+dust                   = "latest"  # Visual breakdown of disk usage (du -sh replacement)
+"aqua:dalance/procs"   = "latest"  # Modern 'ps' command with clean columns and port search
+"github:tobi/disktree" = "latest"  # Disk space GUI
+
+# --- Fuzzy Searching ---
+skim = "latest"  # Fuzzy finder alternative to fzf (provides 'sk' binary)
+fzf  = "latest"  # Industry standard fuzzy finder (highly recommended alongside skim)
+
+# --- Linters & Formatters ---
+ruff                  = "latest"  # Python linters and formatters
+rumdl                 = "latest"  # Markdown formatter
+tombi                 = "latest"  # TOML formatter
+"aqua:owenlamont/ryl" = "latest"  # YAMLlint replacement and formatter
+
+# --- Unsorted ---
+atuin                        = "latest"                              # Fuzzy-searchable shell history database
+helix                        = "latest"                              # Text editor
+marksman                     = "latest"                              # LSP for Markdown
+zellij                       = "latest"                              # Feature-rich terminal multiplexer and workspace manager
+"aqua:Canop/dysk"            = { version = "latest", os = "linux" }  # Like df but better
+"aqua:ouch-org/ouch"         = "latest"                              # Obvious Unified Compression Helper
+"github:balovess/aria2_rust" = "latest"                              # Lightweight downloader
