@@ -15,6 +15,13 @@
   },
   "agent_buffer_font_size": 12.0,
   "agent": {
+    "default_model": {
+      "provider": "openai-subscribed",
+      "model": "gpt-5.6-terra",
+      "enable_thinking": true,
+      "effort": "medium"
+    },
+    "default_profile": "ask",
     "play_sound_when_agent_done": "when_hidden",
     "threads_sidebar": {
       "position": "right"
@@ -22,7 +29,27 @@
     "dock": "right",
     "button": true,
     "favorite_models": [],
-    "model_parameters": []
+    "model_parameters": [],
+    "tool_permissions": {
+      "default": "confirm",
+      "tools": {
+        "terminal": {
+          "default": "confirm",
+          "always_allow": [
+            { "pattern": "^cargo\\s+(build|test|check|run)" },
+            { "pattern": "^npm\\s+(install|test|run|ci)" },
+            { "pattern": "^git\\s+.*\\s+(status|diff|log|branch)" },
+            { "pattern": "^ls(\\s+.*)?$" },
+            { "pattern": "^cat\\s+.*$" },
+            { "pattern": "^grep\\s+.*$" }
+          ],
+          "always_confirm": [
+            { "pattern": "sudo\\s+" },
+            { "pattern": "rm\\s+-rf" }
+          ]
+        }
+      }
+    },
   },
   "collaboration_panel": {
     "button": false
