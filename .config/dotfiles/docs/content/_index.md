@@ -9,7 +9,7 @@ home_primary_action_label = "Read the docs"
 home_primary_action_path = "/docs/"
 home_features = [
   { kicker = "Start", title = "Bootstrap", description = "Deploy configuration files onto a fresh machine." },
-  { kicker = "Configure", title = "Neovim & Zsh", description = "Per-config guides for everyday editing and shell setup." },
+  { kicker = "Configure", title = "Neovim & shells", description = "Configure editing and shared sh, Bash, and Zsh environments." },
   { kicker = "Automate", title = "Git hooks (prek)", description = "Fast, Rust-based pre-commit hook management." },
 ]
 +++
@@ -27,7 +27,7 @@ fresh machine is set up.
 | --- | --- |
 | `.config/dotfiles/` | Bootstrap script, `mise` tasks, and this documentation |
 | `.config/nvim/` | Neovim configuration — see [Neovim](/docs/nvim/) |
-| `.config/zsh/` | Zsh configuration — see [Zsh](/docs/zsh/) |
+| `.config/sh/`, `.config/zsh/`, `.bashrc` | Shared shell and shell-specific configuration — see [Shell environments](/docs/shell/) |
 | `.config/dotfiles/prek.toml` | Git hooks configuration — see [Git hooks](/docs/prek/) |
 
 ## Interact with the repo
@@ -39,5 +39,5 @@ dotfiles commit -m "feat(nvim): update config"
 dotfiles push
 ```
 
-`dotfiles` is a shell alias (`.config/zsh/zsh.d/20_aliases.zshrc`) equivalent
+`dotfiles` is a shell alias (`.config/sh/sh.d/20_aliases.sh`) equivalent
 to `git --git-dir=$HOME/.local/share/dotfiles --work-tree=$HOME`.
