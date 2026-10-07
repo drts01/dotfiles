@@ -18,6 +18,12 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write  # To upload SARIF files
+      contents: read          # To clone the repo
+      actions: read           # To read workflow run info
+    env:
+      MISE_EXPERIMENTAL: true
     steps:
       - name: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -25,17 +31,21 @@ jobs:
           persist-credentials: false
           submodules: true
       - name: Install mise
-        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
         with:
-          install: false
+          install_args: prek
       - name: Cache prek environments
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.cache/prek
-          key: lint-${{ hashFiles(env.PREKFILE) }}
+          key: lint-${{ runner.os }}-prek-${{ hashFiles('**/.pre-commit-config.yaml', '**/prek.toml') }}
           restore-keys: |
             lint-
-      - name: Install prek
-        run: mise use --global prek
       - name: Run prek
-        run: prek run --config "$PREKFILE" --show-diff-on-failure --color=always --all-files
+        run: mise task run lint
+      - name: Upload Zizmor SARIF file
+        if: always()
+        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+        with:
+          sarif_file: zizmor.sarif
+          category: zizmor
