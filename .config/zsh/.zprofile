@@ -1,3 +1,5 @@
+# shellcheck shell=zsh
+#
 [[ -n $ZSH_PROFILE ]] && zmodload zsh/zprof
 
 . "$HOME/.profile"

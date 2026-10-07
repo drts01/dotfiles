@@ -10,3 +10,10 @@ else
   zcompile "$ZSH_COMPDUMP"
 fi
 unset _zcomp_stale
+
+# Load completions after compinit
+#
+# shellcheck source=/dev/null
+. "$XDG_CONFIG_HOME/sh/sh.d/30_search.sh"
+# shellcheck source=/dev/null
+. "$XDG_CONFIG_HOME/sh/sh.d/40_tools.sh"

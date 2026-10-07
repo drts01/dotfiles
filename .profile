@@ -1,3 +1,4 @@
+# shellcheck shell=sh
 
 # XDG -- https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"

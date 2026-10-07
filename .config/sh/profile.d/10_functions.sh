@@ -1,4 +1,4 @@
-# shellcheck disable=SC2148
+# shellcheck shell=sh
 
 if [ -z "$_shell" ]; then
   if [ -n "${ZSH_VERSION-}" ]; then

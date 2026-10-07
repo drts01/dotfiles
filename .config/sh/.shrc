@@ -1,3 +1,5 @@
+# shellcheck shell=sh
+
 # Stop execution here for non-interactive tasks (prevents scp/rsync/cron errors)
 case "$-" in
   *i*) : ;;
@@ -6,10 +8,15 @@ esac
 
 SH_CONF="$XDG_CONFIG_HOME/sh"
 . "$SH_CONF/profile.d/10_functions.sh"
-. "$SH_CONF/sh.d/20_aliases.sh"
 
-# shellcheck disable=SC2154
-source_cache "$XDG_CACHE_HOME/shell/mise.$_shell" mise activate "$_shell"
+for file in "$SH_CONF"/sh.d/*.sh; do
+  case "$_shell:$file" in
+    zsh:*/30_search.sh|zsh:*/40_tools.sh) ;;  # Defer until Zsh completion is ready
+    *) # shellcheck disable=SC1090
+       . "$file" ;;
+  esac
+done
+unset file
 
 if [ "$_shell" = "sh" ] && [ -z "$ZELLIJ" ] && [ "$TERM_PROGRAM" != "zellij" ] && has zellij; then
   zellij attach -c default || zellij
