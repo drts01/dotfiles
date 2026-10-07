@@ -1,3 +1,4 @@
 [tools]
 aws-cli = "latest"
 k9s     = "latest"
+kubectl = "latest"

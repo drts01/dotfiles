@@ -1,0 +1,13 @@
+[tools]
+# Runtimes & Orchestration
+podman         = "latest"  # Daemonless container engine alternative to Docker
+docker-compose = "latest"  # Tool for defining and running multi-container apps
+# "pipx:podman-compose" = "latest"
+
+# Image Manipulation & Registry Utilities
+skopeo = "latest"  # Inspects and copies images directly between registries
+regctl = "latest"  # CLI client for inspecting and managing registry artifacts
+
+# Advanced Builders
+buildah = "latest"  # Builds OCI-compliant images without a running daemon
+pack    = "latest"  # Builds app images using Cloud Native Buildpacks instead of Dockerfiles
