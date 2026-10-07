@@ -1,4 +1,4 @@
-has starship && eval "$(starship init "$_shell")"
+source_cache "$XDG_CACHE_HOME/shell/starship.$_shell" starship init "$_shell"
 
 # if ! type z > /dev/null; then
 #   for lua in lua luajit lua5.4 lua5.3 lua5.2 lua5.1; do
@@ -8,14 +8,18 @@ has starship && eval "$(starship init "$_shell")"
 # eval "$("$ZLUA_EXEC" "${XDG_DATA_HOME}/z.lua/z.lua" --init "${SHELL##*/}" enhanced once "$(type fzf &> /dev/null && echo fzf)")"
 # fi
 
-if [ -n "${RBENV_ROOT-}" ] && [ -x "${RBENV_ROOT}/bin/rbenv" ]; then
-  eval "$("${RBENV_ROOT}/bin/rbenv" init - "$_shell")"
+if [ -x "${RBENV_ROOT-}/bin/rbenv" ]; then
+  source_cache "$XDG_CACHE_HOME/shell/rbenv.$_shell" "$RBENV_ROOT/bin/rbenv" init - "$_shell"
 fi
 
-has jenv && eval "$(jenv init -)"
+source_cache "$XDG_CACHE_HOME/shell/jenv.$_shell" jenv init -
 
-if [ -n "${SDKMAN_DIR-}" ] && [ -r "${SDKMAN_DIR}/bin/sdkman-init.sh" ]; then
-  . "${SDKMAN_DIR}/bin/sdkman-init.sh"
+if [ -r "${SDKMAN_DIR-}/bin/sdkman-init.sh" ]; then
+  sdk() {
+    unset -f sdk
+    . "$SDKMAN_DIR/bin/sdkman-init.sh"
+    sdk "$@"
+  }
 fi
 
 has kubectl && {

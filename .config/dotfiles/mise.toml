@@ -1,5 +1,5 @@
 [settings]
-enable_tools        = [ "prek", "zola" ]  # Prevents tool install from other configurations
+enable_tools        = [ "hyperfine", "prek", "zola" ]  # Prevents tool install from other configurations
 locked              = true
 lockfile_mode       = "generate"
 minimum_release_age = "3d"
@@ -29,6 +29,15 @@ env         = {
 [tasks.doctor]
 description = "Verify bootstrap succeeded: tools and hooks"
 run         = "doctor.sh"
+
+[tasks."shell:test"]
+description = "Test shell syntax, caching, and isolated Zsh startup"
+run         = "sh tests/shell.sh"
+
+[tasks."shell:bench"]
+description = "Benchmark isolated warm shell startup"
+tools       = { hyperfine = "latest" }
+run         = "sh bench/shell-startup.sh"
 
 [tasks.update]
 description = "Pull latest dotfiles, sync submodules, and run mise bootstrap from global config"

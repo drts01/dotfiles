@@ -3,8 +3,9 @@
 path_add "$HOME/.bin"
 path_add "$HOME/.local/bin"
 
-# shellcheck disable=SC2154
-has mise && eval "$(mise activate "${_shell}" --shims)"
+MISE_DATA_DIR="${MISE_DATA_DIR:-$XDG_DATA_HOME/mise}"
+path_add "$MISE_DATA_DIR/shims"
+export MISE_DATA_DIR
 
 set -o vi    # Enable vim bindings
 KEYTIMEOUT=1 # Reduces escape key delay for switching modes

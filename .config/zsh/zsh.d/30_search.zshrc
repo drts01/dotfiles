@@ -1,10 +1,9 @@
 # Fuzzy search
 # Must go before Atuin and Zoxide
 if has sk; then
-    export FZF_DEFAULT_COMMAND="sk"
-    # export SKIM_DEFAULT_OPTIONS="--height 40% --layout=reverse --inline-info --color=light"
-    source <(sk --shell "$_shell")
-    alias fzf="sk"
+    export FZF_DEFAULT_COMMAND=sk
+    source_cache "$XDG_CACHE_HOME/shell/sk.$_shell" sk --shell "$_shell"
+    alias fzf=sk
 
 elif has fzf; then
     # Fallback to standard fzf
@@ -19,8 +18,8 @@ elif has fzf; then
       unset _fzf_key_bindings
     fi
 
-    source <(fzf --shell "$_shell" )
+    source_cache "$XDG_CACHE_HOME/shell/fzf.$_shell" fzf --shell "$_shell"
 fi
 
-[ ! "$_shell" = "zsh" ] && has atuin && eval "$(atuin init "$_shell" --disable-up-arrow)"
-has zoxide && eval "$(zoxide init "$_shell")"
+[ "$_shell" = zsh ] || source_cache "$XDG_CACHE_HOME/shell/atuin.$_shell" atuin init "$_shell" --disable-up-arrow
+source_cache "$XDG_CACHE_HOME/shell/zoxide.$_shell" zoxide init "$_shell"
