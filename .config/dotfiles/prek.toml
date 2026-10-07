@@ -62,8 +62,10 @@ hooks = [
 
 [[repos]]
 repo  = "https://github.com/shellcheck-py/shellcheck-py"
-rev   = "a6564f5d57444e123433a5c9af733e3975c77229"        # frozen: v0.11.0.1-1
+rev   = "a6564f5d57444e123433a5c9af733e3975c77229"                  # frozen: v0.11.0.1-1
 hooks = [ { id = "shellcheck" } ]
+types = [ "shell" ]
+files = '(^|/)\.(shrc|bashrc|zshrc|zshenv|zprofile|bash_profile)$'
 
 [[repos]]
 repo  = "https://github.com/tombi-toml/tombi-pre-commit"
