@@ -8,6 +8,8 @@ SH_CONF="$XDG_CONFIG_HOME/sh"
 . "$SH_CONF/profile.d/10_functions.sh"
 . "$SH_CONF/sh.d/20_aliases.sh"
 
+# shellcheck disable=SC2154
+source_cache "$XDG_CACHE_HOME/shell/mise.$_shell" mise activate "$_shell"
 
 if [ "$_shell" = "sh" ] && [ -z "$ZELLIJ" ] && [ "$TERM_PROGRAM" != "zellij" ] && has zellij; then
   zellij attach -c default || zellij
