@@ -21,7 +21,6 @@ skim = "latest"  # Fuzzy finder alternative to fzf (provides 'sk' binary)
 fzf  = "latest"  # Industry standard fuzzy finder (highly recommended alongside skim)
 
 # --- Linters & Formatters ---
-ruff                  = "latest"  # Python linters and formatters
 rumdl                 = "latest"  # Markdown formatter
 tombi                 = "latest"  # TOML formatter
 "aqua:owenlamont/ryl" = "latest"  # YAMLlint replacement and formatter
