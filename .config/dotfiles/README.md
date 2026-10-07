@@ -2,6 +2,15 @@
 
 Manage system environment configurations via a Git bare repository.
 
+## Features
+
+- Manage local environment without root access
+- No dependencies other than Git and Borne Shell.
+- Support shells: Borne, BASH, Zsh
+
+mise is not required to use dot files.
+mise is used to manage CLI tools.
+
 ## Installation
 
 Run the bootstrap script to deploy configuration files onto a fresh machine:
