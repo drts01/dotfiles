@@ -7,6 +7,9 @@ minimum_release_age = "3d"
 [env]
 DEST_DIR = "{{ env.HOME }}/.local/share/dotfiles"  # Bare git repository
 
+[tools]
+prek = "latest"
+
 [tasks."install-hooks"]
 description = "Install prek pre-commit hooks patched for the bare repo"
 tools       = { prek = "latest" }
@@ -14,6 +17,14 @@ env         = { BASEDIR = "{{config_root}}" }
 
 [tasks.bootstrap]
 description = "Bootstrap dotfiles"
+
+[tasks."lint"]
+description = "Run lint checks (auto-detects CI)"
+run         = "prek run --all-files ${CI_FLAGS:-}"
+env         = {
+  # Populate CI_FLAGS if in CI, otherwise leave it empty
+  CI_FLAGS = "{% if env.CI is defined %}--show-diff-on-failure --color=always --hook-stage manual{% endif %}"
+}
 
 [tasks.doctor]
 description = "Verify bootstrap succeeded: tools and hooks"
