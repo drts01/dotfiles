@@ -7,6 +7,7 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "accessible_mode": false,
   "edit_predictions": {
     "provider": "copilot"
   },
@@ -19,11 +20,12 @@
   },
   "agent_buffer_font_size": 12.0,
   "agent": {
+    "thinking_display": "preview",
     "default_model": {
       "provider": "openai-subscribed",
       "model": "gpt-5.6-terra",
       "enable_thinking": true,
-      "effort": "low"
+      "effort": "medium"
     },
     "default_profile": "write",
     "play_sound_when_agent_done": "when_hidden",
@@ -108,6 +110,9 @@
   },
   "agent_servers": {
     "github-copilot-cli": {
+      "type": "registry"
+    },
+    "cline": {
       "type": "registry"
     },
     "codex-acp": {
