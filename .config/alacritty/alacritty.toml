@@ -9,4 +9,4 @@ bold_italic = { family = "JetBrainsMono Nerd Font", style = "Bold Italic" }
 size        = 11
 
 [terminal]
-# shell = { program = "zellij", args = [ "-l", "welcome" ] }
+shell = { program = "/bin/sh", args = [ "-l", "-c", "exec zellij -l welcome" ] }
