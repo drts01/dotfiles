@@ -25,3 +25,5 @@ fi
 
 has bat && alias cat='bat'
 has rip && alias rm='rip'
+
+has prek && alias pre-commit='prek'
