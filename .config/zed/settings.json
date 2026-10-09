@@ -44,7 +44,7 @@
           "always_allow": [
             { "pattern": "^cargo\\s+(build|test|check|run)" },
             { "pattern": "^npm\\s+(install|test|run|ci)" },
-            { "pattern": "^git\\s+.*\\s+(status|diff|log|branch)" },
+            { "pattern": "^git\\s+.*\\s+(status|diff|log|branch|show)" },
             { "pattern": "^ls(\\s+.*)?$" },
             { "pattern": "^cat\\s+.*$" },
             { "pattern": "^grep\\s+.*$" },
