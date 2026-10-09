@@ -47,7 +47,9 @@
             { "pattern": "^git\\s+.*\\s+(status|diff|log|branch)" },
             { "pattern": "^ls(\\s+.*)?$" },
             { "pattern": "^cat\\s+.*$" },
-            { "pattern": "^grep\\s+.*$" }
+            { "pattern": "^grep\\s+.*$" },
+            { "pattern": "ansible-playbook\\s+.*--syntax-check\\s+" },
+            { "pattern": "^pre(k|-commit)\\s+(run|list|validate-config|validate-manifest)\\s+" },
           ],
           "always_confirm": [
             { "pattern": "sudo\\s+" },
