@@ -1,5 +1,5 @@
 # shellcheck shell=bash
-#
+
 # shellcheck disable=SC2154
 case $_shell in
 bash | zsh)
