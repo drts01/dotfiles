@@ -1,5 +1,8 @@
 [format.rules]
 array-bracket-space-width       = 1
+array-comma-space-width         = 1
+inline-table-brace-space-width  = 1
+inline-table-comma-space-width  = 1
 key-value-equals-sign-alignment = true
 line-width                      = 120
 trailing-comment-alignment      = true
