@@ -1,3 +1,6 @@
+min_version = "2026.10.2"
+
 [settings]
+experimental        = true
 http_timeout        = "10s"
 minimum_release_age = "3d"
