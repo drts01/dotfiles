@@ -98,7 +98,7 @@
         "provider": "copilot_chat",
         "model": "claude-opus-5",
         "enable_thinking": true,
-        "effort": "high"
+        "effort": "medium"
       }
     ],
     "model_parameters": [],
@@ -133,27 +133,97 @@
             },
             {
               "pattern": "^https?://pypi\\.org"
+            },
+            {
+              "pattern": "^https?://docs\\.ansible\\.com"
+            },
+            {
+              "pattern": "^https?://galaxy\\.ansible\\.com"
+            },
+            {
+              "pattern": "^https?://zensical\\.org"
+            },
+            {
+              "pattern": "^https?://www\\.updatecli\\.io"
+            },
+            {
+              "pattern": "^https?://docs\\.astral\\.sh"
+            },
+            {
+              "pattern": "^https?://docs\\.github\\.com"
+            },
+            {
+              "pattern": "^https?://trivy\\.dev"
+            },
+            {
+              "pattern": "^https?://docs\\.zizmor\\.sh"
             }
           ]
         },
         "terminal": {
           "default": "confirm",
           "always_allow": [
-            { "pattern": "^cargo\\s+(build|test|check|run)" },
-            { "pattern": "^npm\\s+(install|test|run|ci)" },
-            { "pattern": "^git\\s+.*\\s+(status|diff|log|branch|show|ls-files)" },
-            { "pattern": "^(cat|echo|printf|ls|grep|stat|test)(\\s+.*)?$" },
-            { "pattern": "ansible-playbook\\s+.*--syntax-check\\s+" },
-            { "pattern": "pre(k|-commit)\\s+(run|list|validate-config|validate-manifest)\\s+" },
-            { "pattern": "(podman|docker)\\s+image\\s+inspect\\s+" },
-            { "pattern": "mise\\s+.*run\\s+.*(lint|precommit|fmt|format|check|test|verify|validate|docs)" },
-            { "pattern": "mise\\s+(task|run)" },
-            { "pattern": "(podman|docker)(-|\\s+).*(ps|compose|ls|list|inspect|logs|info)"},
-            { "pattern": "(opentofu|terraform)\\s+(show|plan|version)"},
-            { "pattern": "(jq|yq)\\s+" },
-            { "pattern": "uv\\s+(lock|run|tree)\\s+" },
-            { "pattern": "(ruff|pytest)\\s+" },
-
+            {
+              "pattern": "^cargo\\s+(build|test|check|run)"
+            },
+            {
+              "pattern": "^npm\\s+(install|test|run|ci)"
+            },
+            {
+              "pattern": "^git\\s+.*(status|diff|log|branch|show|ls-files|describe|check-ignore|ls-remote|blame|fetch|rev-list|rev-parse)"
+            },
+            {
+              "pattern": "^(cat|echo|printf|ls|grep|stat|test|find|sort|head|tail|rg|fd)(\\s+.*)?$"
+            },
+            {
+              "pattern": "ansible-playbook\\s+.*--syntax-check\\s+"
+            },
+            {
+              "pattern": "ansible-lint\\s+"
+            },
+            {
+              "pattern": "pre(k|-commit)\\s+(run|list|validate-config|validate-manifest)\\s+"
+            },
+            {
+              "pattern": "(podman|docker)\\s+image\\s+inspect\\s+"
+            },
+            {
+              "pattern": "mise\\s+.*run\\s+.*(lint|precommit|fmt|format|check|test|verify|validate|docs)"
+            },
+            {
+              "pattern": "mise\\s+(task|run)"
+            },
+            {
+              "pattern": "(podman|docker)(-|\\s+).*(ps|compose|ls|list|inspect|logs|info)"
+            },
+            {
+              "pattern": "(opentofu|terraform)\\s+.*(show|plan|version|output|fmt)"
+            },
+            {
+              "pattern": "terraform-docs\\s+"
+            },
+            {
+              "pattern": "(jq|yq)\\s+"
+            },
+            {
+              "pattern": "uv\\s+(lock|run|tree|build|audit)\\s+"
+            },
+            {
+              "pattern": "(ruff|pytest)\\s+"
+            },
+            {
+              "pattern": "^gh\\s+run(\\s|$)"
+            },
+            {
+              "pattern": "^sed\\b"
+            },
+            {
+              "pattern": "^sed\\s+s/x1b\\[\\[0-9(\\s|$)"
+            },
+            {
+              "pattern": "^gh\\s+api(\\s|$)"
+            },
+            { "pattern": "actionlint\\s+"}
           ],
           "always_confirm": [
             { "pattern": "sudo\\s+" },
