@@ -43,6 +43,7 @@
 	colorMoved = default
 	relative = true
 	tool = smartdiff
+	submodule = log
 
 [diff "exif"]
 	textconv = exiftool || file $0
@@ -96,3 +97,5 @@
 
 [includeIf "gitdir:~/git/UHG/"]
 	path = ~/git/UHG/.gitconfig
+[status]
+	submoduleSummary = true
