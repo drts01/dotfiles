@@ -10,6 +10,7 @@
 	diff-side = -c delta.side-by-side=true diff
 	sm-up = "!f() { t=\"${1:-.}\"; git -C \"$t\" rev-parse --is-submodule >/dev/null 2>&1 || { echo \"Error: Not a submodule\"; return 1; }; cd \"$t\" && git fetch --tags --quiet && git checkout $(git describe --tags --abbrev=0 $(git rev-list --tags --max-count=1)); }; f"
 	sm-up-all = !git submodule foreach git sm-up "$sm_path"
+	sm-rm = "!f() { if [ ! -d \".git/modules/${1%/}\" ]; then echo \"Error: Not a submodule\"; return 1; fi; git submodule deinit -f \"$1\" && git rm -f \"$1\" && rm -rf \".git/modules/$1\"; }; f"
 
 [advice]
 	detachedHead = false
