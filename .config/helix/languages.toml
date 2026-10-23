@@ -1,10 +1,6 @@
 [[language]]
-name             = "yaml"
-language-servers = [
-  { name = "ryl", only-features = [ "format", "diagnostics" ] },
-  { name = "yaml-language-server", except-features = [ "format" ] },
-  { name = "ansible-language-server" },
-]
+name             = "git-commit"
+language-servers = [ "harper-ls" ]
 
 [[language]]
 name             = "markdown"
@@ -13,7 +9,25 @@ language-servers = [
   { name = "marksman", except-features = [ "format" ] },
   { name = "markdown-oxide" },
   { name = "ryl", only-features = [ "diagnostics" ] },
+  { name = "harper-ls" },
+  """"""
 ]
+
+[[language]]
+name             = "yaml"
+language-servers = [
+  { name = "ryl", only-features = [ "format", "diagnostics" ] },
+  { name = "yaml-language-server", except-features = [ "format" ] },
+  { name = "ansible-language-server" },
+]
+
+[language-server.codebook]
+command = "codebook-lsp"
+args    = [ "serve" ]
+
+[language-server.harper-ls]
+command = "harper-ls"
+args    = [ "--stdio" ]
 
 [language-server.ryl]
 command = "ryl"
