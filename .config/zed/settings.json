@@ -233,7 +233,7 @@
               "pattern": "^npm\\s+(install|test|run|ci)"
             },
             {
-              "pattern": "^git\\s+.*(status|diff|log|branch|show|ls-files|describe|check-ignore|ls-remote|blame|fetch|rev-list|rev-parse)"
+              "pattern": "^git\\s+(?:(?:--no-pager|--no-optional-locks)\\s+)*(?:status|diff|log|show|ls-files|describe|check-ignore|ls-remote|blame|rev-list|rev-parse)(?:\\s|$)"
             },
             {
               "pattern": "^(cat|echo|printf|ls|grep|stat|test|find|sort|head|tail|rg|fd|true|command|du|df|wc)(\\s+.*)?$"
@@ -332,7 +332,6 @@
     "button": true
   },
   "autosave": "on_focus_change",
-  "vim_mode": false,
   "helix_mode": true,
   "session": {
     "trust_all_worktrees": true
@@ -360,26 +359,9 @@
     "light": "One Light",
     "dark": "Dracula",
   },
-  "lsp": {
-    "harper-ls": {
-      "command": "harper-ls",
-    },
-    "ryl": {
-      "command": "ryl",
-      "arguments": ["server"]
-    },
-    "tombi": {
-      "command": "tombi",
-      "arguments": ["server"]
-    },
-    "rumdl": {
-      "command": "rumdl",
-      "arguments": ["server"]
-    }
-  },
   "languages": {
     "TOML": {
-      "language_servers": ["tombi"],
+      "language_servers": ["tombi", "!taplo", "..."],
       "formatter": {
         "language_server": {
           "name": "tombi"
@@ -387,38 +369,20 @@
       }
     },
     "Markdown": {
-      "language_servers": [
-        "rumdl",
-        "harper-ls",
-        "!codebook",
-        "...",
-      ],
+      "language_servers": ["rumdl", "harper-ls", "!codebook", "..."],
       "formatter": {
         "language_server": {
           "name": "rumdl"
         }
       }
     },
-    "Plain Text": {
-      "language_servers": ["harper-ls", "..."]
-    },
     "YAML": {
-      "language_servers": ["ryl", "..."],
       "formatter": {
-        "language_server": {
-          "name": "ryl"
+        "external": {
+          "command": "ryl",
+          "arguments": ["format", "--no-warnings", "--stdin-filename", "{buffer_path}", "-"]
         }
       }
-    }
-  },
-  "language_models": {
-    "openai-subscribed": {
-      "available_models": [
-        {
-          "name": "gpt-5.6-sol",
-          "max_tokens": 272000
-        },
-      ]
     }
   },
 }
