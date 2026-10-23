@@ -1,4 +1,9 @@
 [[language]]
+name        = "bash"
+auto-format = true
+formatter   = { command = "shfmt", args = [ "--filename", "%{buffer_name}" ] }
+
+[[language]]
 name             = "git-commit"
 language-servers = [ "harper-ls" ]
 
