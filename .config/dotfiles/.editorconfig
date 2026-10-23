@@ -1,0 +1,13 @@
+# Match all shell files
+[*.{sh,bash,zsh,bats}]
+indent_style = space
+indent_size = 2
+shell_variant = posix # Default fallback variant
+
+# Match extensionless files (like 'run' or 'deploy') using shfmt's syntax
+[[shell]]
+indent_style = space
+indent_size = 2
+binary_next_line = true
+switch_case_indent = true
+space_redirects = true
