@@ -10,10 +10,12 @@ idiomatic_version_file_enable_tools = [
 ]
 
 [tools]
+"aqua:blopker/codebook"    = "latest"                                  # Spell checker for code
 "npm:bash-language-server" = "latest"
 "npm:yaml-language-server" = "latest"
 delta                      = "latest"                                  # Syntax-highlighted side-by-side terminal git diff pager
 gh                         = "latest"                                  # GitHub CLI
+harper-ls                  = "latest"                                  # English grammar checker
 jnv                        = "latest"                                  # Interactive terminal JSON filter and visualization UI
 lima                       = { version = "latest", os = [ "macos" ] }  # Lightweight VM manager
 prek                       = "latest"                                  # Git hook manager (pre-commit configuration compatible)
@@ -23,5 +25,4 @@ uv                         = "latest"
 node                       = "lts"
 
 # --- AI coding assistants ---
-"npm:cline" = "latest"
-opencode    = "latest"
+opencode = "latest"
