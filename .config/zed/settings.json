@@ -131,9 +131,12 @@
       "tools": {
         "fetch": {
           "always_allow": [
-            {
-              "pattern": "^https?://(?:api\\.github\\.com|raw\\.githubusercontent\\.com|mise\\.jdx\\.dev|docs\\.renovatebot\\.com|floci\\.io|registry\\.terraform\\.io|docs\\.prismacloud\\.io|github\\.com|pypi\\.org|docs\\.ansible\\.com|galaxy\\.ansible\\.com|zensical\\.org|www\\.updatecli\\.io|docs\\.astral\\.sh|docs\\.github\\.com|trivy\\.dev|docs\\.zizmor\\.sh|docs\\.gitlab\\.com|docs\\.docker\\.com|learn\\.microsoft\\.com|docs\\.aws\\.amazon\\.com|www\\.chainguard\\.dev|tekton\\.dev|docs\\.drone\\.io|git-scm\\.com|trufflesecurity\\.com|pre-commit\\.com|www\\.trufflesecurity\\.com|docs\\.python\\.org|docs\\.pydantic\\.dev)(?:[/:?#]|$)"
-            }
+            { "pattern": "^https://(?:api\\.github\\.com|raw\\.githubusercontent\\.com|github\\.com|docs\\.github\\.com|git-scm\\.com|pre-commit\\.com)(?:[/:?#]|$)" },
+            { "pattern": "^https://(?:pypi\\.org|docs\\.python\\.org|docs\\.pydantic\\.dev|docs\\.astral\\.sh|docs\\.pytest\\.org|tox\\.wiki|docs\\.npmjs\\.com|zed\\.dev)(?:[/:?#]|$)" },
+            { "pattern": "^https://(?:mise\\.jdx\\.dev|docs\\.renovatebot\\.com|registry\\.terraform\\.io|docs\\.ansible\\.com|galaxy\\.ansible\\.com|docs\\.gitlab\\.com|docs\\.docker\\.com|docs\\.podman\\.io)(?:[/:?#]|$)" },
+            { "pattern": "^https://(?:docs\\.prismacloud\\.io|trivy\\.dev|docs\\.zizmor\\.sh|learn\\.microsoft\\.com|docs\\.aws\\.amazon\\.com|www\\.chainguard\\.dev|trufflesecurity\\.com|www\\.trufflesecurity\\.com)(?:[/:?#]|$)" },
+            { "pattern": "^https://(?:floci\\.io|zensical\\.org|www\\.updatecli\\.io|tekton\\.dev|docs\\.drone\\.io)(?:[/:?#]|$)" },
+            { "pattern": "^https://kubernetes\\.io/docs(?:[/?#]|$)" }
           ]
         },
         "terminal": {
