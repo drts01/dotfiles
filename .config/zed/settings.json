@@ -271,21 +271,32 @@
     "dark": "Dracula",
   },
   "languages": {
-    "TOML": {
-      "format_on_save": "on",
-      "language_servers": ["tombi", "!taplo", "..."],
-      "formatter": {
-        "language_server": {
-          "name": "tombi"
-        }
-      }
-    },
     "Markdown": {
       "format_on_save": "on",
       "language_servers": ["rumdl", "harper-ls", "!codebook", "..."],
       "formatter": {
         "language_server": {
           "name": "rumdl"
+        }
+      }
+    },
+    "Shell Script": {
+      "format_on_save": "on",
+      "formatter": {
+        "external": {
+          "command": "shfmt",
+          "arguments": [
+            "--filename", "{buffer_path}",
+          ]
+        }
+      }
+    },
+    "TOML": {
+      "format_on_save": "on",
+      "language_servers": ["tombi", "!taplo", "..."],
+      "formatter": {
+        "language_server": {
+          "name": "tombi"
         }
       }
     },
