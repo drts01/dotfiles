@@ -9,6 +9,7 @@ zoxide = "latest"  # Smarter directory jumper that tracks your path history
 bat     = "latest"  # 'cat' clone with syntax highlighting and Git delta flags
 fd      = "latest"  # Sane, rapid alternative to 'find' that honors .gitignore
 ripgrep = "latest"  # The fastest string search utility (grep) available
+jaq     = "latest"  # JSON query tool (jq replacement)
 
 # --- Core System Utilities ---
 bottom                 = "latest"                                   # Visual system resource monitor (graphical top/htop clone)

@@ -26,4 +26,12 @@ fi
 has bat && alias cat='bat'
 has rip && alias rm='rip'
 
+if has jaq; then
+  alias jq='jaq'
+
+  yq() {
+    jaq -I yaml -O yaml "$@"
+  }
+fi
+
 has prek && alias pre-commit='prek'
