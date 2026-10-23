@@ -26,7 +26,7 @@
     },
     "terminal_init_command": "",
     "sandbox_permissions": {
-      "allow_unsandboxed": true
+      "allow_unsandboxed": false
     },
     "profiles": {
       "write": {
@@ -132,161 +132,69 @@
         "fetch": {
           "always_allow": [
             {
-              "pattern": "^https?://api\\.github\\.com"
-            },
-            {
-              "pattern": "^https?://raw\\.githubusercontent\\.com"
-            },
-            {
-              "pattern": "^https?://mise\\.jdx\\.dev"
-            },
-            {
-              "pattern": "^https?://docs\\.renovatebot\\.com"
-            },
-            {
-              "pattern": "^https?://floci\\.io"
-            },
-            {
-              "pattern": "^https?://registry\\.terraform\\.io"
-            },
-            {
-              "pattern": "^https?://docs\\.prismacloud\\.io"
-            },
-            {
-              "pattern": "^https?://github\\.com"
-            },
-            {
-              "pattern": "^https?://pypi\\.org"
-            },
-            {
-              "pattern": "^https?://docs\\.ansible\\.com"
-            },
-            {
-              "pattern": "^https?://galaxy\\.ansible\\.com"
-            },
-            {
-              "pattern": "^https?://zensical\\.org"
-            },
-            {
-              "pattern": "^https?://www\\.updatecli\\.io"
-            },
-            {
-              "pattern": "^https?://docs\\.astral\\.sh"
-            },
-            {
-              "pattern": "^https?://docs\\.github\\.com"
-            },
-            {
-              "pattern": "^https?://trivy\\.dev"
-            },
-            {
-              "pattern": "^https?://docs\\.zizmor\\.sh"
-            },
-            {
-              "pattern": "^https?://docs\\.gitlab\\.com"
-            },
-            {
-              "pattern": "^https?://docs\\.docker\\.com"
-            },
-            {
-              "pattern": "^https?://learn\\.microsoft\\.com"
-            },
-            {
-              "pattern": "^https?://docs\\.aws\\.amazon\\.com"
-            },
-            {
-              "pattern": "^https?://www\\.chainguard\\.dev"
-            },
-            {
-              "pattern": "^https?://tekton\\.dev"
-            },
-            {
-              "pattern": "^https?://docs\\.drone\\.io"
-            },
-            {
-              "pattern": "^https?://git-scm\\.com"
-            },
-            {
-              "pattern": "^https?://trufflesecurity\\.com"
-            },
-            {
-              "pattern": "^https?://pre-commit\\.com"
-            },
-            {
-              "pattern": "^https?://www\\.trufflesecurity\\.com"
-            },
-            {
-              "pattern": "^https?://docs\\.python\\.org"
-            },
-            {
-              "pattern": "^https?://docs\\.pydantic\\.dev"
+              "pattern": "^https?://(?:api\\.github\\.com|raw\\.githubusercontent\\.com|mise\\.jdx\\.dev|docs\\.renovatebot\\.com|floci\\.io|registry\\.terraform\\.io|docs\\.prismacloud\\.io|github\\.com|pypi\\.org|docs\\.ansible\\.com|galaxy\\.ansible\\.com|zensical\\.org|www\\.updatecli\\.io|docs\\.astral\\.sh|docs\\.github\\.com|trivy\\.dev|docs\\.zizmor\\.sh|docs\\.gitlab\\.com|docs\\.docker\\.com|learn\\.microsoft\\.com|docs\\.aws\\.amazon\\.com|www\\.chainguard\\.dev|tekton\\.dev|docs\\.drone\\.io|git-scm\\.com|trufflesecurity\\.com|pre-commit\\.com|www\\.trufflesecurity\\.com|docs\\.python\\.org|docs\\.pydantic\\.dev)(?:[/:?#]|$)"
             }
           ]
         },
         "terminal": {
           "default": "confirm",
           "always_allow": [
-            {
-              "pattern": "^cargo\\s+(build|test|check|run)"
-            },
-            {
-              "pattern": "^npm\\s+(install|test|run|ci)"
-            },
-            {
-              "pattern": "^git\\s+(?:(?:--no-pager|--no-optional-locks)\\s+)*(?:status|diff|log|show|ls-files|describe|check-ignore|ls-remote|blame|rev-list|rev-parse)(?:\\s|$)"
-            },
-            {
-              "pattern": "^(cat|echo|printf|ls|grep|stat|test|find|sort|head|tail|rg|fd|true|command|du|df|wc)(\\s+.*)?$"
-            },
-            {
-              "pattern": "ansible-playbook\\s+.*--syntax-check\\s+"
-            },
-            {
-              "pattern": "ansible-lint\\s+"
-            },
-            {
-              "pattern": "pre(k|-commit)\\s+(run|list|validate-config|validate-manifest)\\s+"
-            },
-            {
-              "pattern": "(podman|docker)\\s+image\\s+inspect\\s+"
-            },
-            {
-              "pattern": "mise\\s+.*run\\s+.*(lint|precommit|fmt|format|check|test|verify|validate|docs)"
-            },
-            {
-              "pattern": "mise\\s+(task|run)"
-            },
-            {
-              "pattern": "(podman|docker)(-|\\s+).*(ps|compose|ls|list|inspect|logs|info)"
-            },
-            {
-              "pattern": "(opentofu|terraform)\\s+.*(show|plan|version|output|fmt)"
-            },
-            {
-              "pattern": "terraform-docs\\s+"
-            },
-            {
-              "pattern": "(jq|yq)\\s+"
-            },
-            {
-              "pattern": "uv\\s+(lock|run|tree|build|audit)\\s+"
-            },
-            {
-              "pattern": "(ruff|pytest)\\s+"
-            },
-            {
-              "pattern": "^gh\\s+run(\\s|$)"
-            },
-            {
-              "pattern": "^sed\\b"
-            },
-            {
-              "pattern": "^sed\\s+s/x1b\\[\\[0-9(\\s|$)"
-            },
-            {
-              "pattern": "^gh\\s+api(\\s|$)"
-            },
-            { "pattern": "actionlint\\s+"}
+            { "pattern": "^git(?: --no-optional-locks)? status(?: --(?:short|branch|porcelain=v1))?\\z" },
+            { "pattern": "^git --no-pager diff(?: --check| --no-ext-diff --no-textconv(?: --(?:stat|name-only|name-status))?)\\z" },
+            { "pattern": "^git --no-pager log(?: -n [1-9][0-9]{0,2})?(?: --(?:oneline|stat))?\\z" },
+            { "pattern": "^git --no-pager show --no-ext-diff --no-textconv(?: --stat)?(?: HEAD)?\\z" },
+            { "pattern": "^git branch --(?:show-current|list)\\z" },
+            { "pattern": "^git rev-parse --(?:show-toplevel|is-inside-work-tree|abbrev-ref HEAD)\\z" },
+            { "pattern": "^git ls-files(?: --others --exclude-standard)?\\z" },
+            { "pattern": "^git (?:describe --always|--version)\\z" },
+            { "pattern": "^(?:pwd|whoami|id|date|uptime)\\z" },
+            { "pattern": "^uname(?: -a)?\\z" },
+            { "pattern": "^ls(?: -(?:a|l|la|al))?(?: [A-Za-z0-9_./][A-Za-z0-9_./-]*)?\\z" },
+            { "pattern": "^df(?: -h)?\\z" },
+            { "pattern": "^du -sh [A-Za-z0-9_./][A-Za-z0-9_./-]*\\z" },
+            { "pattern": "^wc -l [A-Za-z0-9_./][A-Za-z0-9_./-]*\\z" },
+            { "pattern": "^rg --files(?: [A-Za-z0-9_./][A-Za-z0-9_./-]*)?\\z" },
+            { "pattern": "^rg -n -F -- [A-Za-z0-9_][A-Za-z0-9_./:-]*(?: [A-Za-z0-9_./][A-Za-z0-9_./-]*)?\\z" },
+            { "pattern": "^fd --type [fd](?: [A-Za-z0-9_./][A-Za-z0-9_./-]*)?(?: [A-Za-z0-9_./][A-Za-z0-9_./-]*)?\\z" },
+            { "pattern": "^eza(?: -(?:l|a|la|al))?(?: [A-Za-z0-9_./][A-Za-z0-9_./-]*)?\\z" },
+            { "pattern": "^bat --paging=never [A-Za-z0-9_./][A-Za-z0-9_./-]*\\z" },
+            { "pattern": "^grep -n -F -- [A-Za-z0-9_][A-Za-z0-9_./:-]* [A-Za-z0-9_./][A-Za-z0-9_./-]*\\z" },
+            { "pattern": "^sed -n '[1-9][0-9]{0,3}(?:,[1-9][0-9]{0,3})?p' [A-Za-z0-9_./][A-Za-z0-9_./-]*\\z" },
+            { "pattern": "^awk 'END \\{print NR\\}' [A-Za-z0-9_./][A-Za-z0-9_./-]*\\z" },
+            { "pattern": "^find [A-Za-z0-9_./][A-Za-z0-9_./-]* -type [fd]\\z" },
+            { "pattern": "^(?:head|tail) -n [1-9][0-9]{0,2} [A-Za-z0-9_./][A-Za-z0-9_./-]*\\z" },
+            { "pattern": "^test -(?:e|f|d|r) [A-Za-z0-9_./][A-Za-z0-9_./-]*\\z" },
+            { "pattern": "^echo(?: [A-Za-z0-9_./][A-Za-z0-9_./-]*)*\\z" },
+            { "pattern": "^printf %s [A-Za-z0-9_./][A-Za-z0-9_./-]*\\z" },
+            { "pattern": "^true\\z" },
+            { "pattern": "^command -v [A-Za-z][A-Za-z0-9_-]*\\z" },
+            { "pattern": "^(?:jq|yq)(?: --version| '(?:\\.|keys|length|type)' [A-Za-z0-9_./][A-Za-z0-9_./-]*)\\z" },
+            { "pattern": "^uv (?:--version|pip list|pip show [A-Za-z0-9][A-Za-z0-9_.-]*|python list --only-installed|cache dir|tree --frozen --offline --no-build --no-python-downloads)\\z" },
+            { "pattern": "^ruff check --no-fix(?: [A-Za-z0-9_./][A-Za-z0-9_./-]*)?\\z" },
+            { "pattern": "^ruff format --check(?: [A-Za-z0-9_./][A-Za-z0-9_./-]*)?\\z" },
+            { "pattern": "^ty check(?: [A-Za-z0-9_./][A-Za-z0-9_./-]*)?\\z" },
+            { "pattern": "^rumdl check --no-code-block-tools(?: [A-Za-z0-9_./][A-Za-z0-9_./-]*)?\\z" },
+            { "pattern": "^tombi (?:lint --offline|format --check --offline)(?: [A-Za-z0-9_./][A-Za-z0-9_./-]*)?\\z" },
+            { "pattern": "^ryl check [A-Za-z0-9_./][A-Za-z0-9_./-]*\\z" },
+            { "pattern": "^python(?:3(?:\\.[0-9]+)?)? (?:-V|--version)\\z" },
+            { "pattern": "^(?:pytest|python(?:3(?:\\.[0-9]+)?)? -m pytest)(?: --(?:version|help)|(?: (?:-q|-v|-x|--collect-only|--maxfail=[1-9][0-9]?)){0,4}(?: [A-Za-z0-9_./][A-Za-z0-9_./:-]*)?)\\z" },
+            { "pattern": "^(?:pre-commit|prek)(?: --version| validate-(?:config|manifest)(?: [A-Za-z0-9_./][A-Za-z0-9_./-]*)?)\\z" },
+            { "pattern": "^prek(?: -c [A-Za-z0-9_./][A-Za-z0-9_./-]*)? list(?: --output-format json)?\\z" },
+            { "pattern": "^prek(?: -c [A-Za-z0-9_./][A-Za-z0-9_./-]*)? run(?: --all-files)? --dry-run\\z" },
+            { "pattern": "^(?:pre-commit|prek)(?: -c [A-Za-z0-9_./][A-Za-z0-9_./-]*)? run (?:shellcheck|check-json5?|check-yaml|check-toml|check-merge-conflict)(?: --all-files)?\\z" },
+            { "pattern": "^tox --no-provision list(?: -d)?\\z" },
+            { "pattern": "^tox(?: run)? -e (?:lint|test|tests|unit|py[0-9]{2,3})\\z" },
+            { "pattern": "^tox --version\\z" },
+            { "pattern": "^gh workflow list(?: --all)?\\z" },
+            { "pattern": "^gh workflow view [A-Za-z0-9_./][A-Za-z0-9_./-]*(?: --yaml)?\\z" },
+            { "pattern": "^gh run list\\z" },
+            { "pattern": "^gh run view [0-9]+\\z" },
+            { "pattern": "^gh --version\\z" },
+            { "pattern": "^mise (?:--version|ls(?: --(?:current|installed|missing|json))?|tasks ls(?: --(?:json|name-only))?|tasks info [A-Za-z0-9_][A-Za-z0-9_:-]*|config ls)\\z" },
+            { "pattern": "^mise run (?:test|check|verify|validate|shell:test)\\z" },
+            { "pattern": "^(?:podman|docker)(?: --version| version| info| ps(?: -a)?| images(?: -a)?| container ls(?: -a)?| image ls(?: -a)?| volume ls| network ls| system df(?: -v)?| stats --no-stream(?: --all)?| port [A-Za-z0-9_][A-Za-z0-9_.-]*)\\z" },
+            { "pattern": "^podman (?:machine ls|pod ls|system connection list)\\z" },
+            { "pattern": "^npm (?:--version|ls --depth=0|root|prefix|run|pkg get (?:name|version|scripts)(?: (?:name|version|scripts))?|config get registry|explain [A-Za-z0-9_@][A-Za-z0-9_@./-]*)\\z" }
           ],
           "always_confirm": [
             { "pattern": "sudo\\s+" },
@@ -334,7 +242,7 @@
   "autosave": "on_focus_change",
   "helix_mode": true,
   "session": {
-    "trust_all_worktrees": true
+    "trust_all_worktrees": false
   },
   "telemetry": {
     "diagnostics": false,
@@ -361,6 +269,7 @@
   },
   "languages": {
     "TOML": {
+      "format_on_save": "on",
       "language_servers": ["tombi", "!taplo", "..."],
       "formatter": {
         "language_server": {
@@ -369,6 +278,7 @@
       }
     },
     "Markdown": {
+      "format_on_save": "on",
       "language_servers": ["rumdl", "harper-ls", "!codebook", "..."],
       "formatter": {
         "language_server": {
@@ -377,6 +287,7 @@
       }
     },
     "YAML": {
+      "format_on_save": "on",
       "formatter": {
         "external": {
           "command": "ryl",
