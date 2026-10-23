@@ -65,7 +65,7 @@
     "default_model": {
       "effort": "medium",
       "provider": "openai-subscribed",
-      "model": "gpt-5.6-sol",
+      "model": "gpt-6-sol",
       "enable_thinking": true
     },
     "default_profile": "write",
@@ -96,7 +96,31 @@
       },
       {
         "provider": "copilot_chat",
-        "model": "claude-opus-5",
+        "model": "claude-opus-5.5",
+        "enable_thinking": true,
+        "effort": "medium"
+      },
+      {
+        "provider": "copilot_chat",
+        "model": "claude-sonnet-5.5",
+        "enable_thinking": true,
+        "effort": "high"
+      },
+      {
+        "provider": "copilot_chat",
+        "model": "claude-haiku-5.5",
+        "enable_thinking": true,
+        "effort": "high"
+      },
+      {
+        "provider": "openai-subscribed",
+        "model": "gpt-6-sol",
+        "enable_thinking": true,
+        "effort": "medium"
+      },
+      {
+        "provider": "openai-subscribed",
+        "model": "gpt-6-luna",
         "enable_thinking": true,
         "effort": "medium"
       }
@@ -157,6 +181,45 @@
             },
             {
               "pattern": "^https?://docs\\.zizmor\\.sh"
+            },
+            {
+              "pattern": "^https?://docs\\.gitlab\\.com"
+            },
+            {
+              "pattern": "^https?://docs\\.docker\\.com"
+            },
+            {
+              "pattern": "^https?://learn\\.microsoft\\.com"
+            },
+            {
+              "pattern": "^https?://docs\\.aws\\.amazon\\.com"
+            },
+            {
+              "pattern": "^https?://www\\.chainguard\\.dev"
+            },
+            {
+              "pattern": "^https?://tekton\\.dev"
+            },
+            {
+              "pattern": "^https?://docs\\.drone\\.io"
+            },
+            {
+              "pattern": "^https?://git-scm\\.com"
+            },
+            {
+              "pattern": "^https?://trufflesecurity\\.com"
+            },
+            {
+              "pattern": "^https?://pre-commit\\.com"
+            },
+            {
+              "pattern": "^https?://www\\.trufflesecurity\\.com"
+            },
+            {
+              "pattern": "^https?://docs\\.python\\.org"
+            },
+            {
+              "pattern": "^https?://docs\\.pydantic\\.dev"
             }
           ]
         },
@@ -173,7 +236,7 @@
               "pattern": "^git\\s+.*(status|diff|log|branch|show|ls-files|describe|check-ignore|ls-remote|blame|fetch|rev-list|rev-parse)"
             },
             {
-              "pattern": "^(cat|echo|printf|ls|grep|stat|test|find|sort|head|tail|rg|fd)(\\s+.*)?$"
+              "pattern": "^(cat|echo|printf|ls|grep|stat|test|find|sort|head|tail|rg|fd|true|command|du|df|wc)(\\s+.*)?$"
             },
             {
               "pattern": "ansible-playbook\\s+.*--syntax-check\\s+"
@@ -288,9 +351,6 @@
     "github-copilot-cli": {
       "type": "registry"
     },
-    "cline": {
-      "type": "registry"
-    },
     "codex-acp": {
       "type": "registry"
     }
@@ -301,6 +361,9 @@
     "dark": "Dracula",
   },
   "lsp": {
+    "harper-ls": {
+      "command": "harper-ls",
+    },
     "ryl": {
       "command": "ryl",
       "arguments": ["server"]
@@ -324,12 +387,20 @@
       }
     },
     "Markdown": {
-      "language_servers": ["rumdl", "..."],
+      "language_servers": [
+        "rumdl",
+        "harper-ls",
+        "!codebook",
+        "...",
+      ],
       "formatter": {
         "language_server": {
           "name": "rumdl"
         }
       }
+    },
+    "Plain Text": {
+      "language_servers": ["harper-ls", "..."]
     },
     "YAML": {
       "language_servers": ["ryl", "..."],
