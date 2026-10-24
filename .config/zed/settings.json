@@ -144,6 +144,7 @@
           "always_allow": [
             { "pattern": "^git(?: --no-optional-locks)? status(?: --(?:short|branch|porcelain=v1))?(?: -- [A-Za-z0-9_./][A-Za-z0-9_./-]*(?: [A-Za-z0-9_./][A-Za-z0-9_./-]*)*)?\\z" },
             { "pattern": "^git --no-pager diff(?: --check| --no-ext-diff --no-textconv(?: --(?:stat|name-only|name-status))?)(?: -- [A-Za-z0-9_./][A-Za-z0-9_./-]*(?: [A-Za-z0-9_./][A-Za-z0-9_./-]*)*)?\\z" },
+            { "pattern": "^git --no-pager grep -n -F -- [A-Za-z0-9_][A-Za-z0-9_./:-]*(?: -- [A-Za-z0-9_./][A-Za-z0-9_./-]*(?: [A-Za-z0-9_./][A-Za-z0-9_./-]*)*)?\\z" },
             { "pattern": "^git --no-pager log(?:(?: -n [1-9][0-9]{0,2})?(?: --(?:oneline|stat))?| --(?:oneline|stat) -n [1-9][0-9]{0,2})(?: -- [A-Za-z0-9_./][A-Za-z0-9_./-]*(?: [A-Za-z0-9_./][A-Za-z0-9_./-]*)*)?\\z" },
             { "pattern": "^git --no-pager show --no-ext-diff --no-textconv(?: --stat)?(?: HEAD)?(?: -- [A-Za-z0-9_./][A-Za-z0-9_./-]*(?: [A-Za-z0-9_./][A-Za-z0-9_./-]*)*)?\\z" },
             { "pattern": "^git branch --(?:show-current|list)\\z" },
