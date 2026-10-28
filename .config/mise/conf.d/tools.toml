@@ -12,12 +12,11 @@ ripgrep = "latest"  # The fastest string search utility (grep) available
 jaq     = "latest"  # JSON query tool (jq replacement)
 
 # --- Core System Utilities ---
-bottom                 = "latest"                                   # Visual system resource monitor (graphical top/htop clone)
-dust                   = "latest"                                   # Visual breakdown of disk usage (du -sh replacement)
-duf                    = { version = "latest", os = [ "darwin" ] }  # A better 'df'
-"aqua:Canop/dysk"      = { version = "latest", os = "linux" }       # Like df but better
-"aqua:dalance/procs"   = "latest"                                   # Modern 'ps' command with clean columns and port search
-"github:tobi/disktree" = "latest"                                   # Disk space GUI
+bottom               = "latest"                                   # Visual system resource monitor (graphical top/htop clone)
+dust                 = "latest"                                   # Visual breakdown of disk usage (du -sh replacement)
+duf                  = { version = "latest", os = [ "darwin" ] }  # A better 'df'
+"aqua:Canop/dysk"    = { version = "latest", os = "linux" }       # Like df but better
+"aqua:dalance/procs" = "latest"                                   # Modern 'ps' command with clean columns and port search
 
 # --- Fuzzy Searching ---
 skim = "latest"  # Fuzzy finder alternative to fzf (provides 'sk' binary)
