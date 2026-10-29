@@ -26,7 +26,13 @@
     },
     "terminal_init_command": "",
     "sandbox_permissions": {
-      "allow_unsandboxed": false
+      "network_hosts": [
+        "docs.zizmor.sh",
+        "github.blog",
+        "docs.github.com"
+      ],
+      "allow_fs_write_all": true,
+      "allow_unsandboxed": true
     },
     "profiles": {
       "write": {
@@ -62,8 +68,12 @@
       }
     },
     "thinking_display": "preview",
+    "compaction_model": {
+      "provider": "openai-subscribed",
+      "model": "gpt-6-luna",
+    },
     "default_model": {
-      "effort": "medium",
+      "effort": "high",
       "provider": "openai-subscribed",
       "model": "gpt-6-sol",
       "enable_thinking": true
@@ -98,7 +108,7 @@
         "provider": "copilot_chat",
         "model": "claude-opus-5.5",
         "enable_thinking": true,
-        "effort": "medium"
+        "effort": "high"
       },
       {
         "provider": "copilot_chat",
@@ -116,7 +126,7 @@
         "provider": "openai-subscribed",
         "model": "gpt-6-sol",
         "enable_thinking": true,
-        "effort": "medium"
+        "effort": "high"
       },
       {
         "provider": "openai-subscribed",
@@ -131,12 +141,30 @@
       "tools": {
         "fetch": {
           "always_allow": [
-            { "pattern": "^https://(?:api\\.github\\.com|raw\\.githubusercontent\\.com|github\\.com|docs\\.github\\.com|git-scm\\.com|pre-commit\\.com)(?:[/:?#]|$)" },
-            { "pattern": "^https://(?:pypi\\.org|docs\\.python\\.org|docs\\.pydantic\\.dev|docs\\.astral\\.sh|docs\\.pytest\\.org|tox\\.wiki|docs\\.npmjs\\.com|zed\\.dev)(?:[/:?#]|$)" },
-            { "pattern": "^https://(?:mise\\.jdx\\.dev|docs\\.renovatebot\\.com|registry\\.terraform\\.io|docs\\.ansible\\.com|galaxy\\.ansible\\.com|docs\\.gitlab\\.com|docs\\.docker\\.com|docs\\.podman\\.io)(?:[/:?#]|$)" },
-            { "pattern": "^https://(?:docs\\.prismacloud\\.io|trivy\\.dev|docs\\.zizmor\\.sh|learn\\.microsoft\\.com|docs\\.aws\\.amazon\\.com|www\\.chainguard\\.dev|trufflesecurity\\.com|www\\.trufflesecurity\\.com)(?:[/:?#]|$)" },
-            { "pattern": "^https://(?:floci\\.io|zensical\\.org|www\\.updatecli\\.io|tekton\\.dev|docs\\.drone\\.io)(?:[/:?#]|$)" },
-            { "pattern": "^https://kubernetes\\.io/docs(?:[/?#]|$)" }
+            {
+              "pattern": "^https://(?:api\\.github\\.com|raw\\.githubusercontent\\.com|github\\.com|docs\\.github\\.com|git-scm\\.com|pre-commit\\.com)(?:[/:?#]|$)"
+            },
+            {
+              "pattern": "^https://(?:pypi\\.org|docs\\.python\\.org|docs\\.pydantic\\.dev|docs\\.astral\\.sh|docs\\.pytest\\.org|tox\\.wiki|docs\\.npmjs\\.com|zed\\.dev)(?:[/:?#]|$)"
+            },
+            {
+              "pattern": "^https://(?:mise\\.jdx\\.dev|docs\\.renovatebot\\.com|registry\\.terraform\\.io|docs\\.ansible\\.com|galaxy\\.ansible\\.com|docs\\.gitlab\\.com|docs\\.docker\\.com|docs\\.podman\\.io)(?:[/:?#]|$)"
+            },
+            {
+              "pattern": "^https://(?:docs\\.prismacloud\\.io|trivy\\.dev|docs\\.zizmor\\.sh|learn\\.microsoft\\.com|docs\\.aws\\.amazon\\.com|www\\.chainguard\\.dev|trufflesecurity\\.com|www\\.trufflesecurity\\.com)(?:[/:?#]|$)"
+            },
+            {
+              "pattern": "^https://(?:floci\\.io|zensical\\.org|www\\.updatecli\\.io|tekton\\.dev|docs\\.drone\\.io)(?:[/:?#]|$)"
+            },
+            {
+              "pattern": "^https://kubernetes\\.io/docs(?:[/?#]|$)"
+            },
+            {
+              "pattern": "^https?://github\\.blog"
+            },
+            {
+              "pattern": "^https?://www\\.socallinuxexpo\\.org"
+            }
           ]
         },
         "terminal": {
@@ -144,6 +172,7 @@
           "always_allow": [
             { "pattern": "^git(?: --no-optional-locks)? status(?: --(?:short|branch|porcelain=v1))?(?: -- [A-Za-z0-9_./][A-Za-z0-9_./-]*(?: [A-Za-z0-9_./][A-Za-z0-9_./-]*)*)?\\z" },
             { "pattern": "^git --no-pager diff(?: --check| --no-ext-diff --no-textconv(?: --(?:stat|name-only|name-status))?)(?: -- [A-Za-z0-9_./][A-Za-z0-9_./-]*(?: [A-Za-z0-9_./][A-Za-z0-9_./-]*)*)?\\z" },
+            { "pattern": "^git --no-pager cat-file(?: -t (?: -- [A-Za-z0-9_./][A-Za-z0-9_./-]*(?: [A-Za-z0-9_./][A-Za-z0-9_./-]*)*)?\\z" },
             { "pattern": "^git --no-pager grep(?: -n| -i| -F| -E| --count| --name-only)*(?: --)? (?:[A-Za-z0-9_][A-Za-z0-9_./:-]*|'[A-Za-z0-9_][A-Za-z0-9_./:|+?*()\\[\\]{}^$ -]*')(?: -- [A-Za-z0-9_./][A-Za-z0-9_./-]*(?: [A-Za-z0-9_./][A-Za-z0-9_./-]*)*)?\\z" },
             { "pattern": "^git --no-pager log(?:(?: -n [1-9][0-9]{0,2})?(?: --(?:oneline|stat))?| --(?:oneline|stat) -n [1-9][0-9]{0,2})(?: -- [A-Za-z0-9_./][A-Za-z0-9_./-]*(?: [A-Za-z0-9_./][A-Za-z0-9_./-]*)*)?\\z" },
             { "pattern": "^git --no-pager show --no-ext-diff --no-textconv(?: --stat)?(?: HEAD)?(?: -- [A-Za-z0-9_./][A-Za-z0-9_./-]*(?: [A-Za-z0-9_./][A-Za-z0-9_./-]*)*)?\\z" },
