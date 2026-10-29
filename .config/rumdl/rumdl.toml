@@ -1,0 +1,38 @@
+[global]
+exclude       = [
+  "AGENTS.md",
+  "CHANGELOG.md",
+]
+output-format = "grouped"
+extend-enable = [
+  "table-format",                   # MD060
+  "nested-code-fence",              # MD070
+  "heading-anchor-collision",       # MD080
+  "mojibake",                       # MD083
+  "invisible-characters",           # MD084
+  "paragraph-continuation-indent",  # MD085
+  "unused-disable-comment",         # MD087
+  "quotes-dashes",                  # MD088
+]
+disable       = [
+  "no-inline-html",                 # MD033
+  "no-bare-urls",                   # MD034"
+]
+
+[per-file-flavor]
+"*.md" = "gfm"
+
+[heading-style]  # MD003
+style = "atx"
+
+[line-length]  # MD013
+line-length = 120
+code_blocks = false
+code_spans  = false
+tables      = false
+blockquotes = false
+reflow      = true
+reflow-mode = "semantic-line-breaks"
+
+[table-format]  # MD060
+style = "aligned"
