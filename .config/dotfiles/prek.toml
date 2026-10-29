@@ -89,6 +89,7 @@ alias    = "ryl"
 args     = [ "--config-file", ".config/ryl/ryl.toml", "--fix" ]
 types_or = [ "yaml", "markdown" ]
 files    = '.*\.(ya?ml|md|markdown|mdx|qmd|Rmd)$'
+exclude  = '\.config/zed/AGENTS\.md$'
 stages   = [ "pre-commit" ]
 
 [[repos.hooks]]
@@ -98,4 +99,5 @@ alias    = "ryl-github"
 args     = [ "--config-file", ".config/ryl/ryl.toml", "--format=github" ]
 types_or = [ "yaml", "markdown" ]
 files    = '.*\.(ya?ml|md|markdown|mdx|qmd|Rmd)$'
+exclude  = '\.config/zed/AGENTS\.md$'
 stages   = [ "manual" ]
