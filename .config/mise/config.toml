@@ -5,3 +5,6 @@ env_file            = ".env"
 experimental        = true
 http_timeout        = "10s"
 minimum_release_age = "3d"
+
+[settings.self_update]
+auto = true
