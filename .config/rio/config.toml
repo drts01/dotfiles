@@ -1,0 +1,35 @@
+theme = "dracula"
+
+[fonts]
+size = 12
+
+[fonts.regular]
+family = "FiraCode Nerd Font"
+style  = "Regular"
+weight = 400
+
+[fonts.bold]
+family = "FiraCode Nerd Font"
+style  = "Bold"
+weight = 700
+
+[fonts.italic]
+family = "FiraCode Nerd Font"
+style  = "Italic"
+weight = 400
+
+[fonts.bold-italic]
+family = "FiraCode Nerd Font"
+style  = "Bold Italic"
+weight = 700
+
+[navigation]
+# Set the mode to "Plain" to remove native tabs/decorations
+mode = "Plain"
+
+# Optional: Keep these false to prevent path tracking collisions with Zellij
+use-current-path = false
+
+[shell]
+program = "/bin/sh"
+args    = [ "-l", "-c", "exec zellij -l welcome" ]
