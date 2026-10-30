@@ -10,21 +10,29 @@ idiomatic_version_file_enable_tools = [
 ]
 
 [tools]
-"aqua:blopker/codebook"    = "latest"                                  # Spell checker for code
+"aqua:blopker/codebook" = "latest"                                  # Spell checker for code
+jnv                     = "latest"                                  # Interactive terminal JSON filter and visualization UI
+lima                    = { version = "latest", os = [ "macos" ] }  # Lightweight VM manager
+prek                    = "latest"                                  # Git hook manager (pre-commit configuration compatible)
+uv                      = "latest"
+node                    = "lts"
+
+# --- Linters
+ruff        = "latest"  # Python linters and formatters
+shfmt       = "latest"  # Formatter & Parser for shell scripts
+shellharden = "latest"  # Security hardening tool for Bash
+ty          = "latest"  # Python type-checker
+
+# --- Language Servers / LSP---
 "npm:bash-language-server" = "latest"
 "npm:yaml-language-server" = "latest"
-delta                      = "latest"                                  # Syntax-highlighted side-by-side terminal git diff pager
-gh                         = "latest"                                  # GitHub CLI
-harper-ls                  = "latest"                                  # English grammar checker
-jnv                        = "latest"                                  # Interactive terminal JSON filter and visualization UI
-lima                       = { version = "latest", os = [ "macos" ] }  # Lightweight VM manager
-prek                       = "latest"                                  # Git hook manager (pre-commit configuration compatible)
-ruff                       = "latest"                                  # Python linters and formatters
-shfmt                      = "latest"                                  # Formatter & Parser for shell scripts
-shellharden                = "latest"                                  # Security hardening tool for Bash
-ty                         = "latest"                                  # Python type-checker
-uv                         = "latest"
-node                       = "lts"
+harper-ls                  = "latest"  # English grammar checker
+
+# --- VCS / Git ---
+"github:git/git" = "latest"  # Distributed version control system
+delta            = "latest"  # Syntax-highlighted side-by-side terminal git diff pager
+gh               = "latest"  # GitHub CLI
+gitsign          = "latest"  # Keyless Git commit and tag signing via Sigstore
 
 # --- AI coding assistants ---
 opencode = "latest"
