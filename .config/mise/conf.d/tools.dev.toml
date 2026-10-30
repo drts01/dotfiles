@@ -29,10 +29,9 @@ ty          = "latest"  # Python type-checker
 harper-ls                  = "latest"  # English grammar checker
 
 # --- VCS / Git ---
-"github:git/git" = "latest"  # Distributed version control system
-delta            = "latest"  # Syntax-highlighted side-by-side terminal git diff pager
-gh               = "latest"  # GitHub CLI
-gitsign          = "latest"  # Keyless Git commit and tag signing via Sigstore
+delta   = "latest"  # Syntax-highlighted side-by-side terminal git diff pager
+gh      = "latest"  # GitHub CLI
+gitsign = "latest"  # Keyless Git commit and tag signing via Sigstore
 
 # --- AI coding assistants ---
 opencode = "latest"
