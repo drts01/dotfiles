@@ -12,6 +12,16 @@ if [ -z "$_shell" ]; then
   readonly _shell
 fi
 
+if [ "$_shell" = "bash" ] || [ "$_shell" = "zsh" ]; then
+    export LOCAL_OS="${OSTYPE%%[0-9]*}"
+else
+    case "$(uname -s)" in
+        Darwin) export LOCAL_OS="darwin" ;;
+        Linux)  export LOCAL_OS="linux" ;;
+        *)      export LOCAL_OS="unknown" ;;
+    esac
+fi
+
 path_add() {
     # Prefix variables with function name to prevent global pollution
     _pa_dir="$1"
