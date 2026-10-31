@@ -42,8 +42,8 @@ if [ ! -f "$DEST_DIR/index" ]; then
     # `read` strips the leading tab that marks conflicting paths).
     df -c core.quotePath=false ls-tree -r HEAD | while IFS="$TAB" read -r meta f; do
       case "$meta" in
-      *" blob "*) ;;
-      *) continue ;;
+        *" blob "*) ;;
+        *) continue ;;
       esac
       if [ -e "$HOME/$f" ] || [ -L "$HOME/$f" ]; then
         mkdir -p "$BACKUP_DIR/$(dirname "$f")"
