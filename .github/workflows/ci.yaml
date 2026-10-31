@@ -12,16 +12,11 @@ permissions:
 
 env:
   MISE_GLOBAL_CONFIG_FILE: ${{ github.workspace }}/.config/dotfiles/mise.toml
-  PREKFILE: ${{ github.workspace }}/.config/dotfiles/prek.toml
 
 jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
-    permissions:
-      security-events: write  # To upload SARIF files
-      contents: read  # To clone the repo
-      actions: read  # To read workflow run info
     env:
       MISE_EXPERIMENTAL: true
       MISE_IGNORED_CONFIG_PATHS: ${{ github.workspace }}/.config/mise
@@ -44,12 +39,6 @@ jobs:
             lint-
       - name: Run prek
         run: mise task run lint
-      - name: Upload Zizmor SARIF file
-        if: always()
-        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2  # v4.38.2
-        with:
-          sarif_file: zizmor.sarif
-          category: zizmor
 
   shell:
     name: Shell
