@@ -1,9 +1,10 @@
 #!/bin/sh
 # Integration test: deploy the dotfiles into throwaway home directories without mise.
-# Covers the curl entrypoint, backups, a repeat run (idempotency), a
+# Covers the remote entrypoint, backups, a repeat run (idempotency), a
 # fast-forward pull, and the git-only install path. The scripts under test are
 # the working-tree copies; the deployed content is the committed HEAD.
-# Requires git, curl, and network access for submodules.
+# Requires git, curl or wget, and network access for submodules. Without curl,
+# the entrypoint's wget branch is exercised instead.
 set -eu
 
 CDPATH=
@@ -73,7 +74,26 @@ assert_deployed() {
 }
 
 env -i PATH="$TEST_PATH" sh -c 'command -v git' > /dev/null || fail "git not found in $TEST_PATH"
-env -i PATH="$TEST_PATH" sh -c 'command -v curl' > /dev/null || fail "curl not found in $TEST_PATH"
+if env -i PATH="$TEST_PATH" sh -c 'command -v curl' > /dev/null; then
+  FETCHER=curl
+elif REAL_WGET=$(env -i PATH="$TEST_PATH" sh -c 'command -v wget'); then
+  FETCHER=wget
+  # wget has no file:// support; serve fixture URLs from disk so the
+  # entrypoint's wget branch still runs unmodified.
+  mkdir -p "$TMP/bin"
+  cat > "$TMP/bin/wget" << EOF
+#!/bin/sh
+for url do :; done
+case "\$url" in
+  file://*) exec cat "\${url#file://}" ;;
+esac
+exec "$REAL_WGET" "\$@"
+EOF
+  chmod +x "$TMP/bin/wget"
+  TEST_PATH="$TMP/bin:$TEST_PATH"
+else
+  fail "neither curl nor wget found in $TEST_PATH"
+fi
 if env -i PATH="$TEST_PATH" sh -c 'command -v mise' > /dev/null; then
   fail "mise found in $TEST_PATH; the test requires a mise-free PATH"
 fi
@@ -89,7 +109,7 @@ HOME_A="$TMP/home-a"
 mkdir -p "$HOME_A"
 printf 'pre-existing\n' > "$HOME_A/.bashrc"
 
-step "Entrypoint: fresh install with a conflicting file"
+step "Entrypoint ($FETCHER): fresh install with a conflicting file"
 run "$HOME_A" SKIP_MISE_INSTALL=1 RAW_URL="file://$ROOT" sh "$ENTRYPOINT"
 assert_deployed "$HOME_A"
 [ "$(cat "$HOME_A/.df-bak/.bashrc")" = pre-existing ] || fail "conflicting .bashrc not backed up"
