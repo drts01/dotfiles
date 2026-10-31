@@ -34,6 +34,14 @@ run         = "doctor.sh"
 description = "Test shell syntax, caching, and isolated Zsh startup"
 run         = "sh tests/shell.sh"
 
+[tasks."bootstrap:test"]
+description = "Test bootstrap in throwaway home directories without mise, including a repeat run"
+run         = "sh tests/bootstrap.sh"
+
+[tasks."bootstrap:test:container"]
+description = "Run the bootstrap test as non-root in containers (podman or docker); pass images to select"
+run         = "sh tests/bootstrap-container.sh"
+
 [tasks."shell:bench"]
 description = "Benchmark isolated warm shell startup"
 tools       = { hyperfine = "latest" }
