@@ -5,7 +5,7 @@
 
 set -eu
 
-RAW_URL="https://raw.githubusercontent.com/drts01/dotfiles/trunk"
+RAW_URL="${RAW_URL:-https://raw.githubusercontent.com/drts01/dotfiles/trunk}"
 SKIP_MISE_INSTALL="${SKIP_MISE_INSTALL:-}"
 
 # Wrapped in main so `curl | sh` never executes a partially downloaded script.
