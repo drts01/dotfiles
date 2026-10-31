@@ -34,28 +34,37 @@ Alternatives: Systems & Infrastructure (configuration management) or the co-loca
 ### P0 — required before submitting (deadline 2026-11-01; target 2026-10-30)
 
 - [ ] Confirm in-person availability for April 1–4, 2027, and self-funded travel.
-- [ ] Confirm the employer's policy on public speaking and on the public dotfiles content.
+- [x] Confirm the employer's policy on public speaking and on the public dotfiles content.
 - [ ] Create or log in to the SCaLE CFP account; add `cfp@socallinuxexpo.org` to contacts.
 - [ ] Select the final title.
 - [ ] Finalize the short abstract and long abstract (drafts below).
-- [ ] Write the speaker bio (≤ 1000 characters, third person) and select a photo.
+- [x] Write the speaker bio (≤ 1000 characters, third person); see [Speaker bio](#speaker-bio).
+- [ ] Select a photo.
 - [ ] Select track and level.
 - [ ] Finalize the message to reviewers (draft below).
+- [ ] Push the bootstrap fixes and confirm a green `Bootstrap` CI run for every matrix job;
+      the reviewer message claims the workflow exists.
 - [ ] Submit.
 
 ### P1 — before submitting if the repository is linked in the proposal; otherwise before acceptance
 
-- [ ] Fix `.config/dotfiles/bootstrap.sh`: it downloads and executes itself
-      (infinite recursion), and the `SKIP_MISE_INSTALL` condition is inverted.
+- [x] Fix `.config/dotfiles/bootstrap.sh`: it downloaded and executed itself
+      (infinite recursion), and the `SKIP_MISE_INSTALL` condition was inverted.
       The README install command uses this script.
-- [ ] Remove or privatize employer-identifying files from the public repository
-      (`.ssh/config.d/everbridge##everbridge`, `git/UHG/.gitconfig`); decide whether history must be rewritten.
+      The entrypoint now fetches `mise-tasks/bootstrap.sh`, and mise is optional.
+- [ ] Remove employer references from the public repository
+      (`.ssh/config.d/everbridge##everbridge`, `git/UHG/.gitconfig`).
+      Employer clearance is done and the employers are already public, so history does not need rewriting.
 - [ ] Resolve the `##Darwin` / `##everbridge` yadm-style file names, which conflict with the "no templating" message.
 
 ### P2 — after submission, before notification (2026-12-01)
 
 - [ ] Capture a reproducible shell-startup baseline from an old commit before further optimization.
-- [ ] Add a CI job that bootstraps in a fresh non-root container and runs bootstrap twice (idempotency).
+- [x] Add a GitHub Actions workflow that bootstraps in a fresh non-root container
+      and runs bootstrap twice (idempotency).
+      This workflow is also the demo fallback.
+      Done: the `bootstrap` job in `.github/workflows/ci.yaml` runs one parallel job per image plus a macOS host job;
+      `mise run bootstrap:test:container` runs the same script locally.
 - [ ] Inventory the checks actually enforced by hooks and CI.
 
 ### P3 — after acceptance (December–March)
@@ -63,7 +72,11 @@ Alternatives: Systems & Infrastructure (configuration management) or the co-loca
 - [ ] Decide the secrets workflow: Bitwarden Rust client (`rbw` or `bws`), age, fnox.
 - [ ] Document the work-overlay mechanics without employer-sensitive details.
 - [ ] Build and test the `dotfiles-starter` Copier template.
-- [ ] Script the fresh-container demo; run it in CI; record a fallback.
+- [ ] Script the fresh-container demo from the same steps as the GitHub Actions workflow.
+      `tests/bootstrap-container.sh` already runs locally and in CI;
+      the stage demo still needs a visible user-facing install, not only the test output.
+- [ ] Save the latest passing workflow run offline (screenshots or downloaded logs);
+      the fallback must work without conference Wi-Fi.
 - [ ] Decide whether the Zed limitation stays unresolved or receives a tested mitigation.
 - [ ] Write slides in an open format; fit them to 45 minutes.
 - [ ] Rehearse with a timer; dry run at a local meetup or user group if possible.
@@ -73,28 +86,59 @@ Alternatives: Systems & Infrastructure (configuration management) or the co-loca
 
 ### Short abstract (print)
 
-> Most dotfiles guides stop at "put them in Git." This talk starts there: an opinionated way to carry the same
-> environment to home, work, and temporary machines with only Git and a shell—no sudo, symlinks, or templates—then
-> test, profile, and secure it. Includes a live fresh-container demo.
+> Most dotfiles guides stop at "put them in Git." This talk treats `$HOME` like a small production system: bootstrap
+> it with only Git and a shell—no sudo, symlinks, or templates—then test and secure it. Includes a live demo from a
+> fresh container to a working shell.
 
 ### Long abstract (online)
 
-> I want the same environment wherever I sit: at home, at work, or on a machine I will use for one afternoon. Most dotfiles guides end at "put them in Git." This talk starts there. We will build a portable home-directory setup without superuser access, symlink farms, or runtime templates; then add dependency management, testing, profiling, documentation, and a plan for secrets. Along the way, I will show what a bare Git repository does well, where it gets awkward, and how AI changed the speed at which I discover and iterate on tools. We will go from a fresh container to a configured environment live—and examine the failures that made the process worth testing.
+> AI made configuration cheap to write. It did not make it trustworthy. Most dotfiles guides end at "put them in
+> Git"; this talk starts there and treats the home directory like a small production system.
 >
-> Attendees will leave with a decision framework for managing their home directory, an honest list of limitations,
-> and a starter template they can use the same day.
+> Attendees will learn how to:
+>
+> - Bootstrap a portable environment with only Git and a shell, without superuser access, symlink farms, or runtime
+>   templates.
+> - Manage dependencies through Git wherever possible.
+> - Handle host and work differences with the include and override mechanisms formats already support.
+> - Test deployment, not just syntax: clean containers, repeated runs, and CI.
+> - Keep secrets out of a public repository, including the "secret zero" problem on a new machine.
+> - Recognize when a bare-repository approach is the wrong fit.
+>
+> The session includes a live bootstrap from a fresh container, an honest list of unsolved problems, and a starter
+> template attendees can use the same day. Assumes comfort with Git and a Unix shell.
+
+**Abstract policy:** Git is the only named tool.
+Name mise, submodules, hooks, CI tools, Bitwarden, age, fnox, and Copier in the detailed session description, slides,
+or talk—not in the abstract.
+"No third-party requirement" describes the *minimum bootstrap path*, not the fully provisioned environment.
+AI is the motivation, not the subject; keep it to one sentence.
 
 ### Message to reviewers (draft)
 
-> The talk is based on a public dotfiles repository maintained since 2019. The live demo bootstraps a fresh,
-> non-root container to a configured environment; the same procedure runs in CI, and a recording is available as a
-> fallback if the network fails. Standard HDMI projection is sufficient. Tools covered in the talk body include mise
-> (packages without sudo), Git submodules, pre-commit hooks, CI linting, hyperfine for startup profiling, Bitwarden
-> for secrets, and a Copier template (`dotfiles-starter`) released with the talk.
+> The talk is based on a public dotfiles repository maintained since 2019. CI runs linting, shell-startup tests, and a
+> bootstrap test that deploys the dotfiles as a non-root user in fresh Debian, Alpine, Fedora, and Chainguard
+> containers and on macOS, then repeats the bootstrap to check idempotency. The live demo runs the same steps, and a
+> saved run of that workflow is the fallback if the network fails. Standard HDMI projection is sufficient. Tools
+> covered in the talk body include Git submodules, mise (packages without sudo), pre-commit hooks, CI linting, a
+> password-manager-based secrets workflow, and a Copier template (`dotfiles-starter`) released with the talk.
+> No product pitch.
+
+Present tense is valid only after the P0 green-CI item is checked; otherwise revert to the future-tense draft.
 
 ### Speaker bio
 
-TODO: ≤ 1000 characters, third person, focused on experience relevant to the talk.
+Source: `~/git/tmp/CFP-pinned-but-mutable/presentation/scale-24x-speaker-bios.md`
+(Variant 1 + formal dotfiles hook, with "profiled" replaced by "reproducible").
+Plain text for the CFP form; 760 characters.
+
+> Carlos Meza is a Senior Software Engineer at UnitedHealthcare, where he works on CI/CD, platform automation, and
+> developer experience on AWS. He found his way into tech through Linux user groups, local meetups, and SCaLE. His
+> ten-plus years include engineering roles at Verizon, Everbridge, and The Walt Disney Studios. At Disney, he designed
+> and built a Policy-as-Code service that enforced cloud compliance automatically. He chaired DevOpsDays LA, served on
+> the Interop NOC team, and now leads a team on the SCaLE A/V crew. He has spoken at SCaLE five times since SCaLE 14x.
+> He has kept his dotfiles in a public Git repository since 2019 and treats $HOME like a small production system:
+> versioned, tested, and reproducible. GitHub: drts01 · LinkedIn: cmeza99
 
 ## Premise
 
@@ -103,15 +147,6 @@ Most dotfiles guides stop at "check them into Git."
 This talk starts there and asks what it takes to make that environment portable, reproducible, maintainable, and safe.
 
 The talk should be light-hearted, practical, and honest about what remains unsolved.
-
-## Abstract draft
-
-> I want the same environment wherever I sit: at home, at work, or on a machine I will use for one afternoon. Most dotfiles guides end at "put them in Git." This talk starts there. We will build a portable home-directory setup without superuser access, symlink farms, or runtime templates; then add dependency management, testing, profiling, documentation, and a plan for secrets. Along the way, I will show what a bare Git repository does well, where it gets awkward, and how AI changed the speed at which I discover and iterate on tools. We will go from a fresh container to a configured environment live—and examine the failures that made the process worth testing.
-
-**Abstract policy:** Git is the only named tool.
-Name mise, submodules, hooks, CI tools, Bitwarden, age, fnox, and Copier in the detailed session description, slides,
-or talk—not in the abstract.
-"No third-party requirement" describes the *minimum bootstrap path*, not the fully provisioned environment.
 
 ## Audience takeaway
 
@@ -134,6 +169,7 @@ the resulting dotfiles do not require runtime templating or Copier to deploy.
 **Then:** I could spend months tuning a `vimrc`.
 
 **Now:** AI makes discovering, exploring, and iterating on tools much faster.
+AI is the motivation for the talk, not its subject; do not spend more than the opening on it.
 I can produce a useful Helix configuration in minutes—and still need to verify the keybindings.
 The repository had 5 commits in 2025 and 223 in 2026 at the time these notes were drafted.
 Do not equate commit count with quality; use it to illustrate a changed iteration speed.
@@ -162,6 +198,13 @@ Re-verify before the talk; numbers were taken on 2026-10-26.
 - `.typos.toml` exists, yet the README says "Borne Shell" and commit messages contain "grammer" and "managment". <!-- # typos: ignore -->
 - Submodule commits: 15 across `fix(submodules)`, `fix(submodule)`, and `feat(submodules)`.
 - Cold open: the bootstrap script downloads and executes itself (`curl | sh | curl | sh …`).
+- Writing the bootstrap test exposed more bugs than the recursion: an inverted `SKIP_MISE_INSTALL`,
+  a conflict-backup parser that never matched
+  (`read` strips the leading tab git uses to mark paths),
+  a missing fetch refspec, a detached HEAD aborting under `set -e`, and `git submodule` run outside the work tree.
+  Use as evidence for "test deployment, not syntax."
+- A corporate network blocked or intercepted three of four test images' sources
+  (Alpine CDN, `deb.debian.org`, `cgr.dev` blob storage); the test runner gained mirror overrides.
 - Audience participation: "Raise your hand if your dotfiles have a commit message that just says 'update'."
   (This repository has `Update config` twice on 2021-10-01.)
 
@@ -200,11 +243,15 @@ Bare-repository gotchas worth a slide:
 
 - Set `status.showUntrackedFiles no`.
 - A bare clone has no `remote.origin.fetch` refspec; set it or tracking branches behave unexpectedly.
+- A bare repository has no index until the first checkout; key "already installed" on the index, not the directory.
+- `git submodule` requires the current directory to be inside the work tree, even with `--work-tree`.
 - Never export `GIT_DIR` globally.
 
-**Bootstrap idea:** Git can be the installer, with no curl or wget required:
-`git clone --bare <url> ~/.local/share/dotfiles`,
-then `git --git-dir="$HOME/.local/share/dotfiles" show HEAD:.config/dotfiles/bootstrap.sh | sh`.
+**Bootstrap idea:** Git can be the installer, with no curl or wget required
+(documented in the README):
+`git clone --bare --single-branch --depth=1 <url> ~/.local/share/dotfiles`,
+then `sh -c "$(git --git-dir="$HOME/.local/share/dotfiles" show HEAD:.config/dotfiles/mise-tasks/bootstrap.sh)"`.
+The bootstrap test covers this path.
 
 ### Work overlay
 
@@ -220,7 +267,8 @@ No file may be tracked by both repositories.
 
 ### Dependencies
 
-- Submodules are pinned to commits, which is stronger supply-chain hygiene than plugin managers that pull latest.
+- Submodules keep as much as possible managed through Git alone: one tool to clone, pin, review, and update.
+  Pinning to a commit is a side benefit; do not claim it beats plugin managers, several of which support lockfiles.
   Explain initialization, detached HEADs, and updates.
 - mise installs packages into the user's home without sudo; discuss lockfiles where they apply.
 - Verify which dependency types Renovate actually updates before claiming it on a slide.
@@ -234,18 +282,17 @@ Fit to a 45-minute slot; times are targets.
 1. **The problem and the vimrc gag (0–4):** Same environment everywhere; AI changed how quickly I can experiment.
 2. **Git is the beginning, not the end (4–9):** Bare repository, checkout, portability,
    and the symlink/template tradeoff.
-3. **Dependencies (9–13):** Submodules for third-party source; mise for packages without sudo.
-4. **Guardrails (13–19):** Pre-commit checks, CI linting, shell tests, bootstrap tests, and documentation.
-5. **Performance (19–24):** Startup used to take seconds; the goal is under one second.
-   Show measurements, methodology, and profiling—not an invented before/after number.
-6. **Secrets (24–30):** Bitwarden as the source of truth; evaluate the Rust CLI client, age,
+3. **Dependencies (9–13):** Submodules keep third-party source in Git; mise for packages without sudo.
+4. **Guardrails (13–21):** Pre-commit checks, CI linting, shell tests, bootstrap tests, and documentation.
+   One slide on startup time: a single measured before/after and the tool used—no profiling deep dive.
+5. **Secrets (21–27):** Bitwarden as the source of truth; evaluate the Rust CLI client, age,
    and fnox for retrieval or injection.
    Explain what remains on disk and in the process environment.
-7. **Work and home (30–33):** Portable base plus private work overlay.
-8. **Fresh-container demo (33–38):** Minimal machine to configured environment;
-   run the same steps in CI and keep a recording as backup.
-9. **Limitations (38–40):** What the approach cannot cleanly solve.
-10. **Takeaway (40–45):** `dotfiles-starter`, a checklist, a link the audience can use, and questions.
+6. **Work and home (27–30):** Portable base plus private work overlay.
+7. **Fresh-container demo (30–37):** Minimal machine to configured environment;
+   the GitHub Actions workflow runs the same steps, and a saved run is the offline fallback.
+8. **Limitations (37–40):** What the approach cannot cleanly solve.
+9. **Takeaway (40–45):** `dotfiles-starter`, a checklist, a link the audience can use, and questions.
 
 Cut candidates if over time: merge the work overlay into limitations; shorten documentation to one slide.
 
@@ -256,10 +303,14 @@ Testing layers:
 1. Pre-commit checks catch problems before a commit.
 2. CI repeats checks without relying on local hooks.
 3. Shell tests (`tests/shell.sh`, `tests/source-cache.sh`) cover startup under supported shells.
-4. Integration tests bootstrap in clean, non-root containers (Debian, Alpine/BusyBox, Fedora, macOS runner).
-5. Idempotency: run bootstrap twice; `dotfiles status --porcelain` stays empty.
+4. Integration tests (`tests/bootstrap.sh`) bootstrap without mise in clean, non-root containers: Debian (dash), Alpine
+   (BusyBox `sh`), Fedora (bash), Chainguard/Wolfi (dash, wget-only), plus a macOS runner.
+   Each image is a parallel CI job; `tests/bootstrap-container.sh` runs the same matrix locally with podman or docker.
+5. Idempotency: run bootstrap twice; the `$HOME` file list and `HEAD` are unchanged
+   and `dotfiles status --porcelain` stays empty.
+   Upstream commits fast-forward.
 6. The doctor task reports missing or inconsistent setup.
-7. Profiling checks whether a correct setup is also pleasant to use.
+7. Profiling checks whether a correct setup is also pleasant to use (supporting point; one slide).
 
 **Slide idea:** "The demo is a CI job."
 
@@ -282,9 +333,11 @@ the script derives its root from its own location.
 - Run the bootstrap twice and check that the second run is safe.
 - Run shell tests and the repository's doctor task.
 - Profile shell startup with the existing `bench/shell-startup.sh`.
-- Test the demo procedure in CI; prepare a recording for unreliable conference networking.
+- Run the demo procedure in the GitHub Actions container workflow; save a passing run offline
+  (screenshots or downloaded logs) as the fallback for unreliable conference networking.
 - Never demonstrate with real secrets or work-specific configuration.
-- Fix and test the currently recursive bootstrap script before using it on stage.
+- Rehearse the demo against the pushed `trunk` entrypoint, not a working-tree copy;
+  the test uses `RAW_URL=file://…`, the audience uses `raw.githubusercontent.com`.
 
 ## Secrets questions to resolve
 
@@ -309,6 +362,7 @@ the script derives its root from its own location.
 - Submodules and optional tools add update and network costs.
 - Bootstrap cannot make credentials appear on an untrusted machine.
 - Linux and macOS differ; portability must be tested rather than assumed.
+- Restricted networks (TLS interception, blocked mirrors or registries) can break a bootstrap that passes in CI.
 - No sudo has a boundary: system packages and `/etc` are out of scope, and `chsh` to a user-installed shell
   fails because it is not listed in `/etc/shells`.
 
@@ -330,7 +384,8 @@ Notes:
 ## Evidence to collect before writing slides
 
 - A reproducible old and current shell-startup measurement, including machine and measurement method.
-- The actual bootstrap procedure and its idempotency test.
-- The current CI checks and what they do *not* cover.
+- A passing `Bootstrap` CI run (all matrix jobs) saved offline; the procedure and idempotency test exist.
+- The current CI checks and what they do *not* cover
+  (e.g. the bootstrap test runs without mise, so `update` and `mise bootstrap` are untested in CI).
 - A scrubbed history excerpt illustrating the vim → Helix iteration.
 - Confirmation of the Bitwarden client and work-overlay mechanics.
