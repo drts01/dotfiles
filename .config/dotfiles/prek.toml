@@ -44,7 +44,7 @@ hooks = [
 
 [[repos]]
 repo  = "https://github.com/crate-ci/typos"
-rev   = "d43b6c087ac471e2ea7b8af622ff15f05c0c365b"                            # frozen: v1.50.1
+rev   = "7f9d0819ca1c008ade73f4b41fa9d258d48f605b"                            # frozen: v1.51.1
 hooks = [
   {
     id     = "typos",
@@ -55,7 +55,7 @@ hooks = [
 
 [[repos]]
 repo  = "https://github.com/scop/pre-commit-shfmt"
-rev   = "05c1426671b9237fb5e1444dd63aa5731bec0dfb"                                                              # frozen: v3.13.1-1
+rev   = "479be5958357ba5ab65ce47172117348516860e9"                                                              # frozen: v3.14.1-1
 hooks = [
   { id = "shfmt", args = [ "-w", "-s", "-i", "2", "-sr" ], exclude = ".config/sh/profile.d/10_functions.sh" },
 ]
@@ -73,17 +73,17 @@ hooks = [
 
 [[repos]]
 repo  = "https://github.com/tombi-toml/tombi-pre-commit"
-rev   = "84223797550a899b3a0d89179934e5f91b8ee4d1"        # frozen: v1.5.1
+rev   = "b3f6e09de51290a21d6c7b05b4f5cbe6cfe65b4f"        # frozen: v1.9.6
 hooks = [
   { id = "tombi-format" },                                # Tombi does not have a way to pass a custom path for the configuration
 ]
 
 [[repos]]
 repo = "https://github.com/owenlamont/ryl-pre-commit"
-rev  = "052aa238c11fa01a9324706955746b77761e89a3"      # frozen: v0.21.0
+rev  = "ebab13c478952f480f31b75f3fd7649993a4ce5e"      # frozen: v0.26.1
 
 [[repos.hooks]]
-id       = "ryl-markdown"
+id       = "ryl-check-markdown"
 name     = "ryl"
 alias    = "ryl"
 args     = [ "--config-file", ".config/ryl/ryl.toml", "--fix" ]
@@ -93,7 +93,7 @@ exclude  = '\.config/zed/AGENTS\.md$'
 stages   = [ "pre-commit" ]
 
 [[repos.hooks]]
-id       = "ryl-markdown"
+id       = "ryl-check-markdown"
 name     = "ryl github"
 alias    = "ryl-github"
 args     = [ "--config-file", ".config/ryl/ryl.toml", "--format=github" ]
