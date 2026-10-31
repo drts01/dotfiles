@@ -5,10 +5,10 @@ Manage system environment configurations via a Git bare repository.
 ## Features
 
 - Manage local environment without root access
-- No dependencies other than Git and Borne Shell.
-- Support shells: Borne, BASH, Zsh
+- No dependencies other than Git, a POSIX shell, and curl or wget for the one-line install
+- Support shells: Bourne, Bash, Zsh
 
-mise is not required to use dot files. mise is used to manage CLI tools.
+mise is not required to deploy the dotfiles. mise only manages CLI tools and git hooks after deployment.
 
 ## Installation
 
@@ -18,10 +18,12 @@ Run the bootstrap script to deploy configuration files onto a fresh machine:
 curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | sh
 ```
 
-This installs [mise](https://mise.jdx.dev), clones the bare repo to `~/.local/share/dotfiles`,
-checks out the tracked files into `$HOME`
+This installs [mise](https://mise.jdx.dev)
+(a failed install only warns),
+clones the bare repo to `~/.local/share/dotfiles`, checks out the tracked files into `$HOME`
 (backing up any conflicting pre-existing files to `~/.df-bak`),
-and runs the post-clone bootstrap tasks (mise-managed CLI tools, `prek` git hooks) when mise is available.
+syncs submodules, and installs `prek` git hooks when available.
+Re-running the command is safe: it fast-forwards the existing checkout instead of re-cloning.
 
 Skip mise and deploy with git only:
 
@@ -55,19 +57,47 @@ dotfiles push
 
 ### Updating
 
-Pull the latest dotfiles, sync submodules, and re-run bootstrap:
+Pull the latest dotfiles, sync submodules, then install CLI tools with `mise bootstrap` from `~/.config/mise`:
 
 ```bash
 mise run --cd ~/.config/dotfiles update
 ```
 
+Without mise, re-run the deploy script to pull and sync:
+
+```bash
+sh ~/.config/dotfiles/mise-tasks/bootstrap.sh
+```
+
 ### Available mise tasks
 
-| Task        | Description                                                                             |
-| ----------- | --------------------------------------------------------------------------------------- |
-| `bootstrap` | Install mise-managed CLI tools and `prek` git hooks (runs automatically during install) |
-| `update`    | Pull latest changes, sync submodules, and re-run `bootstrap`                            |
-| `doctor`    | Verify required tools, the bare repo, and git hooks are correctly installed             |
+| Task                       | Description                                                                              |
+| -------------------------- | ---------------------------------------------------------------------------------------- |
+| `bootstrap`                | Check out or fast-forward dotfiles, sync submodules, and install `prek` git hooks        |
+| `update`                   | Run `bootstrap`, then `mise bootstrap` from the global config (`~/.config/mise`)         |
+| `doctor`                   | Verify required tools, the bare repo, and git hooks are correctly installed              |
+| `bootstrap:test`           | Test bootstrap in throwaway home directories without mise, including a repeat run        |
+| `bootstrap:test:container` | Run `bootstrap:test` as non-root in containers (podman or docker); pass images to select |
+
+## Testing
+
+Test the bootstrap on the host:
+
+```bash
+mise run --cd ~/.config/dotfiles bootstrap:test
+```
+
+Test it as a non-root user in clean containers.
+Omit images to run all defaults:
+
+```bash
+mise run --cd ~/.config/dotfiles bootstrap:test:container
+mise run --cd ~/.config/dotfiles bootstrap:test:container -- cgr.dev/chainguard/git:latest-dev
+```
+
+Default images: `buildpack-deps:stable-scm`, `alpine:latest`, `fedora:latest`, `cgr.dev/chainguard/git:latest-dev`.
+CI runs one parallel job per image plus a macOS host job.
+See the [bootstrap docs](docs/content/docs/bootstrap.md#testing) for engine selection and mirror overrides.
 
 ## Documentation
 
