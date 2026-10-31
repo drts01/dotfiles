@@ -21,6 +21,12 @@ if [ ! -d "$DEST_DIR" ]; then
   git clone --bare --single-branch --depth=1 "$REPO_URL" "$DEST_DIR"
 fi
 
+# Remove the legacy setting before reading the bare repo through the df wrapper.
+# --file avoids Git's core.bare/core.worktree warning during migration.
+if git config --file "$DEST_DIR/config" --get core.worktree > /dev/null; then
+  git config --file "$DEST_DIR/config" --unset-all core.worktree
+fi
+
 df config --local status.showUntrackedFiles no
 
 # `|| true`: under set -e a detached HEAD would otherwise abort the script here.
@@ -62,7 +68,6 @@ else
 fi
 
 echo "Syncing submodules..."
-df config core.worktree "$HOME"
 # git-submodule requires the cwd to be inside the work tree.
 (cd "$HOME" && df submodule update --init)
 

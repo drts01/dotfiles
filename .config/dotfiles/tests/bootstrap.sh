@@ -63,6 +63,11 @@ snapshot() {
 assert_deployed() {
   _home=$1
   [ -f "$_home/.config/dotfiles/mise-tasks/bootstrap.sh" ] || fail "$_home: dotfiles not checked out"
+  [ "$(git config --file "$_home/.local/share/dotfiles/config" --get core.bare)" = true ] ||
+    fail "$_home: repo is not bare"
+  if git config --file "$_home/.local/share/dotfiles/config" --get core.worktree > /dev/null; then
+    fail "$_home: legacy core.worktree was not removed"
+  fi
   [ "$(dfg "$_home" config status.showUntrackedFiles)" = no ] ||
     fail "$_home: status.showUntrackedFiles is not 'no'"
   [ "$(dfg "$_home" config remote.origin.fetch)" = "+refs/heads/trunk:refs/remotes/origin/trunk" ] ||
@@ -114,9 +119,13 @@ run "$HOME_A" SKIP_MISE_INSTALL=1 RAW_URL="file://$ROOT" sh "$ENTRYPOINT"
 assert_deployed "$HOME_A"
 [ "$(cat "$HOME_A/.df-bak/.bashrc")" = pre-existing ] || fail "conflicting .bashrc not backed up"
 
-step "Entrypoint: repeat run is idempotent"
+step "Entrypoint: repeat run removes legacy core.worktree and is idempotent"
 BEFORE=$(snapshot "$HOME_A")
-run "$HOME_A" SKIP_MISE_INSTALL=1 RAW_URL="file://$ROOT" sh "$ENTRYPOINT"
+git config --file "$HOME_A/.local/share/dotfiles/config" core.worktree "$HOME_A"
+run "$HOME_A" SKIP_MISE_INSTALL=1 RAW_URL="file://$ROOT" sh "$ENTRYPOINT" 2> "$TMP/repeat-stderr"
+if grep -q 'core.bare and core.worktree' "$TMP/repeat-stderr"; then
+  fail "repeat run emitted the bare repo worktree warning"
+fi
 assert_deployed "$HOME_A"
 [ "$(snapshot "$HOME_A")" = "$BEFORE" ] || fail "repeat run changed $HOME_A"
 
@@ -130,6 +139,24 @@ git -C "$TMP/upstream" push -q --no-verify origin HEAD:trunk
 run "$HOME_A" sh "$DEPLOY"
 assert_deployed "$HOME_A"
 [ "$(cat "$HOME_A/.bootstrap-test")" = upstream ] || fail "upstream change not pulled"
+
+step "Upgrade: fetch current deploy script before running the installed copy"
+cp "$DEPLOY" "$TMP/upstream/.config/dotfiles/mise-tasks/bootstrap.sh"
+git -C "$TMP/upstream" add .config/dotfiles/mise-tasks/bootstrap.sh
+# A future checkout may already contain this version; still exercise the upgrade path.
+git -C "$TMP/upstream" -c user.name=test -c user.email=test@example.invalid \
+  commit -q --allow-empty --no-verify -m "test: publish current deploy script"
+git -C "$TMP/upstream" push -q --no-verify origin HEAD:trunk
+git config --file "$HOME_A/.local/share/dotfiles/config" core.worktree "$HOME_A"
+run "$HOME_A" SKIP_MISE_INSTALL=1 RAW_URL="file://$ROOT" sh "$ENTRYPOINT" 2> "$TMP/upgrade-stderr"
+if grep -q 'core.bare and core.worktree' "$TMP/upgrade-stderr"; then
+  fail "upgrade emitted the bare repo worktree warning"
+fi
+assert_deployed "$HOME_A"
+cmp -s "$DEPLOY" "$HOME_A/.config/dotfiles/mise-tasks/bootstrap.sh" ||
+  fail "upgrade did not replace the installed deploy script"
+run "$HOME_A" sh "$HOME_A/.config/dotfiles/mise-tasks/bootstrap.sh"
+assert_deployed "$HOME_A"
 
 step "Deploy: git-only install into a pre-cloned bare repo"
 HOME_B="$TMP/home-b"
