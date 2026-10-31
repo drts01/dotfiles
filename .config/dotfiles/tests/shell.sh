@@ -57,6 +57,6 @@ COMPDEF_CHECK='(( ${+functions[compdef]} ))'
 env -i HOME="$HOME_DIR" PATH=/usr/bin:/bin TERM=xterm TERM_PROGRAM=zellij \
   HOMEBREW_PREFIX=/nonexistent "$ZSH" -d -lic "$COMPDEF_CHECK"
 env -i HOME="$HOME_DIR" PATH=/usr/bin:/bin TERM=xterm TERM_PROGRAM=zellij \
-  HOMEBREW_PREFIX=/nonexistent "$ZSH" -d -lic 'zsh -d -ic exit'
+  HOMEBREW_PREFIX=/nonexistent "$ZSH" -d -lic 'zsh -d -ic "(( \${+functions[compdef]} && \${+functions[_zsh_autosuggest_accept]} && \${+functions[_zsh_highlight]} ))"'
 
 printf 'shell tests: ok\n'
