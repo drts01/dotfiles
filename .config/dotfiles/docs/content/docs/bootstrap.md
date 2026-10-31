@@ -1,6 +1,6 @@
 +++
 title = "Bootstrap"
-updated = 2026-10-30
+updated = 2026-10-31
 weight = 1
 +++
 
@@ -76,6 +76,8 @@ hasmise -->|no| direct
 - **Idempotent:** Rerun safely; later runs only pull and sync submodules.
 - **First checkout:** Keyed on `~/.local/share/dotfiles/index`, not the repo directory.
   Resumes interrupted installs and supports a manually cloned bare repo.
+- **Bare repo config:** Keep `core.bare=true`; remove the legacy `core.worktree` setting on reruns.
+  Work-tree commands pass `--work-tree="$HOME"` explicitly, and submodules run from `$HOME`.
 - **Backups:** Tracked paths already in `$HOME` move to `~/.df-bak`.
   A later backup of the same path overwrites the earlier one.
 - **Pulls:** Fast-forward only; never creates merge commits in `$HOME`.
@@ -83,6 +85,22 @@ hasmise -->|no| direct
 - **Downloads:** Saved to temp files before running; a failed fetch aborts instead of piping nothing into `sh`.
 - **mise:** Optional.
   Install failures warn and continue.
+
+### Upgrade an installation with the legacy deploy script
+
+After this fix is published, run the remote entrypoint for the first upgrade instead of `mise run bootstrap`
+or `mise run update`.
+The old installed deploy script writes `core.worktree` again after it pulls;
+the entrypoint fetches and runs the new script, which clears that setting and replaces the installed script:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | SKIP_MISE_INSTALL=1 sh
+```
+
+Subsequent local updates use the new installed script.
+To silence the warning before the fix is published,
+run `git config --file "$HOME/.local/share/dotfiles/config" --unset-all core.worktree`.
+The old installed script will restore it if run again.
 
 ### Environment variables
 
@@ -105,8 +123,9 @@ mise run --cd ~/.config/dotfiles bootstrap:test
 The test deploys into throwaway home directories with mise off `PATH` and checks:
 
 - Fresh install through the entrypoint (curl, or wget when curl is absent), including backup of a conflicting `.bashrc`.
-- Repeat run leaves `$HOME` unchanged and `dotfiles status --porcelain` empty.
+- Repeat run removes a legacy `core.worktree`, leaves `$HOME` unchanged, and keeps `dotfiles status --porcelain` empty.
 - Upstream commits fast-forward.
+- Upgrade via the remote entrypoint replaces the old installed script; later local runs do not restore `core.worktree`.
 - Git-only install into a pre-cloned bare repo.
 
 Run the same test as a non-root user in clean containers (podman, else docker; override with `CONTAINER_ENGINE`).
@@ -150,11 +169,14 @@ so they're re-runnable independently of the curl install:
 | `bootstrap:test`           | Test bootstrap in throwaway home directories without mise, including a repeat run    |
 | `bootstrap:test:container` | Run `bootstrap:test` as non-root in containers; pass images to select                |
 
-Run any task with:
+Run any task from an installed dotfiles home with:
 
 ```bash
 mise run --cd ~/.config/dotfiles <task>
 ```
+
+To run tasks from a clone of this repository,
+see [CONTRIBUTING.md](https://github.com/drts01/dotfiles/blob/trunk/.github/CONTRIBUTING.md#run-tasks).
 
 ### `prek`
 

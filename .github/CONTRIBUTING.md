@@ -92,8 +92,10 @@ Every tracked file is checked out into `$HOME`.
 
 - Place repository-only files under `.config/dotfiles/` or `.github/`.
 - Avoid new top-level files; they land directly in `$HOME`.
-- Keep tool configs that search parent directories (`.editorconfig`, `tombi.toml`, `.taplo.toml`) out of the root;
+- Keep tool configs that search parent directories (`.taplo.toml`, `tombi.toml`) out of the root;
   in `$HOME` they apply to every project below it.
+- Start every `.editorconfig` section glob with `/` (for example `[/.config/sh/**]`).
+  Anchored globs match only files tracked here; `[*.sh]` would match scripts in every project under `$HOME`.
 - Add plugins and themes as shallow submodules in `.gitmodules`.
 - Keep `bootstrap.sh` dependent only on Git, a POSIX shell, and curl or wget.
 
