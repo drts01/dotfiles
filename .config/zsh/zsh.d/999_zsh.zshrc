@@ -13,7 +13,7 @@ source_cache "$XDG_CACHE_HOME/shell/atuin.zsh" atuin init zsh --disable-up-arrow
 
 # shellcheck disable=SC2034
 {
-    ZSH_AUTOSUGGEST_STRATEGY=(atuin history)
-    ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#555555"
-    (( ${+autosuggest-accept} )) && bindkey -M viins '^[[C' autosuggest-accept  # Allow the Right Arrow key to accept suggestions in Vi Insert mode
+  ZSH_AUTOSUGGEST_STRATEGY=(atuin history)
+  ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#555555"
+  zle -l autosuggest-accept > /dev/null 2>&1 && bindkey -M viins '^[[C' autosuggest-accept # Allow the Right Arrow key to accept suggestions in Vi Insert mode
 }
