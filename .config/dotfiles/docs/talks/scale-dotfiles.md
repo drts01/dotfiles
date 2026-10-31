@@ -44,6 +44,9 @@ Alternatives: Systems & Infrastructure (configuration management) or the co-loca
 - [ ] Finalize the message to reviewers (draft below).
 - [ ] Push the bootstrap fixes and confirm a green `Bootstrap` CI run for every matrix job;
       the reviewer message claims the workflow exists.
+- [ ] Fix the red `Lint` and `Shell` CI jobs, or remove them from the reviewer message.
+      Run `41174536580`: `Lint` fails at `Install mise`;
+      `Shell` fails because `999_zsh.zshrc` sources submodule files unguarded and the job does not check out submodules.
 - [ ] Submit.
 
 ### P1 — before submitting if the repository is linked in the proposal; otherwise before acceptance
@@ -72,12 +75,19 @@ Alternatives: Systems & Infrastructure (configuration management) or the co-loca
 - [ ] Decide the secrets workflow: Bitwarden Rust client (`rbw` or `bws`), age, fnox.
 - [ ] Document the work-overlay mechanics without employer-sensitive details.
 - [ ] Build and test the `dotfiles-starter` Copier template.
+- [ ] Build the [maturity model](#dotfiles-maturity-model) slide and the audience checklist.
+- [ ] Add an absence test: start every supported shell with submodules uninitialized and mise absent;
+      startup must be silent and exit 0.
 - [ ] Script the fresh-container demo from the same steps as the GitHub Actions workflow.
       `tests/bootstrap-container.sh` already runs locally and in CI;
       the stage demo still needs a visible user-facing install, not only the test output.
 - [ ] Save the latest passing workflow run offline (screenshots or downloaded logs);
       the fallback must work without conference Wi-Fi.
 - [ ] Decide whether the Zed limitation stays unresolved or receives a tested mitigation.
+- [ ] Test home-manager under `nix-portable` in a non-root Debian container and an Ubuntu 24.04 container:
+      activate a minimal config, then open a fresh login shell outside `nix-portable`;
+      record whether `~/.zshrc` resolves and how long the first activation takes.
+      Replace the "verify" caveats in [Rootless Nix and home-manager](#rootless-nix-and-home-manager) with the result.
 - [ ] Write slides in an open format; fit them to 45 minutes.
 - [ ] Rehearse with a timer; dry run at a local meetup or user group if possible.
 - [ ] Re-verify all repository statistics shortly before the talk.
@@ -92,21 +102,24 @@ Alternatives: Systems & Infrastructure (configuration management) or the co-loca
 
 ### Long abstract (online)
 
-> AI made configuration cheap to write. It did not make it trustworthy. Most dotfiles guides end at "put them in
-> Git"; this talk starts there and treats the home directory like a small production system.
+> AI made trying a new tool an afternoon's work. In six months my dotfiles gained configurations for more tools than
+> in the previous five years—and each one had to install cleanly, start fast, and come out cleanly on machines I don't
+> control. Most dotfiles guides end at "put them in Git"; this talk starts there and treats the home directory like a
+> small production system.
 >
 > Attendees will learn how to:
 >
-> - Bootstrap a portable environment with only Git and a shell, without superuser access, symlink farms, or runtime
->   templates.
-> - Manage dependencies through Git wherever possible.
+> - Bootstrap a portable environment with only Git and a shell, without superuser access, symlink farms, runtime
+>   templates, or a new configuration language to learn.
+> - Manage dependencies through Git wherever possible, and let other tools plug in without a manager in the middle.
 > - Handle host and work differences with the include and override mechanisms formats already support.
 > - Test deployment, not just syntax: clean containers, repeated runs, and CI.
 > - Keep secrets out of a public repository, including the "secret zero" problem on a new machine.
-> - Recognize when a bare-repository approach is the wrong fit.
+> - Recognize when a bare-repository approach is the wrong fit, and when a declarative system serves better.
 >
-> The session includes a live bootstrap from a fresh container, an honest list of unsolved problems, and a starter
-> template attendees can use the same day. Assumes comfort with Git and a Unix shell.
+> The session includes a live bootstrap from a fresh container, the bugs that only deployment tests found, an honest
+> list of unsolved problems, a maturity model to rate your own setup, and a starter template attendees can use the
+> same day. Assumes comfort with Git and a Unix shell.
 
 **Abstract policy:** Git is the only named tool.
 Name mise, submodules, hooks, CI tools, Bitwarden, age, fnox, and Copier in the detailed session description, slides,
@@ -119,7 +132,9 @@ AI is the motivation, not the subject; keep it to one sentence.
 > The talk is based on a public dotfiles repository maintained since 2019. CI runs linting, shell-startup tests, and a
 > bootstrap test that deploys the dotfiles as a non-root user in fresh Debian, Alpine, Fedora, and Chainguard
 > containers and on macOS, then repeats the bootstrap to check idempotency. The live demo runs the same steps, and a
-> saved run of that workflow is the fallback if the network fails. Standard HDMI projection is sufficient. Tools
+> saved run of that workflow is the fallback if the network fails. The talk positions the approach against the
+> Atlassian bare-repository tutorial, GNU Stow, chezmoi, yadm, vcsh, and Nix home-manager, including where each is the
+> better choice. Standard HDMI projection is sufficient. Tools
 > covered in the talk body include Git submodules, mise (packages without sudo), pre-commit hooks, CI linting, a
 > password-manager-based secrets workflow, and a Copier template (`dotfiles-starter`) released with the talk.
 > No product pitch.
@@ -154,9 +169,12 @@ A decision framework and a working starting point for managing `$HOME`:
 
 1. Start with Git and a shell, without sudo.
 2. Make optional tooling additive rather than a prerequisite for using the dotfiles.
-3. Test deployment, not just configuration syntax.
-4. Keep secrets out of the public repository.
-5. Know when a bare-repo approach is the wrong fit.
+3. Make removal as safe as installation: a missing tool must not break startup.
+4. Test deployment, not just configuration syntax.
+5. Keep secrets out of the public repository.
+6. Know when a bare-repo approach is the wrong fit.
+
+Close with the [maturity model](#dotfiles-maturity-model) so attendees can rate their own setup and pick one next step.
 
 Publish a **`dotfiles-starter` Copier template**.
 Copier generates a starter repository once;
@@ -164,17 +182,26 @@ the resulting dotfiles do not require runtime templating or Copier to deploy.
 
 ## Narrative
 
+**Cold open (audience poll):** Ask in sequence and let the hands drop:
+"Who keeps dotfiles in Git?" → "Who has bootstrapped them on a new machine this year?" → "Who has ever *tested*
+that bootstrap?" → "On a machine without sudo?"
+The drop-off states the talk's premise in 30 seconds.
+
 **Opening problem:** "I want to sit down anywhere and feel at home."
 
 **Then:** I could spend months tuning a `vimrc`.
 
-**Now:** AI makes discovering, exploring, and iterating on tools much faster.
+**Now:** AI is the catalyst: it makes discovering, evaluating, and iterating on new tools much faster.
 AI is the motivation for the talk, not its subject; do not spend more than the opening on it.
+Faster evaluation means tools arrive *and leave* faster; the dotfiles must survive both.
+First-add dates under `.config/`: 7 tool directories in 2021–2025; 19 from April to October 2026
+(editors: vim, Helix, Zed; terminals: Alacritty, Rio).
+Re-verify with a scripted count; directory moves and top-level files skew it.
 I can produce a useful Helix configuration in minutes—and still need to verify the keybindings.
 The repository had 5 commits in 2025 and 223 in 2026 at the time these notes were drafted.
 Do not equate commit count with quality; use it to illustrate a changed iteration speed.
 
-**Central tension:** When configuration becomes cheap to produce, how do I trust it on every machine?
+**Central tension:** When trying a new tool becomes cheap, how do I keep `$HOME` trustworthy on every machine?
 
 **Answer:** Treat `$HOME` like a small production system: provision it, pin dependencies, test it, profile it,
 document it, and protect its secrets.
@@ -182,8 +209,8 @@ document it, and protect its secrets.
 **Closing callback:** The bootstrap process should be demonstrably repeatable, not merely a command in a README.
 Resolve the bootstrap bug introduced in the opening before the live demonstration.
 
-**Closing line candidate:** "AI made configuration cheap.
-The guardrails are what make it portable."
+**Closing line candidate:** "AI made trying tools cheap.
+The guardrails make it safe to keep them—or drop them."
 
 ### Repository evidence for gags
 
@@ -202,7 +229,10 @@ Re-verify before the talk; numbers were taken on 2026-10-26.
   a conflict-backup parser that never matched
   (`read` strips the leading tab git uses to mark paths),
   a missing fetch refspec, a detached HEAD aborting under `set -e`, and `git submodule` run outside the work tree.
-  Use as evidence for "test deployment, not syntax."
+  Use as evidence for "test deployment, not syntax";
+  see [Bugs only deployment tests find](#bugs-only-deployment-tests-find).
+- The Atlassian tutorial's own conflict-backup one-liner parses `git checkout` output with `egrep`
+  —the same class of fragile parser that broke here.
 - A corporate network blocked or intercepted three of four test images' sources
   (Alpine CDN, `deb.debian.org`, `cgr.dev` blob storage); the test runner gained mirror overrides.
 - Audience participation: "Raise your hand if your dotfiles have a commit message that just says 'update'."
@@ -212,7 +242,11 @@ Re-verify before the talk; numbers were taken on 2026-10-26.
 
 - No sudo for the portable path.
 - Only Git and a shell required to get started.
+- No new tool-specific knowledge: no configuration language, DSL, or manager to learn;
+  leaving the approach means deleting one alias, and the files stay where they are.
 - No runtime templating.
+- Integrations compose through each tool's own config and shell hooks (mise activation, Bitwarden CLI),
+  not through a dotfiles manager's plugin layer.
 - Prefer real files in `$HOME` over symlink deployment.
 - Personal dotfiles are the portable base.
 - Work-specific files live in a separate, private repository.
@@ -230,11 +264,71 @@ The advantage is a small bootstrap surface; the cost is weaker support for host-
 especially formats without includes or overrides.
 Do not claim a bare repository is universally best.
 
-| Approach        | Strength                                                | Cost                                                         |
-| --------------- | ------------------------------------------------------- | ------------------------------------------------------------ |
-| Bare repository | Git and shell are enough; no relink or render step      | `$HOME` is a hazardous working tree; host differences harder |
-| Symlink manager | Repository and home directory are clearly separated     | Link creation and maintenance become deployment steps        |
-| Templating tool | Strong host-specific configuration                      | Another dependency; source and target can drift              |
+| Approach            | Examples         | New knowledge required       | Strength                                              | Cost                                                                      |
+| ------------------- | ---------------- | ---------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------- |
+| Bare repository     | This talk        | Git, POSIX shell             | Git and shell are enough; no relink or render step    | `$HOME` is a hazardous working tree; host differences harder              |
+| Multiple bare repos | vcsh + myrepos   | Git + vcsh                   | Prior art for the work overlay                        | Another tool for what two Git aliases do                                  |
+| Symlink manager     | GNU Stow         | Stow package layout          | Repository and home directory are clearly separated   | Link creation and maintenance become deployment steps                     |
+| Templating manager  | chezmoi, yadm    | Template syntax, manager CLI | Strong host-specific config; built-in secret managers | Another dependency; source and target can drift                           |
+| Declarative         | Nix home-manager | Nix language, store, flakes  | Packages and config together; atomic rollback         | Steep learning curve; installing Nix normally needs root to create `/nix` |
+
+The "new knowledge" column is the core argument: everything here is Git and shell, which the audience already knows.
+Be precise: the bare-repo gotchas below are still knowledge, but it is *Git* knowledge that transfers everywhere,
+not knowledge of a tool that may be abandoned.
+Do not claim integration with mise or Bitwarden is unique; chezmoi integrates with Bitwarden natively.
+Claim instead that integrations need no adapter: each tool is configured by its own files.
+
+### Prior art to credit
+
+- **Atlassian tutorial** (<https://www.atlassian.com/git/tutorials/dotfiles>),
+  from `StreakyCobra`'s Hacker News comment:
+  the canonical bare-repository setup and likely the audience's starting point.
+  Frame the talk as the manual it is missing:
+  - Installs with `curl -Lks … | /bin/bash`; `-k` disables TLS verification.
+  - Depends on a third-party URL shortener and a Bitbucket snippet; verify whether they still resolve.
+  - Backs up conflicts by parsing `git checkout` output with `egrep`.
+  - No fetch refspec, no idempotency, no tests ("tested on many freshly minted Alpine Linux containers" by hand).
+  - Unquoted `$@` in the `config` function.
+- **Nix home-manager:** the strongest answer to "treat `$HOME` like production."
+  Acknowledge it is better for atomic, declarative environments.
+  This approach targets a different constraint: a machine without root, used for an afternoon,
+  by someone who should not have to learn a new language first.
+  Rootless Nix exists but does not deliver a usable home-manager `$HOME`;
+  see [Rootless Nix and home-manager](#rootless-nix-and-home-manager).
+
+Expected question: "Why not Nix?"
+Answer: different constraints; if you control the machine and want rollback, use home-manager;
+if you need Git-and-shell-only on a box you don't own, use this.
+
+Follow-up question: "What about nix-portable?"
+Answer below.
+
+### Rootless Nix and home-manager
+
+Short answer: rootless Nix runs packages, but home-manager's output only resolves inside the Nix sandbox,
+so the login shell and GUI apps outside it see broken links.
+
+| Option                                  | Mechanism                                                                   | home-manager result                                                                                                                            |
+| --------------------------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `nix-portable`                          | bwrap, proot, or nix namespaces map `~/.nix-portable/store` to `/nix/store` | Not usable for `$HOME`: README states programs outside cannot call nix-portable programs; `nix-env` profiles unsupported; Linux only, no macOS |
+| `nix-user-chroot` / `nix --store ~/nix` | User namespace bind-mounts `/nix`                                           | Works only inside the namespace; the login shell must re-exec into it                                                                          |
+| Nix built with a custom store path      | Store at e.g. `~/nix/store`                                                 | Works natively, but cache.nixos.org binaries assume `/nix/store`; everything builds from source (hours)                                        |
+
+Why home-manager breaks outside the namespace (verify each in a container before stating on stage):
+
+- `home.file` entries are symlinks into `/nix/store`; outside the namespace, `~/.zshrc` dangles.
+- Standalone home-manager installs `home.packages` into a Nix profile; nix-portable does not support `nix-env` profiles.
+- The terminal emulator, `sshd`, and the display manager start outside the namespace.
+- Ubuntu 24.04 restricts unprivileged user namespaces via AppArmor;
+  nix-portable then falls back to proot, which its README warns can add significant overhead.
+- macOS has no rootless option; nix-portable is Linux-only.
+
+Slide wording: "Rootless Nix runs programs.
+It does not give you a home directory."
+Do not claim home-manager is impossible without root; claim it does not meet the constraint
+(Git and a shell, any login path, an afternoon).
+
+Source: <https://github.com/DavHau/nix-portable> (Drawbacks and Missing Features sections, retrieved 2026-10-31).
 
 Without templating, put host differences where formats already support them: git `includeIf`, ssh `Include` and `Match`,
 shell `.d/` directories and `uname` conditionals, Alacritty `import`, and untracked local override files.
@@ -274,16 +368,20 @@ No file may be tracked by both repositories.
 - Verify which dependency types Renovate actually updates before claiming it on a slide.
 - Modern tools (`bat`, `eza`, `atuin`) are examples, not the subject.
   Show graceful fallback on a minimal machine.
+- Every integration is guarded (`command -v`, file existence) so removing a tool
+  or skipping submodules never breaks startup.
+  The current `Shell` CI failure (unguarded `source` of submodule files) is the counterexample.
 
 ## Proposed full-session flow
 
 Fit to a 45-minute slot; times are targets.
 
 1. **The problem and the vimrc gag (0–4):** Same environment everywhere; AI changed how quickly I can experiment.
-2. **Git is the beginning, not the end (4–9):** Bare repository, checkout, portability,
-   and the symlink/template tradeoff.
+2. **Git is the beginning, not the end (4–9):** Start from the Atlassian tutorial and show what it leaves out;
+   comparison table including Stow, chezmoi/yadm, vcsh, and Nix home-manager; the "new knowledge required" argument.
 3. **Dependencies (9–13):** Submodules keep third-party source in Git; mise for packages without sudo.
-4. **Guardrails (13–21):** Pre-commit checks, CI linting, shell tests, bootstrap tests, and documentation.
+4. **Guardrails (13–21):** Pre-commit checks, CI linting, shell tests, bootstrap tests, absence tests.
+   Centerpiece: [Bugs only deployment tests find](#bugs-only-deployment-tests-find).
    One slide on startup time: a single measured before/after and the tool used—no profiling deep dive.
 5. **Secrets (21–27):** Bitwarden as the source of truth; evaluate the Rust CLI client, age,
    and fnox for retrieval or injection.
@@ -292,7 +390,7 @@ Fit to a 45-minute slot; times are targets.
 7. **Fresh-container demo (30–37):** Minimal machine to configured environment;
    the GitHub Actions workflow runs the same steps, and a saved run is the offline fallback.
 8. **Limitations (37–40):** What the approach cannot cleanly solve.
-9. **Takeaway (40–45):** `dotfiles-starter`, a checklist, a link the audience can use, and questions.
+9. **Takeaway (40–45):** Maturity model self-assessment, `dotfiles-starter`, a link the audience can use, and questions.
 
 Cut candidates if over time: merge the work overlay into limitations; shorten documentation to one slide.
 
@@ -310,7 +408,9 @@ Testing layers:
    and `dotfiles status --porcelain` stays empty.
    Upstream commits fast-forward.
 6. The doctor task reports missing or inconsistent setup.
-7. Profiling checks whether a correct setup is also pleasant to use (supporting point; one slide).
+7. Absence: start each supported shell with submodules uninitialized and mise missing; startup is silent and exits 0.
+   Proves removal is as safe as installation.
+8. Profiling checks whether a correct setup is also pleasant to use (supporting point; one slide).
 
 **Slide idea:** "The demo is a CI job."
 
@@ -324,6 +424,40 @@ Profiling tools:
 
 Baseline capture: create a worktree at an old commit, copy the current bench script into it, and run it there;
 the script derives its root from its own location.
+
+## Bugs only deployment tests find
+
+Centerpiece of the Guardrails segment: one slide per bug, each with the line that failed and the test that caught it.
+Every item passed linting.
+
+| Bug                                         | Symptom                                     | Caught by                     |
+| ------------------------------------------- | ------------------------------------------- | ----------------------------- |
+| Bootstrap downloads and runs itself         | `curl \| sh` recursion, never finishes      | Bootstrap test                |
+| Inverted `SKIP_MISE_INSTALL`                | Installs mise only when told to skip        | Bootstrap test without mise   |
+| `read` strips git's leading tab             | Conflict-backup parser never matches        | Bootstrap over existing files |
+| Bare clone lacks a fetch refspec            | Tracking branches misbehave on update       | Idempotency (second run)      |
+| Detached HEAD under `set -e`                | Bootstrap aborts mid-run                    | Bootstrap test                |
+| `git submodule` outside the work tree       | Fails despite `--work-tree`                 | Bootstrap test                |
+| Unguarded `source` of submodule files       | zsh startup errors without submodules       | `Shell` CI job                |
+| Corporate TLS interception, blocked mirrors | Three of four images fail on a work network | Local container matrix        |
+
+Open the segment with the Atlassian tutorial's `egrep` backup parser: the fragile pattern is inherited, not invented.
+
+## Dotfiles maturity model
+
+Closing self-assessment.
+Ask the audience to pick their level and one step to the next.
+
+| Level | Name       | Criteria                                                                            |
+| ----- | ---------- | ----------------------------------------------------------------------------------- |
+| 0     | Scattered  | Config lives only on the machine                                                    |
+| 1     | Versioned  | Config is in Git                                                                    |
+| 2     | Deployable | One documented command bootstraps a new machine without sudo                        |
+| 3     | Tested     | Bootstrap runs in a clean container; second run is a no-op; missing tools are safe  |
+| 4     | Operated   | CI matrix across OSes and shells; pinned dependencies; secrets policy; work overlay |
+
+Keep the criteria observable (a command or a CI job proves each), not aspirational.
+The Atlassian tutorial lands at level 2 by hand; the cold-open poll maps roughly to levels 1–3.
 
 ## Demo and verification plan
 
@@ -365,6 +499,7 @@ the script derives its root from its own location.
 - Restricted networks (TLS interception, blocked mirrors or registries) can break a bootstrap that passes in CI.
 - No sudo has a boundary: system packages and `/etc` are out of scope, and `chsh` to a user-installed shell
   fails because it is not listed in `/etc/shells`.
+- No atomic rollback of packages and config together; Nix home-manager does this better where Nix is available.
 
 Leave the Zed issue visibly unresolved if there is no reliable solution.
 It is an honest example of where the chosen architecture strains.
