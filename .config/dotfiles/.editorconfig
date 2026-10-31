@@ -8,6 +8,6 @@ shell_variant = posix # Default fallback variant
 [[shell]]
 indent_style = space
 indent_size = 2
-binary_next_line = true
+binary_next_line = false
 switch_case_indent = true
 space_redirects = true
