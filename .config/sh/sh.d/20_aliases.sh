@@ -6,10 +6,10 @@ if has eza; then
     eza_icons=""
     for arg in "$@"; do
       case "$arg" in
-      *-[a-zA-Z0-9]*[l1]* | "--long" | "-l" | "-1")
-        eza_icons="--icons=auto"
-        break
-        ;;
+        *-[a-zA-Z0-9]*[l1]* | "--long" | "-l" | "-1")
+          eza_icons="--icons=auto"
+          break
+          ;;
       esac
     done
 

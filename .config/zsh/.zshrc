@@ -1,8 +1,8 @@
 # Stop execution here for non-interactive tasks (prevents scp/rsync/cron errors)
 # shellcheck disable=SC2317
 case "$-" in
-*i*) : ;;
-*) return 0 2> /dev/null || exit 0 ;;
+  *i*) : ;;
+  *) return 0 2> /dev/null || exit 0 ;;
 esac
 
 zmodload zsh/parameter

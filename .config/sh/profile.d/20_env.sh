@@ -11,10 +11,10 @@ export MISE_DATA_DIR
 
 # shellcheck disable=SC2154
 case $_shell in
-bash | zsh)
-  export HISTSIZE=20000
-  export HISTFILE="${XDG_STATE_HOME}/.${_shell}_history"
-  ;;
+  bash | zsh)
+    export HISTSIZE=20000
+    export HISTFILE="${XDG_STATE_HOME}/.${_shell}_history"
+    ;;
 esac
 
 export INPUTRC="$XDG_CONFIG_HOME/inputrc"
