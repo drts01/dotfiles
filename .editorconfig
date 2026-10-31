@@ -1,0 +1,25 @@
+# Deployed to ~/.editorconfig. Every section starts with "/" so it only matches
+# files tracked by this repository. A glob without "/", like [*.sh], would apply
+# to shell scripts in every project under $HOME.
+root = true
+
+[/{.profile,.bashrc,.bash_profile,.zshenv,.config/sh/**,.config/zsh/**,.config/spaceship.zsh,.config/dotfiles/**.sh}]
+indent_style = space
+indent_size = 2
+binary_next_line = false
+switch_case_indent = true
+space_redirects = true
+
+[/{.profile,.config/sh/**,.config/dotfiles/**.sh}]
+shell_variant = posix
+
+[/{.bashrc,.bash_profile}]
+shell_variant = bash
+
+[/{.zshenv,.config/zsh/**,.config/spaceship.zsh}]
+shell_variant = zsh
+
+# Mixes zsh syntax into a POSIX file; also excluded from the prek shfmt hook.
+# shfmt honours `ignore` only when walking directories, not for explicit file paths.
+[/.config/sh/profile.d/10_functions.sh]
+ignore = true
