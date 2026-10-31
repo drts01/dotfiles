@@ -62,6 +62,6 @@ forbid-unsafe-tags   = true
 forbid-removed-types = true
 
 [[lint.per-line-ignores]]
-path  = "**/.github/workflows/*.y*ml"
+path  = "/**/.github/workflows/*.y*ml"
 regex = "^on:"
 rules = [ "truthy" ]
