@@ -1,0 +1,4 @@
+# Paths are relative to the dotfiles work tree ($HOME when deployed).
+/.cache/
+/.df-bak/
+/.local/share/dotfiles/

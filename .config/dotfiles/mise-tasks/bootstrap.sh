@@ -71,6 +71,8 @@ echo "Syncing submodules..."
 # git-submodule requires the cwd to be inside the work tree.
 (cd "$HOME" && df submodule update --init)
 
+sh "$BASEDIR/mise-tasks/install-ignore.sh" "$DEST_DIR"
+
 echo "Running post-clone setup..."
 if command -v mise > /dev/null 2>&1; then
   # A fresh machine has not trusted this config; mise refuses to load it otherwise.

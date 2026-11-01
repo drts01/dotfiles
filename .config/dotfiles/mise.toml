@@ -10,6 +10,10 @@ DEST_DIR = "{{ env.HOME }}/.local/share/dotfiles"  # Bare git repository
 [tools]
 prek = "latest"
 
+[tasks."install-ignore"]
+description = "Link this clone's Git exclude file to the tracked dotfiles ignore list"
+run         = "sh mise-tasks/install-ignore.sh"
+
 [tasks."install-hooks"]
 description = "Install prek pre-commit hooks patched for the bare repo"
 tools       = { prek = "latest" }

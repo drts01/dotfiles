@@ -70,6 +70,10 @@ assert_deployed() {
   fi
   [ "$(dfg "$_home" config status.showUntrackedFiles)" = no ] ||
     fail "$_home: status.showUntrackedFiles is not 'no'"
+  [ -L "$_home/.local/share/dotfiles/info/exclude" ] || fail "$_home: Git exclude is not linked"
+  [ "$(readlink "$_home/.local/share/dotfiles/info/exclude")" = "$_home/.config/dotfiles/gitignore" ] ||
+    fail "$_home: Git exclude points to the wrong file"
+  dfg "$_home" check-ignore -q "$_home/.df-bak/generated" || fail "$_home: backup directory is not ignored"
   [ "$(dfg "$_home" config remote.origin.fetch)" = "+refs/heads/trunk:refs/remotes/origin/trunk" ] ||
     fail "$_home: remote.origin.fetch refspec not set"
   [ -z "$(dfg "$_home" status --porcelain)" ] || fail "$_home: work tree is not clean"
@@ -109,6 +113,15 @@ git init -q --bare "$ORIGIN"
 git --git-dir="$ORIGIN" config receive.shallowUpdate true
 src_git push -q --no-verify "$ORIGIN" HEAD:refs/heads/trunk
 git --git-dir="$ORIGIN" symbolic-ref HEAD refs/heads/trunk
+# Tests run before changes are committed; publish the files under test to the fixture.
+git clone -q "file://$ORIGIN" "$TMP/fixture"
+cp "$ROOT/.config/dotfiles/gitignore" "$TMP/fixture/.config/dotfiles/gitignore"
+cp "$ROOT/.config/dotfiles/mise-tasks/install-ignore.sh" "$TMP/fixture/.config/dotfiles/mise-tasks/install-ignore.sh"
+cp "$DEPLOY" "$TMP/fixture/.config/dotfiles/mise-tasks/bootstrap.sh"
+git -C "$TMP/fixture" add .config/dotfiles/gitignore .config/dotfiles/mise-tasks/install-ignore.sh .config/dotfiles/mise-tasks/bootstrap.sh
+git -C "$TMP/fixture" -c user.name=test -c user.email=test@example.invalid \
+  commit -q --allow-empty --no-verify -m "test: publish ignore installer"
+git -C "$TMP/fixture" push -q --no-verify origin HEAD:trunk
 
 HOME_A="$TMP/home-a"
 mkdir -p "$HOME_A"
@@ -164,5 +177,17 @@ mkdir -p "$HOME_B/.local/share"
 git clone -q --bare --single-branch --depth=1 "file://$ORIGIN" "$HOME_B/.local/share/dotfiles"
 run "$HOME_B" sh "$DEPLOY"
 assert_deployed "$HOME_B"
+
+step "Installer: preserve existing local exclude rules"
+INFO_B="$HOME_B/.local/share/dotfiles/info"
+[ -f "$INFO_B/exclude.before-dotfiles" ] || fail "original exclude was not backed up"
+rm "$INFO_B/exclude"
+mv "$INFO_B/exclude.before-dotfiles" "$INFO_B/exclude"
+printf '/.private/\n' >> "$INFO_B/exclude"
+run "$HOME_B" sh "$HOME_B/.config/dotfiles/mise-tasks/install-ignore.sh" "$HOME_B/.local/share/dotfiles" \
+  2> "$TMP/custom-exclude-stderr"
+[ ! -L "$INFO_B/exclude" ] || fail "custom exclude was replaced"
+grep -qF '/.private/' "$INFO_B/exclude" || fail "custom exclude rule was lost"
+grep -qF 'contains local rules' "$TMP/custom-exclude-stderr" || fail "missing custom exclude warning"
 
 printf 'bootstrap tests: ok\n'

@@ -43,6 +43,7 @@ mise --cd .config/dotfiles run <task>
 
 | Task                       | Purpose                                                       |
 | -------------------------- | ------------------------------------------------------------- |
+| `install-ignore`           | Link this clone's Git exclude file to the tracked ignore list |
 | `lint`                     | Run all `prek` hooks on tracked files                         |
 | `shell:test`               | Check shell syntax, caching, and isolated Zsh startup         |
 | `shell:bench`              | Benchmark isolated warm shell startup                         |
@@ -70,6 +71,24 @@ prek install --config .config/dotfiles/prek.toml
 
 Skip `install-hooks` for clones.
 That task patches hooks for the bare repository in `~/.local/share/dotfiles`.
+
+## Ignore local files
+
+Run this once in a development clone:
+
+```bash
+mise --cd .config/dotfiles run install-ignore
+```
+
+The task links this clone's `.git/info/exclude` to the tracked `.config/dotfiles/gitignore`.
+The bare-repository bootstrap installs the same link at `~/.local/share/dotfiles/info/exclude`.
+Git reads `info/exclude` only for its own repository, so these rules do not affect other repos under `$HOME`.
+Changes to the tracked list take effect immediately in both installs after a pull; no link update is needed.
+The installer backs up Git's comment-only default file to `exclude.before-dotfiles`.
+If `info/exclude` contains local rules or is already a different symlink, it leaves it unchanged and prints a warning.
+Keep rules specific to a directory in that directory's `.gitignore`,
+and use `~/.config/git/ignore` for rules shared by all repositories.
+Ignore rules do not hide tracked files; untrack them first if necessary.
 
 ## Validate changes
 
