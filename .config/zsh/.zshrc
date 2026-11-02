@@ -15,4 +15,6 @@ for file in "${ZDOTDIR}"/zsh.d/*.zshrc; do
   source "$file"
 done
 
-[[ -n $ZSH_PROFILE ]] && zprof
+if [[ -n $ZSH_PROFILE ]]; then
+  zprof
+fi

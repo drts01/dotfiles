@@ -33,15 +33,19 @@ for shell in sh bash zsh; do
   "$shell" "$ROOT/.config/dotfiles/tests/source-cache.sh" "$ROOT" "$TMP/$shell"
 done
 
+make_home() {
+  mkdir -p "$1/.config" "$1/.local/share" "$1/.cache" "$1/.local/state"
+  ln -s "$ROOT/.profile" "$1/.profile"
+  ln -s "$ROOT/.bash_profile" "$1/.bash_profile"
+  ln -s "$ROOT/.bashrc" "$1/.bashrc"
+  ln -s "$ROOT/.zshenv" "$1/.zshenv"
+  ln -s "$ROOT/.config/sh" "$1/.config/sh"
+  ln -s "$ROOT/.config/zsh" "$1/.config/zsh"
+  ln -s "$ROOT/.config/spaceship.zsh" "$1/.config/spaceship.zsh"
+}
+
 HOME_DIR="$TMP/home"
-mkdir -p "$HOME_DIR/.config" "$HOME_DIR/.local/share" "$HOME_DIR/.cache" "$HOME_DIR/.local/state"
-ln -s "$ROOT/.profile" "$HOME_DIR/.profile"
-ln -s "$ROOT/.bash_profile" "$HOME_DIR/.bash_profile"
-ln -s "$ROOT/.bashrc" "$HOME_DIR/.bashrc"
-ln -s "$ROOT/.zshenv" "$HOME_DIR/.zshenv"
-ln -s "$ROOT/.config/sh" "$HOME_DIR/.config/sh"
-ln -s "$ROOT/.config/zsh" "$HOME_DIR/.config/zsh"
-ln -s "$ROOT/.config/spaceship.zsh" "$HOME_DIR/.config/spaceship.zsh"
+make_home "$HOME_DIR"
 ln -s "$ROOT/.local/share/zsh" "$HOME_DIR/.local/share/zsh"
 
 BASH=$(command -v bash)
@@ -58,5 +62,21 @@ env -i HOME="$HOME_DIR" PATH=/usr/bin:/bin TERM=xterm TERM_PROGRAM=zellij \
   HOMEBREW_PREFIX=/nonexistent "$ZSH" -d -lic "$COMPDEF_CHECK"
 env -i HOME="$HOME_DIR" PATH=/usr/bin:/bin TERM=xterm TERM_PROGRAM=zellij \
   HOMEBREW_PREFIX=/nonexistent "$ZSH" -d -lic 'zsh -d -ic "(( \${+functions[compdef]} && \${+functions[_zsh_autosuggest_accept]} && \${+functions[_zsh_highlight]} )) && zle -l autosuggest-accept >/dev/null && bindkey -M viins | grep -q autosuggest-accept"'
+
+# Absence: uninitialized submodules leave empty directories; zsh startup must stay silent and succeed.
+# Bash is excluded: it sources no submodule files and writes job-control noise to stderr without a TTY.
+ABSENT_HOME="$TMP/absent"
+make_home "$ABSENT_HOME"
+for dir in \
+  plugins/fast-syntax-highlighting \
+  plugins/zsh-autosuggestions \
+  themes/spaceship-prompt; do
+  mkdir -p "$ABSENT_HOME/.local/share/zsh/$dir"
+done
+if ! ERR=$(env -i HOME="$ABSENT_HOME" PATH=/usr/bin:/bin TERM=xterm TERM_PROGRAM=zellij \
+  HOMEBREW_PREFIX=/nonexistent "$ZSH" -d -lic exit 2>&1 > /dev/null) || [ -n "$ERR" ]; then
+  printf 'FAIL: zsh startup without submodules\n%s\n' "$ERR" >&2
+  exit 1
+fi
 
 printf 'shell tests: ok\n'
