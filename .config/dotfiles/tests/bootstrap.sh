@@ -166,7 +166,8 @@ if grep -q 'core.bare and core.worktree' "$TMP/upgrade-stderr"; then
   fail "upgrade emitted the bare repo worktree warning"
 fi
 assert_deployed "$HOME_A"
-cmp -s "$DEPLOY" "$HOME_A/.config/dotfiles/mise-tasks/bootstrap.sh" ||
+# git instead of cmp: minimal images (Fedora) ship without diffutils.
+git diff --no-index --quiet "$DEPLOY" "$HOME_A/.config/dotfiles/mise-tasks/bootstrap.sh" ||
   fail "upgrade did not replace the installed deploy script"
 run "$HOME_A" sh "$HOME_A/.config/dotfiles/mise-tasks/bootstrap.sh"
 assert_deployed "$HOME_A"
