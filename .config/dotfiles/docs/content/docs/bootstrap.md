@@ -146,14 +146,23 @@ mise run --cd ~/.config/dotfiles bootstrap:test:container -- cgr.dev/chainguard/
 
 `tests/bootstrap-container.sh` starts each image as root with a `/bin/sh` entrypoint
 and mounts the checkout read-only at `/src`.
-`tests/bootstrap-container-setup.sh` installs missing tools, creates the `tester` user, and runs the test as that user.
+`tests/bootstrap-container-setup.sh` installs missing tools, creates the `tester` user,
+and runs the bootstrap and POSIX shell tests as that user.
+The POSIX test checks each image's `/bin/sh` login profile, interactive `$ENV` startup, shared functions,
+and cache behavior.
+Debian, Fedora, and Chainguard also run Bash login, interactive, and cache tests;
+CI fails if Bash is missing from one of those images.
+Alpine does not require Bash.
 
 Network overrides:
 
 - Set `ALPINE_MIRROR` (e.g. `https://mirrors.edge.kernel.org/alpine`) on networks that block `dl-cdn.alpinelinux.org`.
 - Use `docker.io/chainguard/git:latest-dev` (same digest) on networks that block `cgr.dev` blob storage.
 
-CI runs one parallel job per image and the host test on macOS.
+CI runs one parallel bootstrap job per image, the host tests on Ubuntu and macOS,
+and the full Bash/Zsh suite on both hosts (including macOS's default Zsh).
+Run `mise run --cd ~/.config/dotfiles shell:test:posix` to test the host's `/bin/sh` separately,
+or `mise run --cd ~/.config/dotfiles shell:test:bash` to test Bash.
 
 ## mise tasks
 
