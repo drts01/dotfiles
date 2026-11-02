@@ -73,15 +73,19 @@ jobs:
           - name: debian
             runner: ubuntu-latest
             image: buildpack-deps:stable-scm
+            bash_test: required
           - name: alpine
             runner: ubuntu-latest
             image: alpine:latest
+            bash_test: skip
           - name: fedora
             runner: ubuntu-latest
             image: fedora:latest
+            bash_test: required
           - name: chainguard
             runner: ubuntu-latest
             image: cgr.dev/chainguard/git:latest-dev
+            bash_test: required
           - name: ubuntu
             runner: ubuntu-latest
           - name: macos
@@ -96,6 +100,7 @@ jobs:
         if: matrix.image
         env:
           IMAGE: ${{ matrix.image }}
+          TEST_BASH: ${{ matrix.bash_test }}
         run: sh .config/dotfiles/tests/bootstrap-container.sh "$IMAGE"
       - name: Test bootstrap (host)
         if: ${{ !matrix.image }}

@@ -14,11 +14,7 @@ for file in \
   sh -n "$file"
 done
 
-for file in \
-  "$ROOT/.bash_profile" \
-  "$ROOT/.bashrc"; do
-  bash -n "$file"
-done
+sh "$ROOT/.config/dotfiles/tests/shell-bash.sh"
 
 for file in \
   "$ROOT/.config/zsh/.zprofile" \
@@ -28,7 +24,7 @@ for file in \
   zsh -n "$file"
 done
 
-for shell in sh bash zsh; do
+for shell in sh zsh; do
   command -v "$shell" > /dev/null
   "$shell" "$ROOT/.config/dotfiles/tests/source-cache.sh" "$ROOT" "$TMP/$shell"
 done
@@ -36,8 +32,7 @@ done
 make_home() {
   mkdir -p "$1/.config" "$1/.local/share" "$1/.cache" "$1/.local/state"
   ln -s "$ROOT/.profile" "$1/.profile"
-  ln -s "$ROOT/.bash_profile" "$1/.bash_profile"
-  ln -s "$ROOT/.bashrc" "$1/.bashrc"
+
   ln -s "$ROOT/.zshenv" "$1/.zshenv"
   ln -s "$ROOT/.config/sh" "$1/.config/sh"
   ln -s "$ROOT/.config/zsh" "$1/.config/zsh"
@@ -48,14 +43,12 @@ HOME_DIR="$TMP/home"
 make_home "$HOME_DIR"
 ln -s "$ROOT/.local/share/zsh" "$HOME_DIR/.local/share/zsh"
 
-BASH=$(command -v bash)
 ZSH=$(command -v zsh)
 env -i HOME="$HOME_DIR" PATH=/usr/bin:/bin TERM=xterm TERM_PROGRAM=zellij \
   XDG_CONFIG_HOME="$HOME_DIR/.config" XDG_DATA_HOME="$HOME_DIR/.local/share" \
   XDG_STATE_HOME="$HOME_DIR/.local/state" XDG_CACHE_HOME="$HOME_DIR/.cache" \
   ENV="$HOME_DIR/.config/sh/.shrc" sh -ic exit
-env -i HOME="$HOME_DIR" PATH=/usr/bin:/bin TERM=xterm TERM_PROGRAM=zellij \
-  HOMEBREW_PREFIX=/nonexistent "$BASH" --noprofile --rcfile "$HOME_DIR/.bashrc" -ic exit
+
 # shellcheck disable=SC2016
 COMPDEF_CHECK='(( ${+functions[compdef]} ))'
 env -i HOME="$HOME_DIR" PATH=/usr/bin:/bin TERM=xterm TERM_PROGRAM=zellij \

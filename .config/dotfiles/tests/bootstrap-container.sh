@@ -1,5 +1,5 @@
 #!/bin/sh
-# Run tests/bootstrap.sh as a non-root user inside clean containers.
+# Run bootstrap and available shell tests as a non-root user in clean containers.
 # Usage: sh tests/bootstrap-container.sh [image...]
 # Engine: CONTAINER_ENGINE, else podman, else docker.
 # Container-side setup lives in tests/bootstrap-container-setup.sh.
@@ -38,7 +38,7 @@ for image in "$@"; do
   # --user/--entrypoint: images such as Chainguard default to a nonroot user
   # and a non-shell entrypoint (git).
   if ! "$ENGINE" run --rm --user 0 --entrypoint /bin/sh \
-    --volume "$ROOT:/src:ro" --env ALPINE_MIRROR \
+    --volume "$ROOT:/src:ro" --env ALPINE_MIRROR --env TEST_BASH \
     "$image" /src/.config/dotfiles/tests/bootstrap-container-setup.sh; then
     FAILED="$FAILED $image"
   fi
