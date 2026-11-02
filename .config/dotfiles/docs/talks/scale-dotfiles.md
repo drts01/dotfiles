@@ -107,41 +107,38 @@ Alternatives: Systems & Infrastructure (configuration management) or the co-loca
 
 ### Short abstract (print)
 
-> Most dotfiles guides stop at "put them in Git." This talk treats $HOME as a small production system: bootstrap it
+> Most dotfiles guides stop at "put them in Git." This talk treats $HOME as a small production system: bootstrap
 > with only Git and a POSIX shell (no sudo, symlinks, or templates), test it in clean Linux containers, make missing
 > tools harmless, and manage secrets without committing them. Live demo: fresh container to working shell.
 
 ### Long abstract (online)
 
-> Most of us keep our dotfiles in Git. Fewer have bootstrapped them on a machine without sudo, and almost nobody has
-> tested that bootstrap. When I finally wrote the test, every lint check was green, yet my bootstrap script downloaded
-> and executed itself in an endless loop. More bugs followed, and no linter could have caught any of them.
+> Keeping dotfiles in Git is the easy part. A passing lint check proves the files parse. It doesn't prove that a fresh
+> machine without sudo ends up with a working shell, or that removing a tool leaves startup clean. My dotfiles passed
+> every lint check while hiding bugs that only appeared on deployment: an installer that re-downloaded itself forever,
+> a shell that errored when a plugin was missing, and a startup that silently returned a failing exit status.
 >
-> Why now: AI made trying a new tool an afternoon's work, so tools arrive and leave faster. Each one has to install
+> Tools now arrive and leave faster than ever, so each has to install
 > cleanly, start fast, and be removable without breaking the shell, on machines I don't control.
 >
-> This talk starts where the popular bare-repository tutorial ends. It treats $HOME like a small production system,
-> using only Git, POSIX sh, and the include mechanisms your tools already support. You will learn how to:
+> This talk starts where the popular bare-repository tutorial ends and treats $HOME like a small production system.
+> The base needs only Git and POSIX sh; everything else is an optional layer. You will learn how to:
 >
-> - Use Git as the installer: no sudo, no symlink farm, no runtime templating, no new DSL to learn.
-> - Layer host- and work-specific settings with git includeIf, ssh Include/Match, shell .d/ directories, and
->   untracked local overrides, including a private work overlay that shares $HOME with a public base.
-> - Pin plugins with Git submodules and install user-space tools with mise, while keeping shell startup silent and
->   clean when either is missing.
-> - Test deployment, not syntax: a CI matrix that bootstraps as a non-root user on Debian (dash), Alpine
->   (BusyBox sh), Fedora (bash), Wolfi, and macOS, and runs a second time to prove idempotency.
-> - Handle secrets with a tool-agnostic pattern: commit references, not values; resolve them at use time; and accept
->   that a new machine still needs one credential ("secret zero").
+> - Use Git as the installer: no sudo, no symlink farm, no runtime templating, no new DSL.
+> - Add pinned plugins (Git submodules) and user-space tools (mise) as optional layers, and prove the shell still
+>   starts silently when they're missing.
+> - Test the result, not just the syntax: deploy as a non-root user in clean Debian (dash), Alpine (BusyBox sh), and
+>   Fedora (bash) containers, run again to prove idempotency, and start the shell with optional tools removed.
+> - Keep secrets out of the repository: commit references, not values; resolve them at use time; and plan for
+>   "secret zero."
 >
-> The comparison is honest: when GNU Stow, chezmoi, yadm, vcsh, or Nix home-manager is the better choice, and why
-> rootless Nix runs programs but doesn't give you a home directory.
->
-> You'll see a live bootstrap from a fresh container, the bugs that only deployment tests caught, a list of problems
-> I haven't solved, and a five-level maturity model for rating your own setup. You'll leave with an open-source
-> starter template you can use the same day.
+> You'll see each deployment-only bug with the test that caught it, a live install from a fresh container, and the
+> problems I haven't solved. The comparison is honest: when GNU Stow, chezmoi, yadm, vcsh, or Nix home-manager is the
+> better choice. You'll leave with a five-level maturity model for rating your own setup and an open-source starter
+> template you can use the same day.
 >
 > For developers, SREs, and anyone who works across personal, work, and temporary machines. Assumes comfort with Git
-> and a Unix shell. No Nix, Ansible, or dotfiles-manager experience needed.
+> and a Unix shell; no Nix, Ansible, or dotfiles-manager experience needed.
 
 **Abstract policy:** The short abstract names only Git and POSIX sh.
 The long abstract names open-source projects and Linux distributions: reviewers score open-source relevance,
@@ -154,26 +151,32 @@ The secrets bullet promises a tool-agnostic pattern
 not a specific tool or a solved bootstrap; mise is the integration point used on stage.
 Keep "AI agents inherit the shell environment" for the slides: mise `[env]` still exports to every shell in the project,
 so the abstract cannot promise agent isolation.
+Do not state how people currently test their dotfiles; there is no data, and any prevalence claim invites challenge.
+The gap is deployment and removal testing, not testing in general; the installer bug is one example, not the lead.
+CFP matrix claims: Debian (dash), Alpine (BusyBox sh), Fedora (bash).
+Debian, not Ubuntu: both use dash as `/bin/sh`, and the Debian container is the minimal non-root case
+(the Ubuntu runner job has passwordless sudo).
+Wolfi/Chainguard and macOS are omitted until their jobs are green; add them to the slides, not the CFP.
+Keep rootless Nix out of the abstract until the container test (P3) verifies it.
 
 ### Message to reviewers (draft)
 
 > Repository: https://github.com/drts01/dotfiles (public since 2019).
 >
 > CI runs linting, shell-startup tests (including startup with submodules and optional tools absent), and a
-> bootstrap test. The bootstrap test deploys the dotfiles as a non-root user in fresh Debian, Alpine, Fedora, and
-> Chainguard/Wolfi containers and on Ubuntu and macOS, then runs the bootstrap again to check idempotency. The live
-> demo runs the same steps, and a saved passing run is the offline fallback if conference networking fails. Standard
-> HDMI is sufficient.
+> deployment test that installs the dotfiles as a non-root user in fresh containers, then runs again to check
+> idempotency. Debian and Alpine pass at submission; the Fedora job is being fixed and will pass well before the talk.
+> The live demo runs the same steps as CI, and a saved passing run is the offline fallback if conference networking
+> fails. Standard HDMI is sufficient.
 >
 > Outline (45 min): problem and prior art (9), dependencies (4), guardrails and the deployment-only bug table (8),
-> secrets pattern (6), work overlay (3), live demo (7), limitations (3), maturity model, starter template, and
-> Q&A (5).
+> secrets pattern (5), work overlay (3), live demo (7), limitations (3), maturity model and starter template (3),
+> Q&A (3).
 >
 > The talk positions the approach against the Atlassian bare-repository tutorial, GNU Stow, chezmoi, yadm, vcsh, and
-> Nix home-manager, including where each is the better choice. AI is the one-sentence motivation, not the subject.
-> Tools covered are all open source: Git submodules, mise, prek (pre-commit hooks), shellcheck-based CI, a
-> password-manager-based secrets workflow, and a Copier template (dotfiles-starter) released with the talk.
-> No product pitch.
+> Nix home-manager, including where each is the better choice. AI is a one-clause motivation, not the subject.
+> Everything covered is open source: Git submodules, mise, prek (pre-commit hooks), a CI shell-test matrix, a
+> tool-agnostic secrets pattern, and a Copier template (dotfiles-starter) released with the talk. No product pitch.
 
 Present tense is valid only for CI jobs that are green at submission
 (see the P0 CI item); remove or reword claims for red jobs.
