@@ -39,4 +39,5 @@ if ! id "$TEST_USER" > /dev/null 2>&1; then
   fi
 fi
 
-exec su "$TEST_USER" -s /bin/sh -c "sh $TEST"
+# su preserves the image's cwd; Chainguard's /home/git is inaccessible to tester.
+exec su "$TEST_USER" -s /bin/sh -c "cd && sh $TEST"
