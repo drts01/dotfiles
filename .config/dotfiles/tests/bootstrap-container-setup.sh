@@ -7,6 +7,7 @@
 set -eu
 
 TEST=/src/.config/dotfiles/tests/bootstrap.sh
+POSIX_TEST=/src/.config/dotfiles/tests/shell-posix.sh
 TEST_USER=tester
 
 has() { command -v "$1" > /dev/null 2>&1; }
@@ -40,4 +41,4 @@ if ! id "$TEST_USER" > /dev/null 2>&1; then
 fi
 
 # su preserves the image's cwd; Chainguard's /home/git is inaccessible to tester.
-exec su "$TEST_USER" -s /bin/sh -c "cd && sh $TEST"
+exec su "$TEST_USER" -s /bin/sh -c "cd && sh $TEST && sh $POSIX_TEST"

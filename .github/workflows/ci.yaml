@@ -42,8 +42,11 @@ jobs:
         run: mise task run lint
 
   shell:
-    name: Shell
-    runs-on: ubuntu-latest
+    name: Shell (${{ matrix.runner }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        runner: [ubuntu-latest, macos-latest]
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -51,9 +54,12 @@ jobs:
           persist-credentials: false
           submodules: true
       - name: Install Zsh
+        if: runner.os == 'Linux'
         run: sudo apt-get install --yes zsh
       - name: Test shell configuration
         run: sh .config/dotfiles/tests/shell.sh
+      - name: Test default POSIX shell
+        run: sh .config/dotfiles/tests/shell-posix.sh
 
   bootstrap:
     name: Bootstrap (${{ matrix.name }})
@@ -94,3 +100,6 @@ jobs:
       - name: Test bootstrap (host)
         if: ${{ !matrix.image }}
         run: sh .config/dotfiles/tests/bootstrap.sh
+      - name: Test default POSIX shell (host)
+        if: ${{ !matrix.image }}
+        run: sh .config/dotfiles/tests/shell-posix.sh
