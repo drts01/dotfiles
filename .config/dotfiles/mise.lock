@@ -95,6 +95,46 @@ url = "https://github.com/j178/prek/releases/download/v0.5.4/prek-x86_64-pc-wind
 url_api = "https://api.github.com/repos/j178/prek/releases/assets/594534981"
 provenance = "github-attestations"
 
+[[tools.shellspec]]
+version = "0.28.1"
+backend = "aqua:shellspec/shellspec"
+specifiers = ["latest"]
+
+[tools.shellspec."platforms.linux-arm64"]
+checksum = "sha256:400d835466429a5fe6c77a62775a9173729d61dd43e05dfa893e8cf6cb511783"
+url = "https://github.com/shellspec/shellspec/archive/refs/tags/0.28.1.tar.gz"
+url_api = "https://api.github.com/repos/shellspec/shellspec/tarball/0.28.1"
+
+[tools.shellspec."platforms.linux-arm64-musl"]
+checksum = "sha256:400d835466429a5fe6c77a62775a9173729d61dd43e05dfa893e8cf6cb511783"
+url = "https://github.com/shellspec/shellspec/archive/refs/tags/0.28.1.tar.gz"
+url_api = "https://api.github.com/repos/shellspec/shellspec/tarball/0.28.1"
+
+[tools.shellspec."platforms.linux-x64"]
+checksum = "sha256:400d835466429a5fe6c77a62775a9173729d61dd43e05dfa893e8cf6cb511783"
+url = "https://github.com/shellspec/shellspec/archive/refs/tags/0.28.1.tar.gz"
+url_api = "https://api.github.com/repos/shellspec/shellspec/tarball/0.28.1"
+
+[tools.shellspec."platforms.linux-x64-musl"]
+checksum = "sha256:400d835466429a5fe6c77a62775a9173729d61dd43e05dfa893e8cf6cb511783"
+url = "https://github.com/shellspec/shellspec/archive/refs/tags/0.28.1.tar.gz"
+url_api = "https://api.github.com/repos/shellspec/shellspec/tarball/0.28.1"
+
+[tools.shellspec."platforms.macos-arm64"]
+checksum = "sha256:400d835466429a5fe6c77a62775a9173729d61dd43e05dfa893e8cf6cb511783"
+url = "https://github.com/shellspec/shellspec/archive/refs/tags/0.28.1.tar.gz"
+url_api = "https://api.github.com/repos/shellspec/shellspec/tarball/0.28.1"
+
+[tools.shellspec."platforms.macos-x64"]
+checksum = "sha256:400d835466429a5fe6c77a62775a9173729d61dd43e05dfa893e8cf6cb511783"
+url = "https://github.com/shellspec/shellspec/archive/refs/tags/0.28.1.tar.gz"
+url_api = "https://api.github.com/repos/shellspec/shellspec/tarball/0.28.1"
+
+[tools.shellspec."platforms.windows-x64"]
+checksum = "sha256:400d835466429a5fe6c77a62775a9173729d61dd43e05dfa893e8cf6cb511783"
+url = "https://github.com/shellspec/shellspec/archive/refs/tags/0.28.1.tar.gz"
+url_api = "https://api.github.com/repos/shellspec/shellspec/tarball/0.28.1"
+
 [[tools.zola]]
 version = "0.23.6"
 backend = "aqua:getzola/zola"

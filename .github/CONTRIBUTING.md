@@ -7,7 +7,7 @@ Use the bare-repository install only for deploying them into `$HOME`.
 
 - Git
 - A POSIX shell, Bash, and Zsh
-- [mise](https://mise.jdx.dev)
+- [mise](https://mise.jdx.dev) with ShellSpec installed through the project tool config
 - Podman or Docker for the container bootstrap tests
 
 ## Set up a working copy
@@ -45,10 +45,12 @@ mise --cd .config/dotfiles run <task>
 | -------------------------- | ------------------------------------------------------------- |
 | `install-ignore`           | Link this clone's Git exclude file to the tracked ignore list |
 | `lint`                     | Run all `prek` hooks on tracked files                         |
-| `shell:test`               | Check shell syntax, caching, and isolated Zsh startup         |
+| `shell:test`               | Run all ShellSpec unit and startup specs                      |
 | `shell:bench`              | Benchmark isolated warm shell startup                         |
 | `bootstrap:test`           | Test bootstrap in throwaway home directories                  |
-| `bootstrap:test:container` | Test bootstrap as non-root in containers; pass images to pick |
+| `bootstrap:test:container` | Test bootstrap and shell specs as non-root in containers      |
+| `shell:test:posix`         | Run POSIX unit and startup specs                              |
+| `shell:test:bash`          | Run Bash unit and startup specs                               |
 | `docs:serve`               | Preview the documentation site                                |
 | `docs:build`               | Build the documentation site                                  |
 
@@ -98,11 +100,17 @@ Run the checks that match the change:
 | ---------------------------- | --------------------------------------------------------- |
 | Any tracked file             | `mise --cd .config/dotfiles run lint`                     |
 | `.profile`, `.bashrc`, Zsh   | `mise --cd .config/dotfiles run shell:test`               |
+| Shell unit specs             | `cd .config/dotfiles && shellspec --shell sh spec/unit`   |
+| Shell startup specs          | `cd .config/dotfiles && shellspec spec/startup`           |
 | `bootstrap.sh`, `mise-tasks` | `mise --cd .config/dotfiles run bootstrap:test`           |
 | Bootstrap portability        | `mise --cd .config/dotfiles run bootstrap:test:container` |
 | Documentation site           | `mise --cd .config/dotfiles run docs:build`               |
 
-CI runs `lint`, `shell:test`, and the bootstrap tests on every push.
+CI runs lint, `spec/unit` under `sh`, `bash`, and `zsh` on Ubuntu and macOS, `spec/startup` once per host,
+and bootstrap tests on hosts and in containers on every push.
+Failed ShellSpec jobs upload JUnit reports.
+Container tests mount the mise-installed ShellSpec distribution read-only and run POSIX specs plus Bash specs
+when available (`TEST_BASH=required|skip|auto`).
 See `.github/workflows/ci.yaml`.
 
 ## Respect the deployment model

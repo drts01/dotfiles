@@ -1,5 +1,5 @@
 #!/bin/sh
-# Run bootstrap and available shell tests as a non-root user in clean containers.
+# Run bootstrap and available ShellSpec tests as a non-root user in clean containers.
 # Usage: sh tests/bootstrap-container.sh [image...]
 # Engine: CONTAINER_ENGINE, else podman, else docker.
 # Container-side setup lives in tests/bootstrap-container-setup.sh.
@@ -30,6 +30,26 @@ if [ -z "$ENGINE" ]; then
   exit 1
 fi
 
+if ! command -v mise > /dev/null 2>&1 ||
+  ! SHELLSPEC_HOME=$(mise --cd "$ROOT/.config/dotfiles" where shellspec 2> /dev/null); then
+  echo "ERROR: ShellSpec is required; run 'mise --cd .config/dotfiles install shellspec' first." >&2
+  exit 1
+fi
+# Task-scoped mise tools may be installed without being active in the calling shell.
+SHELLSPEC_EXEC=$(mise --cd "$ROOT/.config/dotfiles" which shellspec 2> /dev/null) ||
+  SHELLSPEC_EXEC=$(find "$SHELLSPEC_HOME" -type f -name shellspec ! -path '*/stub/*' -print)
+if [ -z "$SHELLSPEC_EXEC" ] || [ ! -x "$SHELLSPEC_EXEC" ]; then
+  echo "ERROR: ShellSpec executable is missing from its mise installation: $SHELLSPEC_HOME" >&2
+  exit 1
+fi
+case $SHELLSPEC_EXEC in
+  "$SHELLSPEC_HOME"/*) SHELLSPEC_IN_CONTAINER=/opt/shellspec/${SHELLSPEC_EXEC#"$SHELLSPEC_HOME"/} ;;
+  *)
+    echo "ERROR: ShellSpec executable is not inside its mise installation: $SHELLSPEC_EXEC" >&2
+    exit 1
+    ;;
+esac
+
 FAILED=""
 for image in "$@"; do
   printf '### %s (%s)\n' "$image" "$ENGINE"
@@ -38,8 +58,9 @@ for image in "$@"; do
   # --user/--entrypoint: images such as Chainguard default to a nonroot user
   # and a non-shell entrypoint (git).
   if ! "$ENGINE" run --rm --user 0 --entrypoint /bin/sh \
-    --volume "$ROOT:/src:ro" --env ALPINE_MIRROR --env TEST_BASH \
-    "$image" /src/.config/dotfiles/tests/bootstrap-container-setup.sh; then
+    --volume "$ROOT:/src:ro" --volume "$SHELLSPEC_HOME:/opt/shellspec:ro" \
+    --env ALPINE_MIRROR --env TEST_BASH \
+    "$image" /src/.config/dotfiles/tests/bootstrap-container-setup.sh "$SHELLSPEC_IN_CONTAINER"; then
     FAILED="$FAILED $image"
   fi
 done

@@ -128,7 +128,10 @@ The test deploys into throwaway home directories with mise off `PATH` and checks
 - Upgrade via the remote entrypoint replaces the old installed script; later local runs do not restore `core.worktree`.
 - Git-only install into a pre-cloned bare repo.
 
-Run the same test as a non-root user in clean containers (podman, else docker; override with `CONTAINER_ENGINE`).
+Run the same bootstrap test and ShellSpec shell specs as a non-root user in clean containers
+(podman, else docker; override with `CONTAINER_ENGINE`).
+Install ShellSpec with `mise --cd .config/dotfiles install shellspec` before running from a clone;
+the container driver mounts the resolved mise installation read-only.
 Pass image names to select containers; omit them to run all defaults:
 
 ```bash
@@ -145,22 +148,23 @@ mise run --cd ~/.config/dotfiles bootstrap:test:container -- cgr.dev/chainguard/
 | `cgr.dev/chainguard/git:latest-dev` | Wolfi, dash `sh`, git and GNU wget only (entrypoint wget path) |
 
 `tests/bootstrap-container.sh` starts each image as root with a `/bin/sh` entrypoint
-and mounts the checkout read-only at `/src`.
-`tests/bootstrap-container-setup.sh` installs missing tools, creates the `tester` user,
-and runs the bootstrap and POSIX shell tests as that user.
-The POSIX test checks each image's `/bin/sh` login profile, interactive `$ENV` startup, shared functions,
-and cache behavior.
-Debian, Fedora, and Chainguard also run Bash login, interactive, and cache tests;
-CI fails if Bash is missing from one of those images.
-Alpine does not require Bash.
+and mounts the checkout read-only at `/src` and the host ShellSpec installation at `/opt/shellspec`.
+`tests/bootstrap-container-setup.sh` installs missing tools, creates the `tester` user, then runs bootstrap,
+POSIX unit specs, and POSIX startup specs as that user.
+The POSIX startup specs check each image's `/bin/sh` login profile and interactive `$ENV` startup;
+unit specs check shared functions and cache behavior.
+Set `TEST_BASH=required` to fail if Bash is absent, `TEST_BASH=skip` to omit Bash,
+or leave it unset (`auto`) to run Bash unit and startup specs when Bash is present.
+CI requires Bash on Debian, Fedora, and Chainguard, and skips it on Alpine.
 
 Network overrides:
 
 - Set `ALPINE_MIRROR` (e.g. `https://mirrors.edge.kernel.org/alpine`) on networks that block `dl-cdn.alpinelinux.org`.
 - Use `docker.io/chainguard/git:latest-dev` (same digest) on networks that block `cgr.dev` blob storage.
 
-CI runs one parallel bootstrap job per image, the host tests on Ubuntu and macOS,
-and the full Bash/Zsh suite on both hosts (including macOS's default Zsh).
+CI runs one parallel bootstrap job per image and the host bootstrap test on Ubuntu and macOS.
+On both hosts it runs `spec/unit` under `sh`, `bash`, and `zsh`, plus `spec/startup` once;
+failed ShellSpec jobs upload JUnit reports.
 Run `mise run --cd ~/.config/dotfiles shell:test:posix` to test the host's `/bin/sh` separately,
 or `mise run --cd ~/.config/dotfiles shell:test:bash` to test Bash.
 

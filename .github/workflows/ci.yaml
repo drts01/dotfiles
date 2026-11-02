@@ -42,9 +42,42 @@ jobs:
         run: mise task run lint
 
   shell:
-    name: Shell (${{ matrix.runner }})
+    name: Shell unit (${{ matrix.runner }}, ${{ matrix.shell }})
     runs-on: ${{ matrix.runner }}
     strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-latest, macos-latest]
+        shell: [sh, bash, zsh]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+          submodules: true
+      - name: Install Zsh
+        if: runner.os == 'Linux'
+        run: sudo apt-get install --yes zsh
+      - name: Install ShellSpec
+        uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca  # v5.1.1
+        with:
+          install_args: shellspec
+      - name: Test unit specs
+        working-directory: .config/dotfiles
+        run: shellspec --output junit --shell "${{ matrix.shell }}" spec/unit
+      - name: Upload failed unit report
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: shell-unit-${{ matrix.runner }}-${{ matrix.shell }}
+          path: .config/dotfiles/report/
+          if-no-files-found: ignore
+
+  shell-startup:
+    name: Shell startup (${{ matrix.runner }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
       matrix:
         runner: [ubuntu-latest, macos-latest]
     steps:
@@ -56,10 +89,20 @@ jobs:
       - name: Install Zsh
         if: runner.os == 'Linux'
         run: sudo apt-get install --yes zsh
-      - name: Test shell configuration
-        run: sh .config/dotfiles/tests/shell.sh
-      - name: Test default POSIX shell
-        run: sh .config/dotfiles/tests/shell-posix.sh
+      - name: Install ShellSpec
+        uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca  # v5.1.1
+        with:
+          install_args: shellspec
+      - name: Test startup specs
+        working-directory: .config/dotfiles
+        run: shellspec --output junit --shell /bin/sh spec/startup
+      - name: Upload failed startup report
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: shell-startup-${{ matrix.runner }}
+          path: .config/dotfiles/report/
+          if-no-files-found: ignore
 
   bootstrap:
     name: Bootstrap (${{ matrix.name }})
@@ -95,6 +138,11 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
+      - name: Install ShellSpec for container tests
+        if: matrix.image
+        uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca  # v5.1.1
+        with:
+          install_args: shellspec
       # Same runner as `mise run bootstrap:test:container` locally.
       - name: Test bootstrap as non-root (container)
         if: matrix.image
@@ -105,6 +153,3 @@ jobs:
       - name: Test bootstrap (host)
         if: ${{ !matrix.image }}
         run: sh .config/dotfiles/tests/bootstrap.sh
-      - name: Test default POSIX shell (host)
-        if: ${{ !matrix.image }}
-        run: sh .config/dotfiles/tests/shell-posix.sh

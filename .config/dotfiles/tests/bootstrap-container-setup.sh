@@ -1,15 +1,19 @@
 #!/bin/sh
 # Container-side half of tests/bootstrap-container.sh; expects the checkout at /src.
 # Runs as root: installs missing test dependencies, then runs bootstrap and
-# available shell tests as an unprivileged user.
+# available ShellSpec tests as an unprivileged user.
 # ALPINE_MIRROR (e.g. https://mirrors.edge.kernel.org/alpine) replaces
 # dl-cdn.alpinelinux.org on networks that block it.
 set -eu
 
 TEST=/src/.config/dotfiles/tests/bootstrap.sh
-POSIX_TEST=/src/.config/dotfiles/tests/shell-posix.sh
-BASH_TEST=/src/.config/dotfiles/tests/shell-bash.sh
+SHELLSPEC=${1:?ShellSpec executable path is required}
 TEST_USER=tester
+
+if [ ! -x "$SHELLSPEC" ]; then
+  echo "ERROR: Mounted ShellSpec executable is missing: $SHELLSPEC" >&2
+  exit 1
+fi
 
 has() { command -v "$1" > /dev/null 2>&1; }
 
@@ -60,7 +64,8 @@ case ${TEST_BASH:-auto} in
 esac
 
 # su preserves the image's cwd; Chainguard's /home/git is inaccessible to tester.
+# The checkout is read-only, so disable ShellSpec's failure quick-log writes.
 if [ "$RUN_BASH" -eq 1 ]; then
-  exec su "$TEST_USER" -s /bin/sh -c "cd && sh $TEST && sh $POSIX_TEST && sh $BASH_TEST"
+  exec su "$TEST_USER" -s /bin/sh -c "cd && sh $TEST && cd /src/.config/dotfiles && $SHELLSPEC --no-quick --shell sh spec/unit spec/startup/posix_spec.sh && $SHELLSPEC --no-quick --shell bash spec/unit spec/startup/bash_spec.sh"
 fi
-exec su "$TEST_USER" -s /bin/sh -c "cd && sh $TEST && sh $POSIX_TEST"
+exec su "$TEST_USER" -s /bin/sh -c "cd && sh $TEST && cd /src/.config/dotfiles && $SHELLSPEC --no-quick --shell sh spec/unit spec/startup/posix_spec.sh"
