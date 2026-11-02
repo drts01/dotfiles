@@ -53,6 +53,18 @@ The status should be success
 The error should be blank
 End
 
+It 'enables vi mode for interactive login Bash'
+When run bash_startup login 'set -o | grep -Eq "^vi[[:space:]]+on$"'
+The status should be success
+The error should be blank
+End
+
+It 'reports the canonical host OS'
+When run bash_startup login 'case $LOCAL_OS in darwin | linux) : ;; *) exit 1 ;; esac; [ "$LOCAL_OS" = "$(uname -s | tr "[:upper:]" "[:lower:]")" ]'
+The status should be success
+The error should be blank
+End
+
 It 'loads the editor, alias, and has function'
 When run bash_startup login '[ -n "$EDITOR" ] && alias dotfiles >/dev/null && has bash && ! has command-that-does-not-exist'
 The status should be success
@@ -93,6 +105,19 @@ End
 
 It 'enables cmdhist and histappend'
 When run bash_startup interactive 'shopt -q cmdhist histappend'
+The status should be success
+The error should be blank
+End
+
+It 'enables vi mode for non-login interactive Bash'
+When run bash_startup interactive 'set -o | grep -Eq "^vi[[:space:]]+on$"'
+The status should be success
+The error should be blank
+End
+
+It 'activates mise specifically for Bash'
+fake_bin mise 'printf "%s\n" "$*" >> "$HOME/mise-invocations"; printf ":\n"'
+When run without_job_control_noise run_isolated env PATH="$BIN:/usr/bin:/bin" bash --noprofile --rcfile "$HOME_DIR/.bashrc" -ic 'grep -qx "activate bash" "$HOME/mise-invocations"'
 The status should be success
 The error should be blank
 End
