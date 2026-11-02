@@ -22,7 +22,6 @@ if [[ -n $HOMEBREW_PREFIX ]]; then
   typeset -U path
   [[ -n $MISE_DATA_DIR ]] &&
     path=("$MISE_DATA_DIR/shims" "${path[@]:#$MISE_DATA_DIR/shims}")
-  FPATH="$HOMEBREW_PREFIX/share/zsh/site-functions:$FPATH"
   export HOMEBREW_PREFIX HOMEBREW_REPOSITORY HOMEBREW_CELLAR
   export HOMEBREW_AUTO_UPDATE_SECS=86400 HOMEBREW_NO_ANALYTICS=1
 fi

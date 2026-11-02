@@ -1,3 +1,8 @@
+if [[ -n $HOMEBREW_PREFIX ]]; then
+  fpath=("$HOMEBREW_PREFIX/share/zsh/site-functions" "${fpath[@]}")
+  typeset -U fpath
+fi
+
 ZSH_COMPDUMP="${XDG_CACHE_HOME}/zsh/.zcompdump"
 [[ -d ${ZSH_COMPDUMP:h} ]] || mkdir -p "${ZSH_COMPDUMP:h}"
 

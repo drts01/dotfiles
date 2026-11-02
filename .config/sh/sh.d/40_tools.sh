@@ -32,7 +32,7 @@ case $_shell in
       [ -r "$_kube_comp_cache" ] && . "$_kube_comp_cache"
       unset _kube_comp_cache
     fi
+
+    source_cache "$XDG_CACHE_HOME/shell/mise.$_shell" mise activate "$_shell"
     ;;
 esac
-
-source_cache "$XDG_CACHE_HOME/shell/mise.$_shell" mise activate "$_shell"

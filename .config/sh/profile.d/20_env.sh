@@ -9,14 +9,6 @@ MISE_DATA_DIR="${MISE_DATA_DIR:-$XDG_DATA_HOME/mise}"
 path_add "$MISE_DATA_DIR/shims"
 export MISE_DATA_DIR
 
-# shellcheck disable=SC2154
-case $_shell in
-  bash | zsh)
-    export HISTSIZE=20000
-    export HISTFILE="${XDG_STATE_HOME}/.${_shell}_history"
-    ;;
-esac
-
 export INPUTRC="$XDG_CONFIG_HOME/inputrc"
 export SCREENRC="$XDG_CONFIG_HOME/screenrc"
 export WGETRC="$XDG_CONFIG_HOME/wgetrc"
@@ -28,9 +20,6 @@ export NVM_DIR="$XDG_DATA_HOME/nvm" CARGO_HOME="$XDG_DATA_HOME/cargo" RBENV_ROOT
 export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker" MINIKUBE_HOME="$XDG_DATA_HOME/minikube" K9SCONFIG="$XDG_CONFIG_HOME/k9s" KUBECONFIG="$XDG_CONFIG_HOME/kubeconfig"
 export TFENV_ROOT="$XDG_DATA_HOME/tfenv" TOFUENV_ROOT="$XDG_DATA_HOME/tofu" TENV_ROOT="$XDG_DATA_HOME/tenv"
 export VAGRANT_HOME="$XDG_DATA_HOME/vagrant" VAGRANT_ALIAS_FILE="$XDG_DATA_HOME/vagrant/aliases" _ZL_DATA="$XDG_DATA_HOME/zlua"
-
-set -o vi    # Enable vim bindings
-KEYTIMEOUT=1 # Reduces escape key delay for switching modes
 
 if has hx; then
   VISUAL="hx"
@@ -49,4 +38,4 @@ if has less; then
   export LESSCHARSET="UTF-8" LESSHISTFILE='-' LESS=-FXgiMRSwz-4 PAGER
 fi
 
-export KEYTIMEOUT VISUAL EDITOR
+export VISUAL EDITOR
