@@ -1,4 +1,4 @@
-# shellcheck shell=bash
+# shellcheck shell=sh
 
 # shellcheck disable=SC2154
 case $_shell in
@@ -19,6 +19,8 @@ case $_shell in
     if has aws_completer; then
       export AWS_CLI_AUTO_PROMPT=on-partial
       [ "$_shell" = zsh ] && autoload bashcompinit && bashcompinit
+      # Only Bash and Zsh enter this branch; POSIX sh has no complete builtin.
+      # shellcheck disable=SC3044
       complete -C aws_completer aws
     fi
 

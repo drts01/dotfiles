@@ -37,9 +37,9 @@ hooks = [
 
 [[repos]]
 repo  = "https://github.com/scop/pre-commit-shfmt"
-rev   = "479be5958357ba5ab65ce47172117348516860e9"                                           # frozen: v3.14.1-1
+rev   = "479be5958357ba5ab65ce47172117348516860e9"             # frozen: v3.14.1-1
 hooks = [
-  { id = "shfmt", exclude = '^\.config/(sh/profile\.d/10_functions\.sh$|dotfiles/spec/)' },
+  { id = "shfmt", exclude = '^\.config/dotfiles/spec/' },
   {
     id    = "shfmt",
     name  = "shfmt (shell rc files)",
@@ -50,12 +50,12 @@ hooks = [
 
 [[repos]]
 repo  = "https://github.com/shellcheck-py/shellcheck-py"
-rev   = "a6564f5d57444e123433a5c9af733e3975c77229"                       # frozen: v0.11.0.1-1
+rev   = "a6564f5d57444e123433a5c9af733e3975c77229"                                                               # frozen: v0.11.0.1-1
 hooks = [
   {
     id    = "shellcheck",
-    types = [ "shell" ],
-    files = '(^|/)\.(shrc|bashrc|zshrc|zshenv|zprofile|bash_profile)$',
+    types = [ "file" ],
+    files = '(^\.profile$|(^|/)\.(shrc|bashrc|bash_profile)$|^\.config/sh/.*\.sh$|^\.config/dotfiles/.*\.sh$)',
   },
 ]
 

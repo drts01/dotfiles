@@ -9,7 +9,7 @@ export XDG_CONFIG_HOME XDG_DATA_HOME XDG_STATE_HOME XDG_CACHE_HOME
 
 SH_CONF="$XDG_CONFIG_HOME/sh/profile.d"
 # shellcheck disable=SC1091
-if [ -z "$_PROFILE_SOURCED" ]; then
+if [ -z "${_PROFILE_SOURCED-}" ]; then
   export _PROFILE_SOURCED=1
   . "$SH_CONF/10_functions.sh"
   . "$SH_CONF/20_env.sh"

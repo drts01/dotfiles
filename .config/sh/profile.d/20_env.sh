@@ -34,7 +34,7 @@ EDITOR="$VISUAL"
 has bat && export PAGER="bat --plain"
 
 if has less; then
-  [ -z "$PAGER" ] && PAGER='less'
+  [ -z "${PAGER-}" ] && PAGER='less'
   export LESSCHARSET="UTF-8" LESSHISTFILE='-' LESS=-FXgiMRSwz-4 PAGER
 fi
 

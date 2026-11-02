@@ -66,6 +66,6 @@ esac
 # su preserves the image's cwd; Chainguard's /home/git is inaccessible to tester.
 # The checkout is read-only, so disable ShellSpec's failure quick-log writes.
 if [ "$RUN_BASH" -eq 1 ]; then
-  exec su "$TEST_USER" -s /bin/sh -c "cd && sh $TEST && cd /src/.config/dotfiles && $SHELLSPEC --no-quick --shell sh spec/unit spec/startup/posix_spec.sh && $SHELLSPEC --no-quick --shell bash spec/unit spec/startup/bash_spec.sh"
+  exec su "$TEST_USER" -s /bin/sh -c "cd && sh $TEST && cd /src/.config/dotfiles && $SHELLSPEC --no-quick --shell sh spec/unit spec/startup/posix_spec.sh spec/startup/cleanup_spec.sh && $SHELLSPEC --no-quick --shell bash spec/unit spec/startup/bash_spec.sh"
 fi
-exec su "$TEST_USER" -s /bin/sh -c "cd && sh $TEST && cd /src/.config/dotfiles && $SHELLSPEC --no-quick --shell sh spec/unit spec/startup/posix_spec.sh"
+exec su "$TEST_USER" -s /bin/sh -c "cd && sh $TEST && cd /src/.config/dotfiles && $SHELLSPEC --no-quick --shell sh spec/unit spec/startup/posix_spec.sh spec/startup/cleanup_spec.sh"

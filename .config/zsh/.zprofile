@@ -1,10 +1,10 @@
 # shellcheck shell=zsh
 #
-[[ -n $ZSH_PROFILE ]] && zmodload zsh/zprof
+[[ -n ${ZSH_PROFILE-} ]] && zmodload zsh/zprof
 
 . "$HOME/.profile"
 
-if [[ -z $HOMEBREW_PREFIX ]]; then
+if [[ -z ${HOMEBREW_PREFIX-} ]]; then
   if [[ -d /opt/homebrew ]]; then
     HOMEBREW_PREFIX=/opt/homebrew
   elif [[ -d /home/linuxbrew/.linuxbrew ]]; then
@@ -14,13 +14,13 @@ if [[ -z $HOMEBREW_PREFIX ]]; then
   fi
 fi
 
-if [[ -n $HOMEBREW_PREFIX ]]; then
+if [[ -n ${HOMEBREW_PREFIX-} ]]; then
   HOMEBREW_REPOSITORY=$HOMEBREW_PREFIX/Homebrew
   [[ $HOMEBREW_PREFIX == /opt/homebrew ]] && HOMEBREW_REPOSITORY=$HOMEBREW_PREFIX
   HOMEBREW_CELLAR=$HOMEBREW_PREFIX/Cellar
   path=("$HOMEBREW_PREFIX/bin" "$HOMEBREW_PREFIX/sbin" "${path[@]}")
   typeset -U path
-  [[ -n $MISE_DATA_DIR ]] &&
+  [[ -n ${MISE_DATA_DIR-} ]] &&
     path=("$MISE_DATA_DIR/shims" "${path[@]:#$MISE_DATA_DIR/shims}")
   export HOMEBREW_PREFIX HOMEBREW_REPOSITORY HOMEBREW_CELLAR
   export HOMEBREW_AUTO_UPDATE_SECS=86400 HOMEBREW_NO_ANALYTICS=1

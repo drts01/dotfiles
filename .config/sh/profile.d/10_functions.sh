@@ -1,18 +1,20 @@
 # shellcheck shell=sh
 
-if [ -z "$_shell" ]; then
+if [ -z "${_shell-}" ]; then
   if [ -n "${ZSH_VERSION-}" ]; then
     _shell=zsh
   elif [ -n "${BASH_VERSION-}" ]; then
     _shell=bash
   else
-  # shellcheck disable=SC2209
+    # shellcheck disable=SC2209
     _shell=sh
   fi
   readonly _shell
 fi
 
 if [ "$_shell" = bash ] || [ "$_shell" = zsh ]; then
+  # OSTYPE is supplied by Bash and Zsh; POSIX sh uses uname below.
+  # shellcheck disable=SC3028
   case ${OSTYPE-} in
     darwin*) LOCAL_OS=darwin ;;
     linux*) LOCAL_OS=linux ;;
@@ -28,23 +30,20 @@ fi
 export LOCAL_OS
 
 path_add() {
-    # Prefix variables with function name to prevent global pollution
-    _pa_dir="$1"
-    case ":$PATH:" in
-        *":$_pa_dir:"*) ;;
-        *) export PATH="$_pa_dir:$PATH" ;;
-    esac
-    unset _pa_dir
+  # Prefix variables with function name to prevent global pollution
+  _pa_dir="$1"
+  case ":$PATH:" in
+    *":$_pa_dir:"*) ;;
+    *) export PATH="$_pa_dir:$PATH" ;;
+  esac
+  unset _pa_dir
 }
 
 has() {
-  # shellcheck disable=SC2154
-  if [ "$_shell" = 'zsh' ]; then
-    # shellcheck disable=SC3006
-    ((${+commands[$1]}))
-  else
-    command -v "$1" > /dev/null 2>&1
-  fi
+  case $_shell in
+    zsh) whence -p "$1" > /dev/null 2>&1 ;; # Ignore aliases, as the commands table did.
+    *) command -v "$1" > /dev/null 2>&1 ;;
+  esac
 }
 
 # Cache and source shell code emitted by a command (for example, `zoxide init`).

@@ -1,4 +1,4 @@
-# shellcheck shell=sh
+# shellcheck shell=sh disable=SC2016 # Commands are evaluated in child shells.
 
 Describe 'Bash startup'
 Skip if 'Bash unavailable or disabled by TEST_BASH' skip_shell bash

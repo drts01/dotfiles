@@ -1,4 +1,4 @@
-# shellcheck shell=sh
+# shellcheck shell=sh disable=SC2016 # Stubs evaluate their bodies in child shells.
 
 Describe 'source_cache in the selected shell'
 Before 'setup_home'

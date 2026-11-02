@@ -1,4 +1,4 @@
-# shellcheck shell=sh
+# shellcheck shell=sh disable=SC2016 # Commands are evaluated in child shells.
 
 Describe 'Zsh startup'
 Skip if 'Zsh is not installed' skip_shell zsh

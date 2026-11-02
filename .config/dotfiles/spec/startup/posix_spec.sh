@@ -1,4 +1,4 @@
-# shellcheck shell=sh
+# shellcheck shell=sh disable=SC2016 # Commands are evaluated in child shells.
 
 Describe 'OS /bin/sh startup'
 Before 'setup_home'

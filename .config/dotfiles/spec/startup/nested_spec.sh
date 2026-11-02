@@ -1,4 +1,4 @@
-# shellcheck shell=sh
+# shellcheck shell=sh disable=SC2016 # Commands are evaluated in child shells.
 
 skip_nested_shells() {
   skip_shell bash || skip_shell zsh
