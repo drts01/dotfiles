@@ -25,24 +25,6 @@ hooks = [
 ]
 
 [[repos]]
-repo  = "local"
-hooks = [
-  {
-    id       = "zola-last-updated",
-    name     = "Update Zola Date",
-    entry    = """
-    TODAY=$(date +%Y-%m-%d)
-    for file in "$@"; do
-        awk -v date="$TODAY" '/^updated[[:space:]]*=/ { $0 = "updated = " date } { print }' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
-    done
-    """,
-    language = "system",
-    shell    = "bash",
-    files    = '^\.config/dotfiles/docs/content/.*\.md$'
-  }
-]
-
-[[repos]]
 repo  = "https://github.com/crate-ci/typos"
 rev   = "7f9d0819ca1c008ade73f4b41fa9d258d48f605b"                            # frozen: v1.51.1
 hooks = [
