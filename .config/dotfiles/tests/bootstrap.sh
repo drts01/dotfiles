@@ -71,7 +71,7 @@ assert_deployed() {
   [ "$(dfg "$_home" config status.showUntrackedFiles)" = no ] ||
     fail "$_home: status.showUntrackedFiles is not 'no'"
   [ -L "$_home/.local/share/dotfiles/info/exclude" ] || fail "$_home: Git exclude is not linked"
-  [ "$(readlink "$_home/.local/share/dotfiles/info/exclude")" = "$_home/.config/dotfiles/gitignore" ] ||
+  [ "$(readlink "$_home/.local/share/dotfiles/info/exclude")" = "$(cd "$_home/.config/dotfiles" && pwd)/gitignore" ] ||
     fail "$_home: Git exclude points to the wrong file"
   dfg "$_home" check-ignore -q "$_home/.df-bak/generated" || fail "$_home: backup directory is not ignored"
   [ "$(dfg "$_home" config remote.origin.fetch)" = "+refs/heads/trunk:refs/remotes/origin/trunk" ] ||
