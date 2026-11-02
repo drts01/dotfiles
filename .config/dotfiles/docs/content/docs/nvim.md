@@ -1,12 +1,12 @@
 +++
 title = "Neovim"
-updated = 2026-09-12
+updated = 2026-11-01
 weight = 2
 +++
 
-Configuration lives in `.config/nvim/init.lua`, using Neovim's native package
-manager — no plugin manager (no vim-plug/lazy.nvim). Plugins are tracked as
-git submodules:
+Configuration lives in `.config/nvim/init.lua`, using Neovim's native package manager — no plugin manager
+(no vim-plug/lazy.nvim).
+Plugins are tracked as git submodules:
 
 - `.config/nvim/pack/plugins/start/` — auto-loaded on startup
 - `.config/nvim/pack/plugins/opt/` — loaded manually with `:packadd`
@@ -20,6 +20,5 @@ git submodules:
   (`list`/`listchars`) enabled by default.
 - Literal tabs (`expandtab=false`), 4-width indentation.
 
-Since plugins are submodules, `dotfiles submodule update --init` (or
-`mise run update`, which does this automatically) is required after pulling
-changes that add or move a plugin.
+Since plugins are submodules, `dotfiles submodule update --init`
+(or `mise run update`, which does this automatically) is required after pulling changes that add or move a plugin.
