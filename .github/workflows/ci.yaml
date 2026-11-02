@@ -64,7 +64,7 @@ jobs:
           install_args: shellspec
       - name: Test unit specs
         working-directory: .config/dotfiles
-        run: shellspec --output junit --shell "${{ matrix.shell }}" spec/unit
+        run: mise exec shellspec@latest -- shellspec --output junit --shell "${{ matrix.shell }}" spec/unit
       - name: Upload failed unit report
         if: failure()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
@@ -95,7 +95,7 @@ jobs:
           install_args: shellspec
       - name: Test startup specs
         working-directory: .config/dotfiles
-        run: shellspec --output junit --shell /bin/sh spec/startup
+        run: mise exec shellspec@latest -- shellspec --output junit --shell /bin/sh spec/startup
       - name: Upload failed startup report
         if: failure()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
