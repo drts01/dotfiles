@@ -20,6 +20,7 @@ jobs:
     env:
       MISE_EXPERIMENTAL: true
       MISE_IGNORED_CONFIG_PATHS: ${{ github.workspace }}/.config/mise
+      XDG_CONFIG_HOME: ${{ github.workspace }}/.config
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
