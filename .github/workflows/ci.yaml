@@ -16,6 +16,7 @@ permissions:
 
 env:
   MISE_GLOBAL_CONFIG_FILE: ${{ github.workspace }}/.config/dotfiles/mise.toml
+  MISE_IGNORED_CONFIG_PATHS: ${{ github.workspace }}/.config/mise
 
 jobs:
   lint:
@@ -24,7 +25,6 @@ jobs:
     env:
 
       MISE_EXPERIMENTAL: true
-      MISE_IGNORED_CONFIG_PATHS: ${{ github.workspace }}/.config/mise
       XDG_CONFIG_HOME: ${{ github.workspace }}/.config
     steps:
       - name: Checkout
@@ -35,7 +35,13 @@ jobs:
       - name: Install mise
         uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca  # v5.1.1
         with:
-          install_args: prek
+          install: false
+      - name: Set up development clone
+        run: sh .config/dotfiles/dev-setup.sh
+      - name: Check shared lock coverage
+        run: |
+          test "$(mise lock --dry-run --json)" = '[]'
+          test "$(mise --cd .config/dotfiles lock --dry-run --json)" = '[]'
       - name: Cache prek environments
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
         with:
@@ -44,11 +50,13 @@ jobs:
           restore-keys: |
             lint-
       - name: Run prek
-        run: mise --cd .config/dotfiles -E dotfiles-dev task run lint
+        run: mise run lint
 
   shell:
     name: Shell unit (${{ matrix.runner }}, ${{ matrix.shell }})
     runs-on: ${{ matrix.runner }}
+    env:
+      MISE_ENABLE_TOOLS: prek,shellspec
     strategy:
       fail-fast: false
       matrix:
@@ -81,6 +89,8 @@ jobs:
   shell-startup:
     name: Shell startup (${{ matrix.runner }})
     runs-on: ${{ matrix.runner }}
+    env:
+      MISE_ENABLE_TOOLS: prek,shellspec
     strategy:
       fail-fast: false
       matrix:
@@ -198,7 +208,7 @@ jobs:
         uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca  # v5.1.1
         with:
           install_args: shellspec
-      # Same runner as `mise -E dotfiles-dev run bootstrap:test:container` locally.
+      # Same runner as `mise run bootstrap:test:container` in a configured clone.
       - name: Test bootstrap as non-root (container)
         if: matrix.image
         env:

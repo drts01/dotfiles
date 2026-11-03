@@ -2,10 +2,15 @@
 enable_tools        = [ "prek" ]  # Prevents tool install from other configurations
 locked              = true
 lockfile_mode       = "generate"
+http_timeout        = "10s"
 minimum_release_age = "3d"
 
 [tools]
-prek = "latest"
+# Keep task-only development tools in the shared lock without installing them on deployment.
+hyperfine = "latest"
+prek      = "latest"
+shellspec = "latest"
+zola      = "latest"
 
 [tasks."install-ignore"]
 description = "Link this clone's Git exclude file to the tracked dotfiles ignore list"

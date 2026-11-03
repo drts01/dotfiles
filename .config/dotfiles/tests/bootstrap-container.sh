@@ -31,12 +31,12 @@ if [ -z "$ENGINE" ]; then
 fi
 
 if ! command -v mise > /dev/null 2>&1 ||
-  ! SHELLSPEC_HOME=$(mise --cd "$ROOT/.config/dotfiles" where shellspec 2> /dev/null); then
-  echo "ERROR: ShellSpec is required; run 'mise --cd .config/dotfiles install shellspec' first." >&2
+  ! SHELLSPEC_HOME=$(mise --cd "$ROOT" where shellspec 2> /dev/null); then
+  echo "ERROR: ShellSpec is required; run 'sh .config/dotfiles/dev-setup.sh' from a development clone first." >&2
   exit 1
 fi
 # Task-scoped mise tools may be installed without being active in the calling shell.
-SHELLSPEC_EXEC=$(mise --cd "$ROOT/.config/dotfiles" which shellspec 2> /dev/null) ||
+SHELLSPEC_EXEC=$(mise --cd "$ROOT" which shellspec 2> /dev/null) ||
   SHELLSPEC_EXEC=$(find "$SHELLSPEC_HOME" -type f -name shellspec ! -path '*/stub/*' -print)
 if [ -z "$SHELLSPEC_EXEC" ] || [ ! -x "$SHELLSPEC_EXEC" ]; then
   echo "ERROR: ShellSpec executable is missing from its mise installation: $SHELLSPEC_HOME" >&2

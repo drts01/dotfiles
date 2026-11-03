@@ -114,10 +114,13 @@ The old installed script will restore it if run again.
 
 ### Testing
 
-Run the bootstrap integration test on the host (requires git, curl or wget, and network access for submodules):
+In a development clone, first run `sh .config/dotfiles/dev-setup.sh`
+(see [Contributing](https://github.com/drts01/dotfiles/blob/trunk/.github/CONTRIBUTING.md)).
+Then run the bootstrap integration test from the clone root
+(requires git, curl or wget, and network access for submodules):
 
 ```bash
-mise run --cd ~/.config/dotfiles -E dotfiles-dev bootstrap:test
+mise run bootstrap:test
 ```
 
 The test deploys into throwaway home directories with mise off `PATH` and checks:
@@ -130,14 +133,13 @@ The test deploys into throwaway home directories with mise off `PATH` and checks
 
 Run the same bootstrap test and ShellSpec shell specs as a non-root user in clean containers
 (podman, else docker; override with `CONTAINER_ENGINE`).
-Install ShellSpec with `mise --cd .config/dotfiles -E dotfiles-dev install shellspec` before running from a clone;
-the container driver mounts the resolved mise installation read-only.
+Development setup installs ShellSpec; the container driver mounts the resolved mise installation read-only.
 Pass image names to select containers; omit them to run all defaults:
 
 ```bash
-mise run --cd ~/.config/dotfiles -E dotfiles-dev bootstrap:test:container
-mise run --cd ~/.config/dotfiles -E dotfiles-dev bootstrap:test:container -- alpine:latest
-mise run --cd ~/.config/dotfiles -E dotfiles-dev bootstrap:test:container -- cgr.dev/chainguard/git:latest-dev fedora:latest
+mise run bootstrap:test:container
+mise run bootstrap:test:container -- alpine:latest
+mise run bootstrap:test:container -- cgr.dev/chainguard/git:latest-dev fedora:latest
 ```
 
 | Image                               | Coverage                                                       |
@@ -165,13 +167,19 @@ Network overrides:
 CI runs one parallel bootstrap job per image and the host bootstrap test on Ubuntu and macOS.
 On both hosts it runs `spec/unit` under `sh`, `bash`, and `zsh`, plus `spec/startup` once;
 failed ShellSpec jobs upload JUnit reports.
-Run `mise run --cd ~/.config/dotfiles -E dotfiles-dev shell:test:posix` to test the host's `/bin/sh` separately,
-or `mise run --cd ~/.config/dotfiles -E dotfiles-dev shell:test:bash` to test Bash.
+Run `mise run shell:test:posix` to test the host's `/bin/sh` separately,
+or `mise run shell:test:bash` to test Bash from a development clone.
 
 ## mise tasks
 
 Deployment tasks live in `.config/dotfiles/mise.toml` and `.config/dotfiles/mise-tasks/`;
-development tasks live in `.config/dotfiles/mise.dotfiles-dev.toml`.
+development tasks live in `.config/dotfiles/dev-tasks.toml`, included by an ignored, clone-local `mise.local.toml`.
+Development setup copies tracked `dev-miserc.toml`
+and `dev-mise-local.toml` templates from `.config/dotfiles/` to the clone root;
+the installed dotfiles never receive these root configs.
+The clone's ignored `mise.local.lock` links to the tracked `.config/dotfiles/mise.lock`;
+both environments resolve locked tool versions from that file.
+Deployment installs only prek by default.
 They are re-runnable independently of the curl install:
 
 | Task                       | Description                                                                          |
@@ -187,7 +195,8 @@ Run any task from an installed dotfiles home with:
 
 ```bash
 mise run --cd ~/.config/dotfiles <deployment-task>
-mise run --cd ~/.config/dotfiles -E dotfiles-dev <development-task>
+# From the root of a development clone after running dev-setup.sh:
+mise run <development-task>
 ```
 
 Run `mise --cd ~/.config/mise bootstrap` separately to update the machine toolchain.
@@ -197,7 +206,8 @@ see [CONTRIBUTING.md](https://github.com/drts01/dotfiles/blob/trunk/.github/CONT
 
 ### `prek`
 
-Installed via `[tools] prek` in `.config/dotfiles/mise.toml`; `mise.lock` pins the resolved version.
+Installed via `[tools] prek` in `.config/dotfiles/mise.toml`;
+the shared `mise.lock` pins prek and the task-only development tools without enabling them for deployment.
 
 ### `install-hooks`
 

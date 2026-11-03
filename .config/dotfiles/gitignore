@@ -1,4 +1,8 @@
 # Paths are relative to the dotfiles work tree ($HOME when deployed).
+# Development-only files are generated in regular clones, never checked out into $HOME.
+/.miserc.toml
+/mise.local.toml
+/mise.local.lock
 /.cache/
 /.df-bak/
 /.local/share/dotfiles/
@@ -6,3 +10,5 @@
 /.config/dotfiles/.shellspec-quick.log
 /.config/dotfiles/report/
 /.config/dotfiles/coverage/
+/.config/mise/locks/
+/.config/mise/mise.lock

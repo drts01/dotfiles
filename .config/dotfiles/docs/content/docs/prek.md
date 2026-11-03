@@ -30,7 +30,8 @@ definitions (here in TOML), but faster and installed as a versioned `mise` tool 
 Because this repo is checked out as a bare repository against `$HOME` rather than a normal working copy,
 the pre-commit hook that `prek install` generates needs `GIT_DIR`/`GIT_WORK_TREE` explicitly set —
 otherwise git can't locate the repo when the hook runs.
-`.config/dotfiles/scripts/install-hooks.sh` patches the generated hook to export these after installation.
+`.config/dotfiles/mise-tasks/install-hooks.sh` patches the generated hook to export these after installation.
+Development clones instead install ordinary hooks with `sh .config/dotfiles/dev-setup.sh` from the clone root.
 
 Re-run this patch at any time with:
 

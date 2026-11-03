@@ -16,6 +16,10 @@ on:
       - .config/spaceship.zsh
       - .local/share/zsh/**
       - .config/dotfiles/bench/**
+      - .config/dotfiles/dev-setup.sh
+      - .config/dotfiles/dev-miserc.toml
+      - .config/dotfiles/dev-mise-local.toml
+      - .config/dotfiles/dev-tasks.toml
       - .config/dotfiles/mise.toml
       - .config/dotfiles/mise.lock
       - .github/workflows/shell-profile.yaml
@@ -68,12 +72,14 @@ jobs:
           add_shims_to_path: false
           env: false
           export_path: false
+      - name: Set up development clone
+        run: sh .config/dotfiles/dev-setup.sh
       - name: Benchmark isolated system PATH
         env:
           PROFILE_RUNNER_LABEL: ${{ matrix.runner }}
           BENCH_JSON: ${{ runner.temp }}/shell-profile/results.json
           BENCH_METADATA: ${{ runner.temp }}/shell-profile/metadata.json
-        run: mise run --cd .config/dotfiles shell:bench
+        run: mise run shell:bench
       - name: Upload measurements
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2

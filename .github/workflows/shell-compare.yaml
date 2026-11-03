@@ -67,6 +67,8 @@ jobs:
           add_shims_to_path: false
           env: false
           export_path: false
+      - name: Set up development clone
+        run: sh .config/dotfiles/dev-setup.sh
       - name: Measure trunk and candidate in alternating order
         env:
           PROFILE_RUNNER_LABEL: ${{ matrix.runner }}
@@ -76,13 +78,13 @@ jobs:
           set -euo pipefail
           mkdir -p "$OUTPUT"
           BENCH_JSON="$OUTPUT/trunk-1.json" BENCH_METADATA="$OUTPUT/trunk-1.meta.json" \
-            mise run --cd .config/dotfiles shell:bench
+            mise run shell:bench
           BENCH_SOURCE_ROOT="$CANDIDATE_ROOT" BENCH_JSON="$OUTPUT/candidate-1.json" \
-            BENCH_METADATA="$OUTPUT/candidate-1.meta.json" mise run --cd .config/dotfiles shell:bench
+            BENCH_METADATA="$OUTPUT/candidate-1.meta.json" mise run shell:bench
           BENCH_SOURCE_ROOT="$CANDIDATE_ROOT" BENCH_JSON="$OUTPUT/candidate-2.json" \
-            BENCH_METADATA="$OUTPUT/candidate-2.meta.json" mise run --cd .config/dotfiles shell:bench
+            BENCH_METADATA="$OUTPUT/candidate-2.meta.json" mise run shell:bench
           BENCH_JSON="$OUTPUT/trunk-2.json" BENCH_METADATA="$OUTPUT/trunk-2.meta.json" \
-            mise run --cd .config/dotfiles shell:bench
+            mise run shell:bench
           python3 .config/dotfiles/bench/profile-data.py compare "$OUTPUT" | tee -a "$GITHUB_STEP_SUMMARY"
       - name: Upload paired measurements
         if: always()
