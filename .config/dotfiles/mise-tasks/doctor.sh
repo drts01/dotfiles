@@ -4,82 +4,98 @@ set -eu
 DEST_DIR="${DEST_DIR:-$HOME/.local/share/dotfiles}"
 HOOK_PATH="$DEST_DIR/hooks/pre-commit"
 FAIL=0
+WARN=0
 
 print_status() {
   _title="$1"
   _status="$2"
   _detail="${3:-}"
 
-  if [ "$_status" = "OK" ]; then
-    if [ -n "$_detail" ]; then
-      printf "  - %-30s ... OK (%s)\n" "$_title" "$_detail"
-    else
-      printf "  - %-30s ... OK\n" "$_title"
-    fi
-  else
-    printf "  - %-30s ... FAIL\n" "$_title" >&2
-    if [ -n "$_detail" ]; then
-      echo "       Error: $_detail" >&2
-    fi
-    FAIL=1
-  fi
+  case "$_status" in
+    OK) printf '  - %-30s ... OK%s\n' "$_title" "${_detail:+ ($_detail)}" ;;
+    WARN)
+      printf '  - %-30s ... WARN%s\n' "$_title" "${_detail:+ ($_detail)}"
+      WARN=1
+      ;;
+    FAIL)
+      printf '  - %-30s ... FAIL%s\n' "$_title" "${_detail:+ ($_detail)}" >&2
+      FAIL=1
+      ;;
+  esac
 }
 
 echo "Running system diagnostics..."
 
-# 1. Verify required system binaries
-for tool in git mise prek; do
-  if _path=$(command -v "$tool" 2> /dev/null); then
-    print_status "Binary: $tool" "OK" "$_path"
-  else
-    print_status "Binary: $tool" "FAIL" "'$tool' not found on PATH"
-  fi
-done
+echo "Required installation checks:"
+if _git=$(command -v git 2> /dev/null); then
+  print_status "Binary: git" OK "$_git"
+else
+  print_status "Binary: git" FAIL "git is required"
+fi
 
-# 2. Verify physical bare repo path existence
 if [ -d "$DEST_DIR" ]; then
-  print_status "Bare repository path" "OK" "$DEST_DIR"
+  print_status "Bare repository path" OK "$DEST_DIR"
 else
-  print_status "Bare repository path" "FAIL" "Directory missing at $DEST_DIR"
+  print_status "Bare repository path" FAIL "missing: $DEST_DIR"
 fi
 
-# 3. Verify git catalog query response
-if git --git-dir="$DEST_DIR" --work-tree="$HOME" status -q > /dev/null 2>&1; then
-  print_status "Dotfiles status integrity" "OK" "Clean tree"
-else
-  print_status "Dotfiles status integrity" "FAIL" "Git status failed or contains unhandled merge conflicts"
+if [ -n "${_git:-}" ] && [ -d "$DEST_DIR" ]; then
+  if [ "$(git --git-dir="$DEST_DIR" rev-parse --is-bare-repository 2> /dev/null || :)" = true ]; then
+    print_status "Bare repository integrity" OK
+    _untracked_cfg=$(git --git-dir="$DEST_DIR" config --get status.showUntrackedFiles 2> /dev/null || :)
+    if [ "$_untracked_cfg" = no ]; then
+      print_status "Git untracked optimization" OK "status.showUntrackedFiles=no"
+    else
+      print_status "Git untracked optimization" FAIL "set status.showUntrackedFiles=no (current: ${_untracked_cfg:-unset})"
+    fi
+
+    echo "Working-tree status:"
+    if _changes=$(git --git-dir="$DEST_DIR" --work-tree="$HOME" status --porcelain --untracked-files=no 2> /dev/null); then
+      if [ -z "$_changes" ]; then
+        print_status "Tracked files" OK "clean"
+      else
+        print_status "Tracked files" WARN "changes present; run dotfiles status"
+      fi
+    else
+      print_status "Tracked files" FAIL "git status failed"
+    fi
+  else
+    print_status "Bare repository integrity" FAIL "not a usable bare Git repository"
+  fi
 fi
 
-# 4. Verify untracked files behavior configuration
-_untracked_cfg=$(git --git-dir="$DEST_DIR" --work-tree="$HOME" config status.showUntrackedFiles 2> /dev/null || echo "not set")
-if [ "$_untracked_cfg" = "no" ]; then
-  print_status "Git untracked optimization" "OK" "status.showUntrackedFiles=no"
+echo "Optional tooling and hooks:"
+if _mise=$(command -v mise 2> /dev/null); then
+  print_status "Binary: mise" OK "$_mise"
 else
-  print_status "Git untracked optimization" "FAIL" "status.showUntrackedFiles is '$_untracked_cfg' (should be 'no')"
+  print_status "Binary: mise" WARN "not installed; dotfiles still work"
+fi
+if _prek=$(command -v prek 2> /dev/null); then
+  print_status "Binary: prek" OK "$_prek"
+else
+  print_status "Binary: prek" WARN "not installed; git hooks unavailable"
 fi
 
-# 5. Verify hook presence and active execute access bits
 if [ -x "$HOOK_PATH" ]; then
-  print_status "Pre-commit execution hooks" "OK" "Active & executable"
-
-  # 6. Verify hook contains bare repo environment overrides
+  print_status "Pre-commit hook" OK "executable"
   _injection="export GIT_DIR=\"$DEST_DIR\" GIT_WORK_TREE=\"$HOME\""
   if grep -qF "$_injection" "$HOOK_PATH"; then
-    print_status "Pre-commit environment patch" "OK" "Bare repo variables injected"
+    print_status "Bare-repo hook configuration" OK
   else
-    print_status "Pre-commit environment patch" "FAIL" "Hook exists but is missing GIT_DIR environment configuration"
+    print_status "Bare-repo hook configuration" FAIL "hook missing GIT_DIR/GIT_WORK_TREE overrides"
   fi
-elif [ -f "$HOOK_PATH" ]; then
-  print_status "Pre-commit execution hooks" "FAIL" "File exists at $HOOK_PATH but is missing execute permissions (+x)"
+elif [ -e "$HOOK_PATH" ] || [ -L "$HOOK_PATH" ]; then
+  print_status "Pre-commit hook" FAIL "present but not executable"
 else
-  print_status "Pre-commit execution hooks" "FAIL" "Hook script missing entirely from $HOOK_PATH"
+  print_status "Pre-commit hook" WARN "not installed; commits run without prek"
 fi
 
-# Final Summary Evaluation Block
-echo ""
-if [ "$FAIL" -eq 0 ]; then
-  echo "✅ All diagnostic checks passed successfully."
-else
-  echo "❌ Some health verification steps failed. See errors above." >&2
+printf '\n'
+if [ "$FAIL" -ne 0 ]; then
+  echo "Installation checks failed. See errors above." >&2
   exit 1
+elif [ "$WARN" -ne 0 ]; then
+  echo "Installation checks passed with warnings."
+else
+  echo "All installation checks passed."
 fi

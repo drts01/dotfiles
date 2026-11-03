@@ -25,10 +25,10 @@ env         = { BASEDIR = "{{config_root}}", DEST_DIR = "{{ env.HOME }}/.local/s
 description = "Bootstrap dotfiles"
 
 [tasks.doctor]
-description = "Verify bare repository and git hooks"
+description = "Check bare repository, tracked changes, and optional tooling"
 env         = { DEST_DIR = "{{ env.HOME }}/.local/share/dotfiles" }
 run         = "doctor.sh"
 
 [tasks.update]
-description = "Pull latest dotfiles, sync submodules, and install hooks"
+description = "Pull dotfiles, initialize selected submodules (all by default), and install hooks"
 run         = "bootstrap.sh"

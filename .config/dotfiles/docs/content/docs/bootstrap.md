@@ -20,9 +20,31 @@ Bootstrap is split into two scripts:
   1. Clones the bare repo to `~/.local/share/dotfiles`.
   2. Checks out tracked files into `$HOME` on first run, backing up conflicting
      pre-existing files to `~/.df-bak`; pulls (fast-forward only) on later runs.
-  3. Syncs submodules.
+  3. Reports and initializes all 25 submodules by default, or a selected subset.
   4. Installs git hooks via `mise run install-hooks` when mise is available;
      otherwise runs `install-hooks.sh` directly (skipped if `prek` is absent).
+
+Choose submodules before installation with `DOTFILES_SUBMODULES=all` (default), `none`, `zsh`
+(Zsh plugins and `z.lua`), `nvim` (Neovim plugins), or `docs` (documentation theme).
+Combine groups with commas, for example `zsh,nvim`.
+Set the variable on the consuming `sh` process when piping the entrypoint:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | DOTFILES_SUBMODULES=none sh
+```
+
+Zsh and Neovim start without their plugins, but plugin-dependent features remain unavailable.
+Building the documentation requires the `docs` theme.
+To install the deferred plugins later, run:
+
+```bash
+DOTFILES_SUBMODULES=all sh ~/.config/dotfiles/mise-tasks/bootstrap.sh
+```
+
+Use a group instead of `all` to install only that group.
+Selection applies to each run, including `mise run --cd ~/.config/dotfiles update`;
+future runs without the variable initialize all missing submodules.
+Selecting `none` does not remove already initialized plugins.
 
 Deploy without mise:
 
@@ -51,7 +73,7 @@ clone["Clone bare repo if missing"]
 index{"Bare repo has an index?"}
 checkout["Check out, back up conflicts to ~/.df-bak"]
 pull["git pull --ff-only"]
-subs["Sync submodules"]
+subs["Initialize selected submodules or skip"]
 hasmise{"mise on PATH?"}
 hooks["mise trust, then mise run install-hooks"]
 direct["install-hooks.sh, skipped without prek"]
@@ -73,7 +95,7 @@ hasmise -->|no| direct
 {% </devlab.diagram> %}
 <!-- rumdl-enable MD013 MD075 -->
 
-- **Idempotent:** Rerun safely; later runs only pull and sync submodules.
+- **Idempotent:** Rerun safely; later runs pull and initialize the selected submodules.
 - **First checkout:** Keyed on `~/.local/share/dotfiles/index`, not the repo directory.
   Resumes interrupted installs and supports a manually cloned bare repo.
 - **Bare repo config:** Keep `core.bare=true`; remove the legacy `core.worktree` setting on reruns.
@@ -104,13 +126,14 @@ The old installed script will restore it if run again.
 
 ### Environment variables
 
-| Variable            | Default                                                   | Purpose                               |
-| ------------------- | --------------------------------------------------------- | ------------------------------------- |
-| `SKIP_MISE_INSTALL` | unset                                                     | Any value skips installing mise       |
-| `MISE_INSTALL_PATH` | `~/.local/bin/mise`                                       | mise binary location, added to `PATH` |
-| `RAW_URL`           | `https://raw.githubusercontent.com/drts01/dotfiles/trunk` | Source of the deploy script           |
-| `REPO_URL`          | `https://github.com/drts01/dotfiles`                      | Repository to clone                   |
-| `DEST_DIR`          | `~/.local/share/dotfiles`                                 | Bare repository location              |
+| Variable              | Default                                                   | Purpose                                                  |
+| --------------------- | --------------------------------------------------------- | -------------------------------------------------------- |
+| `SKIP_MISE_INSTALL`   | unset                                                     | Any value skips installing mise                          |
+| `MISE_INSTALL_PATH`   | `~/.local/bin/mise`                                       | mise binary location, added to `PATH`                    |
+| `RAW_URL`             | `https://raw.githubusercontent.com/drts01/dotfiles/trunk` | Source of the deploy script                              |
+| `REPO_URL`            | `https://github.com/drts01/dotfiles`                      | Repository to clone                                      |
+| `DEST_DIR`            | `~/.local/share/dotfiles`                                 | Bare repository location                                 |
+| `DOTFILES_SUBMODULES` | `all`                                                     | `all`, `none`, or comma-separated `zsh,nvim,docs` groups |
 
 ### Testing
 
@@ -130,6 +153,8 @@ The test deploys into throwaway home directories with mise off `PATH` and checks
 - Upstream commits fast-forward.
 - Upgrade via the remote entrypoint replaces the old installed script; later local runs do not restore `core.worktree`.
 - Git-only install into a pre-cloned bare repo.
+- An offline submodule selection test covers skipping, each group, combinations, and Neovim startup without plugins
+  (when Neovim is available).
 
 Run the same bootstrap test and ShellSpec shell specs as a non-root user in clean containers
 (podman, else docker; override with `CONTAINER_ENGINE`).
@@ -182,14 +207,14 @@ both environments resolve locked tool versions from that file.
 Deployment installs only prek by default.
 They are re-runnable independently of the curl install:
 
-| Task                       | Description                                                                          |
-| -------------------------- | ------------------------------------------------------------------------------------ |
-| `bootstrap`                | Check out or pull dotfiles, sync submodules, and install [git hooks](#install-hooks) |
-| `update`                   | Pull dotfiles, sync submodules, and install hooks                                    |
-| `install-hooks`            | Install [`prek`](#prek) git hooks patched for the bare repo                          |
-| `doctor`                   | Verify `git`, `mise`, `prek`, the bare repo, and git hooks                           |
-| `bootstrap:test`           | Test bootstrap in throwaway home directories without mise, including a repeat run    |
-| `bootstrap:test:container` | Run `bootstrap:test` as non-root in containers; pass images to select                |
+| Task                       | Description                                                                                         |
+| -------------------------- | --------------------------------------------------------------------------------------------------- |
+| `bootstrap`                | Check out or pull dotfiles, initialize selected submodules, and install [git hooks](#install-hooks) |
+| `update`                   | Pull dotfiles, initialize selected submodules, and install hooks                                    |
+| `install-hooks`            | Install [`prek`](#prek) git hooks patched for the bare repo                                         |
+| `doctor`                   | Check the bare repo, tracked changes, and optional tools and hooks                                  |
+| `bootstrap:test`           | Test bootstrap, repeat runs, and submodule selection in throwaway homes without mise                |
+| `bootstrap:test:container` | Run `bootstrap:test` as non-root in containers; pass images to select                               |
 
 Run any task from an installed dotfiles home with:
 
@@ -217,9 +242,13 @@ See [Git hooks](/docs/prek/).
 
 ## Verifying an install
 
+Run the doctor directly, including after a git-only install:
+
 ```bash
-mise run --cd ~/.config/dotfiles doctor
+sh ~/.config/dotfiles/mise-tasks/doctor.sh
 ```
 
-Checks that `git`, `mise`, and `prek` are on `PATH`, the bare repo exists, `dotfiles status` runs clean,
-and the pre-commit hook is installed and executable.
+Check that git and the bare repository are usable and that untracked files are hidden from its status.
+Report tracked changes as a warning, not an installation failure.
+Report missing mise, prek, and pre-commit hooks as optional warnings; fail for a broken installed hook.
+With mise installed, `mise run --cd ~/.config/dotfiles doctor` runs the same check.

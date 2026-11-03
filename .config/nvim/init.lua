@@ -73,8 +73,6 @@ vim.opt.mouse = 'a'                   -- Enable mouse support
 -- Key Mappings
 -- ============================================================================
 
--- NvimTree toggle
-vim.keymap.set('n', '<leader>n', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
 
 -- Buffer navigation
 vim.keymap.set('n', '<F5>', ':buffers<CR>:buffer<Space>', { noremap = true })
@@ -82,11 +80,6 @@ vim.keymap.set('n', '<F5>', ':buffers<CR>:buffer<Space>', { noremap = true })
 -- Use Q for formatting
 vim.keymap.set('n', 'Q', 'gq', { noremap = true })
 
--- Telescope keymaps
-vim.keymap.set('n', '<leader>ff', '<cmd>Telescope find_files<cr>', { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>fg', '<cmd>Telescope live_grep<cr>', { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>fb', '<cmd>Telescope buffers<cr>', { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>fh', '<cmd>Telescope help_tags<cr>', { noremap = true, silent = true })
 
 -- ============================================================================
 -- Auto Commands
@@ -107,20 +100,18 @@ vim.api.nvim_create_autocmd('BufWritePre', {
 -- ============================================================================
 -- Note: Plugins are loaded automatically from pack/plugins/start/
 
--- Check if plugins are installed
+-- Git creates empty directories for uninitialized submodules; check for contents.
 local function plugin_exists(plugin_path)
   local full_path = vim.fn.stdpath('config') .. '/pack/plugins/start/' .. plugin_path
-  return vim.fn.isdirectory(full_path) == 1
+  return vim.fn.glob(full_path .. '/*') ~= ''
 end
 
-if plugin_exists('dracula') then
-  require("dracula").setup({
-    style = "default", -- options: "default", "soft"
+if plugin_exists('theme_dracula') then
+  require('dracula').setup({
+    style = 'default', -- options: 'default', 'soft'
   })
+  vim.cmd.colorscheme('dracula')
 end
-
--- Load the colorscheme
-vim.cmd([[colorscheme dracula]])
 
 -- Lualine setup
 if plugin_exists('lualine.nvim') then
@@ -148,6 +139,7 @@ end
 
 -- NvimTree setup
 if plugin_exists('nvim-tree.lua') then
+  vim.keymap.set('n', '<leader>n', '<cmd>NvimTreeToggle<cr>', { noremap = true, silent = true })
   require('nvim-tree').setup({
     sort_by = 'case_sensitive',
     view = {
@@ -181,6 +173,10 @@ end
 
 -- Telescope setup
 if plugin_exists('telescope.nvim') then
+  vim.keymap.set('n', '<leader>ff', '<cmd>Telescope find_files<cr>', { noremap = true, silent = true })
+  vim.keymap.set('n', '<leader>fg', '<cmd>Telescope live_grep<cr>', { noremap = true, silent = true })
+  vim.keymap.set('n', '<leader>fb', '<cmd>Telescope buffers<cr>', { noremap = true, silent = true })
+  vim.keymap.set('n', '<leader>fh', '<cmd>Telescope help_tags<cr>', { noremap = true, silent = true })
   require('telescope').setup({
     defaults = {
       file_ignore_patterns = { 'node_modules', '.git/', '*.pyc' },

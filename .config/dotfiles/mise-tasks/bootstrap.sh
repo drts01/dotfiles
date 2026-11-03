@@ -8,6 +8,35 @@ REPO_URL="${REPO_URL:-https://github.com/drts01/dotfiles}"
 DEST_DIR="${DEST_DIR:-$HOME/.local/share/dotfiles}"
 BASEDIR="$HOME/.config/dotfiles"
 BACKUP_DIR="$HOME/.df-bak"
+DOTFILES_SUBMODULES="${DOTFILES_SUBMODULES-all}"
+
+# Validate before cloning or modifying the working tree.
+case "$DOTFILES_SUBMODULES" in
+  all | none) ;;
+  '' | ,* | *, | *,,*)
+    printf 'ERROR: DOTFILES_SUBMODULES must be all, none, or a comma-separated list of zsh,nvim,docs.\n' >&2
+    exit 1
+    ;;
+  *)
+    remaining=$DOTFILES_SUBMODULES,
+    groups=' '
+    while [ -n "$remaining" ]; do
+      group=${remaining%%,*}
+      remaining=${remaining#*,}
+      case "$group" in
+        zsh | nvim | docs) ;;
+        *)
+          printf 'ERROR: DOTFILES_SUBMODULES must be all, none, or a comma-separated list of zsh,nvim,docs.\n' >&2
+          exit 1
+          ;;
+      esac
+      case "$groups" in
+        *" $group "*) ;;
+        *) groups="$groups$group " ;;
+      esac
+    done
+    ;;
+esac
 
 df() { git --git-dir="$DEST_DIR" --work-tree="$HOME" "$@"; }
 
@@ -67,9 +96,29 @@ else
   echo "Warning: HEAD is detached; skipping pull." >&2
 fi
 
-echo "Syncing submodules..."
-# git-submodule requires the cwd to be inside the work tree.
-(cd "$HOME" && df submodule update --init)
+# git-submodule requires the cwd to be inside the work tree. Pathspecs select
+# tracked gitlinks, so newly added plugins in a group are picked up automatically.
+if [ "$DOTFILES_SUBMODULES" = none ]; then
+  echo "Skipping submodules (DOTFILES_SUBMODULES=none)."
+elif [ "$DOTFILES_SUBMODULES" = all ]; then
+  total=$(df ls-files --stage | grep -c '^160000 ' || :)
+  echo "Initializing all $total submodules..."
+  (cd "$HOME" && df submodule update --init)
+else
+  set --
+  case "$groups" in
+    *' zsh '*) set -- "$@" .local/share/zsh .local/share/z.lua ;;
+  esac
+  case "$groups" in
+    *' nvim '*) set -- "$@" .config/nvim/pack/plugins/start ;;
+  esac
+  case "$groups" in
+    *' docs '*) set -- "$@" .config/dotfiles/docs/themes ;;
+  esac
+  total=$(df ls-files --stage -- "$@" | grep -c '^160000 ' || :)
+  echo "Initializing $total submodules (DOTFILES_SUBMODULES=$DOTFILES_SUBMODULES)..."
+  (cd "$HOME" && df submodule update --init -- "$@")
+fi
 
 sh "$BASEDIR/mise-tasks/install-ignore.sh" "$DEST_DIR"
 

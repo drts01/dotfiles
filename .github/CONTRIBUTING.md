@@ -40,8 +40,8 @@ Setup links the ignored root `mise.local.lock` to the tracked `.config/dotfiles/
 Both configurations require locked installs.
 The deployment config keeps only prek enabled;
 its other tool declarations retain the development tools in the shared lock without installing them by default.
-If either local config already exists with different contents, setup stops rather than overwriting it;
-setup upgrades its earlier generated config when only the locked setting and TOML spacing changed.
+If either local config already exists with different contents, setup stops rather than overwriting it.
+Compare it with the tracked template and merge changes manually before re-running setup.
 If `mise.local.lock` already exists and points elsewhere, reconcile it manually.
 
 ## Run tasks
@@ -125,11 +125,12 @@ Run the checks that match the change:
 | Shell unit specs             | `cd .config/dotfiles && shellspec --shell sh spec/unit` |
 | Shell startup specs          | `cd .config/dotfiles && shellspec spec/startup`         |
 | `bootstrap.sh`, `mise-tasks` | `mise run bootstrap:test`                               |
+| `mise-tasks/doctor.sh`       | `sh .config/dotfiles/tests/doctor.sh`                   |
 | Bootstrap portability        | `mise run bootstrap:test:container`                     |
 | Documentation site           | `mise run docs:build`                                   |
 
-CI runs lint, `spec/unit` under `sh`, `bash`, and `zsh` on Ubuntu and macOS, `spec/startup` once per host,
-and bootstrap tests on hosts and in containers on every push.
+CI runs lint and the isolated doctor test, `spec/unit` under `sh`, `bash`, and `zsh` on Ubuntu and macOS,
+`spec/startup` once per host, and bootstrap tests on hosts and in containers on every push.
 Failed ShellSpec jobs upload JUnit reports.
 Container tests mount the mise-installed ShellSpec distribution read-only and run POSIX specs plus Bash specs
 when available (`TEST_BASH=required|skip|auto`).

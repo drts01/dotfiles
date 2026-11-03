@@ -1,7 +1,7 @@
 #!/bin/sh
 # Remote entrypoint:
 #   curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | sh
-# Set SKIP_MISE_INSTALL=1 to deploy the dotfiles with git only.
+# Set SKIP_MISE_INSTALL=1 for git-only setup; DOTFILES_SUBMODULES=none|zsh,nvim,docs selects plugin groups.
 
 set -eu
 

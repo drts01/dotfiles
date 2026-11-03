@@ -36,9 +36,9 @@ dir         = "{{config_root}}/.config/dotfiles"
 run         = "shellspec --shell zsh spec/unit spec/startup/zsh_spec.sh"
 
 ["bootstrap:test"]
-description = "Test bootstrap in throwaway home directories without mise, including a repeat run"
+description = "Test bootstrap and selective submodules in throwaway homes without mise"
 dir         = "{{config_root}}/.config/dotfiles"
-run         = "sh tests/bootstrap.sh"
+run         = "sh tests/bootstrap.sh && sh tests/bootstrap-submodules.sh"
 
 ["bootstrap:test:container"]
 description = "Run bootstrap and shell tests as non-root in containers (podman or docker); pass images to select"
