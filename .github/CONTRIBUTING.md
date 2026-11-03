@@ -12,17 +12,33 @@ Use the bare-repository install only for deploying them into `$HOME`.
 
 ## Set up a working copy
 
-Clone the repository with its submodules:
+Clone the repository without the legacy Neovim submodules:
 
 ```bash
-git clone --recurse-submodules https://github.com/drts01/dotfiles
+git clone https://github.com/drts01/dotfiles
 cd dotfiles
 ```
 
-Initialize submodules in an existing clone:
+Initialize the Zsh plugins if `zsh` is installed
+(needed for plugin startup tests), and `z.lua` if `lua` or `luajit` is installed:
 
 ```bash
-git submodule update --init --recursive
+if command -v zsh >/dev/null; then
+  git submodule update --init -- .local/share/zsh
+fi
+if command -v lua >/dev/null || command -v luajit >/dev/null; then
+  git submodule update --init -- .local/share/z.lua
+fi
+```
+
+For Neovim development, initialize its plugins
+when `nvim` is installed with `git submodule update --init -- .config/nvim/pack/plugins/start`.
+To build documentation after development setup, install Zola and initialize its theme:
+
+```bash
+mise install zola
+git submodule update --init -- .config/dotfiles/docs/themes
+mise run docs:build
 ```
 
 Set up the development clone (re-runnable):

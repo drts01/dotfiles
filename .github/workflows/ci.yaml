@@ -31,7 +31,6 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
-          submodules: true
       - name: Install mise
         uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca  # v5.1.1
         with:
@@ -71,7 +70,6 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
-          submodules: true
       - name: Install Zsh
         if: runner.os == 'Linux'
         run: sudo apt-get install --yes zsh
@@ -104,10 +102,11 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
-          submodules: true
       - name: Install Zsh
         if: runner.os == 'Linux'
         run: sudo apt-get install --yes zsh
+      - name: Initialize Zsh plugins for startup specs
+        run: git submodule update --init -- .local/share/zsh
       - name: Install ShellSpec
         uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca  # v5.1.1
         with:
@@ -150,10 +149,11 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
-          submodules: true
       - name: Install Zsh
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install --yes zsh
+      - name: Initialize Zsh plugins for startup checks
+        run: git submodule update --init -- .local/share/zsh
       - name: Install mise
         uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca  # v5.1.1
         with:

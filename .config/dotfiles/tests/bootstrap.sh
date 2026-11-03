@@ -77,9 +77,26 @@ assert_deployed() {
   [ "$(dfg "$_home" config remote.origin.fetch)" = "+refs/heads/trunk:refs/remotes/origin/trunk" ] ||
     fail "$_home: remote.origin.fetch refspec not set"
   [ -z "$(dfg "$_home" status --porcelain)" ] || fail "$_home: work tree is not clean"
-  if (cd "$_home" && dfg "$_home" submodule status) | grep -q '^-'; then
-    fail "$_home: uninitialized submodules"
-  fi
+  for pair in 'zsh .local/share/zsh' 'nvim .config/nvim/pack/plugins/start' \
+    'lua .local/share/z.lua' 'zola .config/dotfiles/docs/themes'; do
+    tool=${pair%% *}
+    path=${pair#* }
+    available=false
+    # The tool name is expanded by the isolated child shell, not this test shell.
+    # shellcheck disable=SC2016
+    if env -i PATH="$TEST_PATH" sh -c 'command -v "$1"' sh "$tool" > /dev/null; then
+      available=true
+    elif [ "$tool" = lua ] && env -i PATH="$TEST_PATH" sh -c 'command -v luajit' > /dev/null; then
+      available=true
+    fi
+    if [ "$available" = true ]; then
+      if (cd "$_home" && dfg "$_home" submodule status -- "$path") | grep -q '^-'; then
+        fail "$_home: $tool submodules not initialized with tool on PATH"
+      fi
+    elif (cd "$_home" && dfg "$_home" submodule status -- "$path") | grep -qv '^-'; then
+      fail "$_home: $tool submodules initialized without tool on PATH"
+    fi
+  done
 }
 
 env -i PATH="$TEST_PATH" sh -c 'command -v git' > /dev/null || fail "git not found in $TEST_PATH"

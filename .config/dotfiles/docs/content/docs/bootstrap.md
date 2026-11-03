@@ -20,31 +20,44 @@ Bootstrap is split into two scripts:
   1. Clones the bare repo to `~/.local/share/dotfiles`.
   2. Checks out tracked files into `$HOME` on first run, backing up conflicting
      pre-existing files to `~/.df-bak`; pulls (fast-forward only) on later runs.
-  3. Reports and initializes all 25 submodules by default, or a selected subset.
+  3. Reports and initializes submodules for tools available on `PATH`, subject to explicit exclusions.
   4. Installs git hooks via `mise run install-hooks` when mise is available;
      otherwise runs `install-hooks.sh` directly (skipped if `prek` is absent).
 
-Choose submodules before installation with `DOTFILES_SUBMODULES=all` (default), `none`, `zsh`
-(Zsh plugins and `z.lua`), `nvim` (Neovim plugins), or `docs` (documentation theme).
-Combine groups with commas, for example `zsh,nvim`.
-Set the variable on the consuming `sh` process when piping the entrypoint:
+Choose submodules before installation with `DOTFILES_SUBMODULES=auto` (default), `all`, `none`,
+or comma-separated groups such as `zsh,nvim`.
+Both `auto` and `all` select every group whose tool is on `PATH`:
+
+| Group  | Required tool     | Submodules             |
+| ------ | ----------------- | ---------------------- |
+| `zsh`  | `zsh`             | Zsh plugins and prompt |
+| `nvim` | `nvim`            | Legacy Neovim plugins  |
+| `lua`  | `lua` or `luajit` | `z.lua`                |
+| `docs` | `zola`            | Documentation theme    |
+
+Helix needs no submodules.
+Explicit group selections still require the matching tool.
+Use `DOTFILES_SKIP_SUBMODULES=nvim,docs` to exclude individual groups,
+or `DOTFILES_SKIP_SUBMODULES=all` to exclude everything (equivalent to `DOTFILES_SUBMODULES=none`).
+Unknown group names fail before checkout.
+Set either variable on the consuming `sh` process when piping the entrypoint:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | DOTFILES_SUBMODULES=none sh
+curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | DOTFILES_SKIP_SUBMODULES=nvim sh
 ```
 
 Zsh and Neovim start without their plugins, but plugin-dependent features remain unavailable.
 Building the documentation requires the `docs` theme.
-To install the deferred plugins later, run:
+To install a skipped group later, first install its tool; for example, with `nvim` on `PATH`, run:
 
 ```bash
-DOTFILES_SUBMODULES=all sh ~/.config/dotfiles/mise-tasks/bootstrap.sh
+DOTFILES_SUBMODULES=nvim sh ~/.config/dotfiles/mise-tasks/bootstrap.sh
 ```
 
-Use a group instead of `all` to install only that group.
-Selection applies to each run, including `mise run --cd ~/.config/dotfiles update`;
-future runs without the variable initialize all missing submodules.
-Selecting `none` does not remove already initialized plugins.
+`all` still skips groups whose tools are unavailable.
+Selection and exclusion apply to each run, including `mise run --cd ~/.config/dotfiles update`;
+future runs without either variable detect tools again.
+Skipping does not remove already initialized plugins.
 
 Deploy without mise:
 
@@ -126,14 +139,15 @@ The old installed script will restore it if run again.
 
 ### Environment variables
 
-| Variable              | Default                                                   | Purpose                                                  |
-| --------------------- | --------------------------------------------------------- | -------------------------------------------------------- |
-| `SKIP_MISE_INSTALL`   | unset                                                     | Any value skips installing mise                          |
-| `MISE_INSTALL_PATH`   | `~/.local/bin/mise`                                       | mise binary location, added to `PATH`                    |
-| `RAW_URL`             | `https://raw.githubusercontent.com/drts01/dotfiles/trunk` | Source of the deploy script                              |
-| `REPO_URL`            | `https://github.com/drts01/dotfiles`                      | Repository to clone                                      |
-| `DEST_DIR`            | `~/.local/share/dotfiles`                                 | Bare repository location                                 |
-| `DOTFILES_SUBMODULES` | `all`                                                     | `all`, `none`, or comma-separated `zsh,nvim,docs` groups |
+| Variable                   | Default                                                   | Purpose                                                 |
+| -------------------------- | --------------------------------------------------------- | ------------------------------------------------------- |
+| `SKIP_MISE_INSTALL`        | unset                                                     | Any value skips installing mise                         |
+| `MISE_INSTALL_PATH`        | `~/.local/bin/mise`                                       | mise binary location, added to `PATH`                   |
+| `RAW_URL`                  | `https://raw.githubusercontent.com/drts01/dotfiles/trunk` | Source of the deploy script                             |
+| `REPO_URL`                 | `https://github.com/drts01/dotfiles`                      | Repository to clone                                     |
+| `DEST_DIR`                 | `~/.local/share/dotfiles`                                 | Bare repository location                                |
+| `DOTFILES_SUBMODULES`      | `auto`                                                    | `auto`, `all`, `none`, or `zsh,nvim,lua,docs` groups    |
+| `DOTFILES_SKIP_SUBMODULES` | unset                                                     | `all` or comma-separated `zsh,nvim,lua,docs` exclusions |
 
 ### Testing
 
@@ -153,8 +167,8 @@ The test deploys into throwaway home directories with mise off `PATH` and checks
 - Upstream commits fast-forward.
 - Upgrade via the remote entrypoint replaces the old installed script; later local runs do not restore `core.worktree`.
 - Git-only install into a pre-cloned bare repo.
-- An offline submodule selection test covers skipping, each group, combinations, and Neovim startup without plugins
-  (when Neovim is available).
+- An offline submodule selection test covers tool detection, exclusions, explicit groups,
+  and Neovim startup without plugins (when Neovim is available).
 
 Run the same bootstrap test and ShellSpec shell specs as a non-root user in clean containers
 (podman, else docker; override with `CONTAINER_ENGINE`).

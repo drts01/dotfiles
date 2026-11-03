@@ -51,12 +51,11 @@ jobs:
           - runner: macos-15-arm64
             slug: macos-arm64
     steps:
-      - name: Checkout trusted trunk with plugins
+      - name: Checkout trusted trunk
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           ref: trunk
           persist-credentials: false
-          submodules: true
       - name: Verify trusted revision
         env:
           EXPECTED_SHA: ${{ github.sha }}
@@ -64,6 +63,8 @@ jobs:
       - name: Install Zsh
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install --yes zsh
+      - name: Initialize Zsh plugins for benchmarking
+        run: git submodule update --init -- .local/share/zsh
       - name: Install mise
         uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca  # v5.1.1
         with:

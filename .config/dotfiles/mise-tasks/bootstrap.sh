@@ -8,33 +8,52 @@ REPO_URL="${REPO_URL:-https://github.com/drts01/dotfiles}"
 DEST_DIR="${DEST_DIR:-$HOME/.local/share/dotfiles}"
 BASEDIR="$HOME/.config/dotfiles"
 BACKUP_DIR="$HOME/.df-bak"
-DOTFILES_SUBMODULES="${DOTFILES_SUBMODULES-all}"
+DOTFILES_SUBMODULES="${DOTFILES_SUBMODULES-auto}"
+DOTFILES_SKIP_SUBMODULES="${DOTFILES_SKIP_SUBMODULES-}"
 
-# Validate before cloning or modifying the working tree.
+# Validate both selections before cloning or changing the working tree.
+parse_groups() {
+  value=$1
+  variable=$2
+  case "$value" in
+    '' | ,* | *, | *,,* | auto | all | none)
+      printf 'ERROR: %s must be a comma-separated list of zsh,nvim,lua,docs.\n' "$variable" >&2
+      exit 1
+      ;;
+  esac
+  parsed=' '
+  remaining=$value,
+  while [ -n "$remaining" ]; do
+    group=${remaining%%,*}
+    remaining=${remaining#*,}
+    case "$group" in
+      zsh | nvim | lua | docs) ;;
+      *)
+        printf 'ERROR: %s must be a comma-separated list of zsh,nvim,lua,docs.\n' "$variable" >&2
+        exit 1
+        ;;
+    esac
+    case "$parsed" in
+      *" $group "*) ;;
+      *) parsed="$parsed$group " ;;
+    esac
+  done
+}
+
 case "$DOTFILES_SUBMODULES" in
-  all | none) ;;
-  '' | ,* | *, | *,,*)
-    printf 'ERROR: DOTFILES_SUBMODULES must be all, none, or a comma-separated list of zsh,nvim,docs.\n' >&2
-    exit 1
-    ;;
+  auto | all) groups=' zsh nvim lua docs ' ;;
+  none) groups=' ' ;;
   *)
-    remaining=$DOTFILES_SUBMODULES,
-    groups=' '
-    while [ -n "$remaining" ]; do
-      group=${remaining%%,*}
-      remaining=${remaining#*,}
-      case "$group" in
-        zsh | nvim | docs) ;;
-        *)
-          printf 'ERROR: DOTFILES_SUBMODULES must be all, none, or a comma-separated list of zsh,nvim,docs.\n' >&2
-          exit 1
-          ;;
-      esac
-      case "$groups" in
-        *" $group "*) ;;
-        *) groups="$groups$group " ;;
-      esac
-    done
+    parse_groups "$DOTFILES_SUBMODULES" DOTFILES_SUBMODULES
+    groups=$parsed
+    ;;
+esac
+case "$DOTFILES_SKIP_SUBMODULES" in
+  '') skips=' ' ;;
+  all) skips=' zsh nvim lua docs ' ;;
+  *)
+    parse_groups "$DOTFILES_SKIP_SUBMODULES" DOTFILES_SKIP_SUBMODULES
+    skips=$parsed
     ;;
 esac
 
@@ -96,27 +115,54 @@ else
   echo "Warning: HEAD is detached; skipping pull." >&2
 fi
 
-# git-submodule requires the cwd to be inside the work tree. Pathspecs select
-# tracked gitlinks, so newly added plugins in a group are picked up automatically.
-if [ "$DOTFILES_SUBMODULES" = none ]; then
-  echo "Skipping submodules (DOTFILES_SUBMODULES=none)."
-elif [ "$DOTFILES_SUBMODULES" = all ]; then
-  total=$(df ls-files --stage | grep -c '^160000 ' || :)
-  echo "Initializing all $total submodules..."
-  (cd "$HOME" && df submodule update --init)
+# Git submodule needs the cwd inside the work tree. Directory pathspecs pick up
+# newly added plugins without a hardcoded per-plugin list.
+set --
+for group in zsh nvim lua docs; do
+  case "$groups" in
+    *" $group "*) ;;
+    *) continue ;;
+  esac
+  case "$skips" in
+    *" $group "*)
+      echo "Skipping $group submodules (excluded)."
+      continue
+      ;;
+  esac
+  case "$group" in
+    zsh)
+      tool=zsh
+      path=.local/share/zsh
+      ;;
+    nvim)
+      tool=nvim
+      path=.config/nvim/pack/plugins/start
+      ;;
+    lua)
+      tool=lua
+      path=.local/share/z.lua
+      ;;
+    docs)
+      tool=zola
+      path=.config/dotfiles/docs/themes
+      ;;
+  esac
+  if [ "$group" = lua ]; then
+    if ! command -v lua > /dev/null 2>&1 && ! command -v luajit > /dev/null 2>&1; then
+      echo "Skipping lua submodule (lua/luajit not found)."
+      continue
+    fi
+  elif ! command -v "$tool" > /dev/null 2>&1; then
+    echo "Skipping $group submodules ($tool not found)."
+    continue
+  fi
+  set -- "$@" "$path"
+done
+if [ "$#" -eq 0 ]; then
+  echo "Skipping submodules (none selected with available tools)."
 else
-  set --
-  case "$groups" in
-    *' zsh '*) set -- "$@" .local/share/zsh .local/share/z.lua ;;
-  esac
-  case "$groups" in
-    *' nvim '*) set -- "$@" .config/nvim/pack/plugins/start ;;
-  esac
-  case "$groups" in
-    *' docs '*) set -- "$@" .config/dotfiles/docs/themes ;;
-  esac
   total=$(df ls-files --stage -- "$@" | grep -c '^160000 ' || :)
-  echo "Initializing $total submodules (DOTFILES_SUBMODULES=$DOTFILES_SUBMODULES)..."
+  echo "Initializing $total submodules (selection: $DOTFILES_SUBMODULES; excluded: ${DOTFILES_SKIP_SUBMODULES:-none})..."
   (cd "$HOME" && df submodule update --init -- "$@")
 fi
 

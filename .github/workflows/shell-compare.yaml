@@ -36,7 +36,6 @@ jobs:
         with:
           ref: trunk
           persist-credentials: false
-          submodules: true
       - name: Verify revisions
         env:
           EXPECTED_SHA: ${{ github.sha }}
@@ -45,13 +44,12 @@ jobs:
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
           [[ "$CANDIDATE_SHA" =~ ^[0-9a-f]{40}$ ]] || { echo 'Supply a full lowercase commit SHA' >&2; exit 1; }
           test "$CANDIDATE_SHA" != "$EXPECTED_SHA"
-      - name: Checkout candidate with plugins
+      - name: Checkout candidate
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           ref: ${{ inputs.candidate_sha }}
           path: candidate
           persist-credentials: false
-          submodules: true
       - name: Verify candidate checkout
         env:
           CANDIDATE_SHA: ${{ inputs.candidate_sha }}
@@ -59,6 +57,10 @@ jobs:
       - name: Install Zsh
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install --yes zsh
+      - name: Initialize Zsh plugins for both benchmarks
+        run: |
+          git submodule update --init -- .local/share/zsh
+          git -C candidate submodule update --init -- .local/share/zsh
       - name: Install mise
         uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca  # v5.1.1
         with:

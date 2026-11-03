@@ -29,24 +29,25 @@ This installs [mise](https://mise.jdx.dev)
 (a failed install only warns),
 clones the bare repo to `~/.local/share/dotfiles`, checks out the tracked files into `$HOME`
 (backing up any conflicting pre-existing files to `~/.df-bak`),
-initializes all 25 submodules in a separate, reported stage, and installs `prek` git hooks when available.
+initializes submodules only for tools already on `PATH` in a separate, reported stage,
+and installs `prek` git hooks when available.
 Re-running the command is safe: it fast-forwards the existing checkout instead of re-cloning.
 
-To defer plugin downloads or select a group, set `DOTFILES_SUBMODULES` on the shell reading the pipe:
+To select or skip groups, set `DOTFILES_SUBMODULES` or `DOTFILES_SKIP_SUBMODULES` on the shell reading the pipe:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | DOTFILES_SUBMODULES=none sh
-curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | DOTFILES_SUBMODULES=zsh,nvim sh
+curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | DOTFILES_SKIP_SUBMODULES=nvim sh
 ```
 
-Choose `all` (default), `none`, or a comma-separated list of `zsh` (Zsh plugins and `z.lua`), `nvim`
-(Neovim plugins), and `docs` (documentation theme).
-Neovim and Zsh start without plugins, but plugin features are unavailable until installed;
-building the docs requires `docs`.
-Install deferred groups later by rerunning `DOTFILES_SUBMODULES=all sh ~/.config/dotfiles/mise-tasks/bootstrap.sh`
-(or substitute a group).
-The choice applies only to that run: ordinary updates install all missing submodules,
-and selecting `none` never removes previously installed ones.
+`auto` (default) and `all` select the groups whose tools are available: `zsh` for Zsh plugins,
+`nvim` for legacy Neovim plugins, `lua` (or `luajit`) for `z.lua`, and `zola` for the `docs` theme.
+Helix needs no submodules.
+Select groups explicitly with `DOTFILES_SUBMODULES=zsh,nvim`; selections still require their tools.
+Exclude a group with `DOTFILES_SKIP_SUBMODULES=nvim` or exclude everything with `DOTFILES_SKIP_SUBMODULES=all`
+(equivalent to `DOTFILES_SUBMODULES=none`).
+On each update, tool detection and exclusions run again; unselected groups are left unchanged, not removed.
+To install a previously skipped group, install its tool, then rerun bootstrap without that exclusion.
 
 Skip mise and deploy with git only:
 
@@ -73,12 +74,12 @@ Interact with the repository using the system alias:
 
 ```bash
 dotfiles status
-dotfiles add .config/nvim/init.lua
-dotfiles commit --message "feat(nvim): update config"
+dotfiles add .config/helix/config.toml
+dotfiles commit --message "feat(helix): update config"
 dotfiles push
 ```
 
-Pull the latest dotfiles, initialize missing submodules (all by default), and set up git hooks when available:
+Pull the latest dotfiles, initialize submodules for available tools, and set up git hooks when available:
 
 ```bash
 mise run --cd ~/.config/dotfiles update

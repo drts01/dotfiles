@@ -30,5 +30,5 @@ env         = { DEST_DIR = "{{ env.HOME }}/.local/share/dotfiles" }
 run         = "doctor.sh"
 
 [tasks.update]
-description = "Pull dotfiles, initialize selected submodules (all by default), and install hooks"
+description = "Pull dotfiles, initialize available-tool submodules except exclusions, and install hooks"
 run         = "bootstrap.sh"

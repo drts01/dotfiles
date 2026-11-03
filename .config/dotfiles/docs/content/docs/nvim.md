@@ -1,8 +1,13 @@
 +++
-title = "Neovim"
+title = "Neovim (legacy)"
 updated = 2026-11-01
 weight = 2
 +++
+
+Helix is the primary editor.
+Neovim remains available as a legacy configuration.
+Bootstrap installs or updates its plugin submodules when `nvim` is on `PATH`,
+unless you exclude them with `DOTFILES_SKIP_SUBMODULES=nvim`.
 
 Configuration lives in `.config/nvim/init.lua`, using Neovim's native package manager — no plugin manager
 (no vim-plug/lazy.nvim).
@@ -20,5 +25,6 @@ Plugins are tracked as git submodules:
   (`list`/`listchars`) enabled by default.
 - Literal tabs (`expandtab=false`), 4-width indentation.
 
-Since plugins are submodules, `dotfiles submodule update --init`
-(or `mise run update`, which does this automatically) is required after pulling changes that add or move a plugin.
+After pulling changes that add or move a plugin,
+rerun `DOTFILES_SUBMODULES=nvim sh ~/.config/dotfiles/mise-tasks/bootstrap.sh`.
+The default update initializes Neovim plugins only when `nvim` is on `PATH` and they are not excluded.
