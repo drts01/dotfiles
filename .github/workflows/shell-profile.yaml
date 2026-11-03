@@ -110,3 +110,51 @@ jobs:
         env:
           ARTIFACTS: ${{ runner.temp }}/shell-profile-artifacts
         run: python3 .config/dotfiles/bench/profile-data.py archive "$ARTIFACTS" "$GITHUB_WORKSPACE"
+
+  chart:
+    if: github.ref == 'refs/heads/trunk'
+    needs: archive
+    name: Chart comparable history
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout trusted chart generator
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          ref: trunk
+          persist-credentials: false
+      - name: Verify trusted revision
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - name: Test chart generator
+        run: python3 -m unittest discover -s .config/dotfiles/tests -p 'test_profile_data.py'
+      - name: Checkout durable results
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          ref: benchmarks
+          path: history
+          persist-credentials: false
+      - name: Generate per-image shell charts
+        env:
+          CHART_OUTPUT: ${{ runner.temp }}/shell-profile-charts
+        run: >-
+          python3 .config/dotfiles/bench/profile-data.py chart history
+          "$CHART_OUTPUT" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT"
+      - name: Upload charts
+        id: charts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: shell-profile-trends
+          path: ${{ runner.temp }}/shell-profile-charts/
+          if-no-files-found: error
+          retention-days: 90
+      - name: Link charts and summarize history
+        env:
+          CHART_OUTPUT: ${{ runner.temp }}/shell-profile-charts
+          CHART_URL: ${{ steps.charts.outputs.artifact-url }}
+        run: |
+          cat "$CHART_OUTPUT/summary.md" >> "$GITHUB_STEP_SUMMARY"
+          printf '\n[Download SVG trend charts](%s)\n' "$CHART_URL" >> "$GITHUB_STEP_SUMMARY"
