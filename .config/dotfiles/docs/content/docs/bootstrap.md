@@ -117,7 +117,7 @@ The old installed script will restore it if run again.
 Run the bootstrap integration test on the host (requires git, curl or wget, and network access for submodules):
 
 ```bash
-mise run --cd ~/.config/dotfiles bootstrap:test
+mise run --cd ~/.config/dotfiles -E dotfiles-dev bootstrap:test
 ```
 
 The test deploys into throwaway home directories with mise off `PATH` and checks:
@@ -130,14 +130,14 @@ The test deploys into throwaway home directories with mise off `PATH` and checks
 
 Run the same bootstrap test and ShellSpec shell specs as a non-root user in clean containers
 (podman, else docker; override with `CONTAINER_ENGINE`).
-Install ShellSpec with `mise --cd .config/dotfiles install shellspec` before running from a clone;
+Install ShellSpec with `mise --cd .config/dotfiles -E dotfiles-dev install shellspec` before running from a clone;
 the container driver mounts the resolved mise installation read-only.
 Pass image names to select containers; omit them to run all defaults:
 
 ```bash
-mise run --cd ~/.config/dotfiles bootstrap:test:container
-mise run --cd ~/.config/dotfiles bootstrap:test:container -- alpine:latest
-mise run --cd ~/.config/dotfiles bootstrap:test:container -- cgr.dev/chainguard/git:latest-dev fedora:latest
+mise run --cd ~/.config/dotfiles -E dotfiles-dev bootstrap:test:container
+mise run --cd ~/.config/dotfiles -E dotfiles-dev bootstrap:test:container -- alpine:latest
+mise run --cd ~/.config/dotfiles -E dotfiles-dev bootstrap:test:container -- cgr.dev/chainguard/git:latest-dev fedora:latest
 ```
 
 | Image                               | Coverage                                                       |
@@ -165,28 +165,32 @@ Network overrides:
 CI runs one parallel bootstrap job per image and the host bootstrap test on Ubuntu and macOS.
 On both hosts it runs `spec/unit` under `sh`, `bash`, and `zsh`, plus `spec/startup` once;
 failed ShellSpec jobs upload JUnit reports.
-Run `mise run --cd ~/.config/dotfiles shell:test:posix` to test the host's `/bin/sh` separately,
-or `mise run --cd ~/.config/dotfiles shell:test:bash` to test Bash.
+Run `mise run --cd ~/.config/dotfiles -E dotfiles-dev shell:test:posix` to test the host's `/bin/sh` separately,
+or `mise run --cd ~/.config/dotfiles -E dotfiles-dev shell:test:bash` to test Bash.
 
 ## mise tasks
 
-Tasks live in `.config/dotfiles/mise.toml` and `.config/dotfiles/mise-tasks/`,
-so they're re-runnable independently of the curl install:
+Deployment tasks live in `.config/dotfiles/mise.toml` and `.config/dotfiles/mise-tasks/`;
+development tasks live in `.config/dotfiles/mise.dotfiles-dev.toml`.
+They are re-runnable independently of the curl install:
 
 | Task                       | Description                                                                          |
 | -------------------------- | ------------------------------------------------------------------------------------ |
 | `bootstrap`                | Check out or pull dotfiles, sync submodules, and install [git hooks](#install-hooks) |
-| `update`                   | Run `bootstrap`, then `mise bootstrap` from the global config (`~/.config/mise`)     |
+| `update`                   | Pull dotfiles, sync submodules, and install hooks                                    |
 | `install-hooks`            | Install [`prek`](#prek) git hooks patched for the bare repo                          |
-| `doctor`                   | Verify required tools, the bare repo, and git hooks are correctly installed          |
+| `doctor`                   | Verify `git`, `mise`, `prek`, the bare repo, and git hooks                           |
 | `bootstrap:test`           | Test bootstrap in throwaway home directories without mise, including a repeat run    |
 | `bootstrap:test:container` | Run `bootstrap:test` as non-root in containers; pass images to select                |
 
 Run any task from an installed dotfiles home with:
 
 ```bash
-mise run --cd ~/.config/dotfiles <task>
+mise run --cd ~/.config/dotfiles <deployment-task>
+mise run --cd ~/.config/dotfiles -E dotfiles-dev <development-task>
 ```
+
+Run `mise --cd ~/.config/mise bootstrap` separately to update the machine toolchain.
 
 To run tasks from a clone of this repository,
 see [CONTRIBUTING.md](https://github.com/drts01/dotfiles/blob/trunk/.github/CONTRIBUTING.md#run-tasks).
@@ -207,5 +211,5 @@ See [Git hooks](/docs/prek/).
 mise run --cd ~/.config/dotfiles doctor
 ```
 
-Checks that `git`, `mise`, `uv`, and `prek` are on `PATH`, the bare repo exists, `dotfiles status` runs clean,
+Checks that `git`, `mise`, and `prek` are on `PATH`, the bare repo exists, `dotfiles status` runs clean,
 and the pre-commit hook is installed and executable.

@@ -28,7 +28,7 @@ print_status() {
 echo "Running system diagnostics..."
 
 # 1. Verify required system binaries
-for tool in git mise uv prek; do
+for tool in git mise prek; do
   if _path=$(command -v "$tool" 2> /dev/null); then
     print_status "Binary: $tool" "OK" "$_path"
   else
@@ -50,7 +50,7 @@ else
   print_status "Dotfiles status integrity" "FAIL" "Git status failed or contains unhandled merge conflicts"
 fi
 
-# 4. NEW: Verify untracked files behavior configuration
+# 4. Verify untracked files behavior configuration
 _untracked_cfg=$(git --git-dir="$DEST_DIR" --work-tree="$HOME" config status.showUntrackedFiles 2> /dev/null || echo "not set")
 if [ "$_untracked_cfg" = "no" ]; then
   print_status "Git untracked optimization" "OK" "status.showUntrackedFiles=no"
@@ -62,7 +62,7 @@ fi
 if [ -x "$HOOK_PATH" ]; then
   print_status "Pre-commit execution hooks" "OK" "Active & executable"
 
-  # 6. NEW: Verify hook contains bare repo environment overrides
+  # 6. Verify hook contains bare repo environment overrides
   _injection="export GIT_DIR=\"$DEST_DIR\" GIT_WORK_TREE=\"$HOME\""
   if grep -qF "$_injection" "$HOOK_PATH"; then
     print_status "Pre-commit environment patch" "OK" "Bare repo variables injected"

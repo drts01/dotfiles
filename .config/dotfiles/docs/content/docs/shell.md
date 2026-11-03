@@ -221,15 +221,15 @@ git --git-dir="$HOME/.local/share/dotfiles" --work-tree="$HOME"
 Run the [ShellSpec](https://shellspec.info/) suite from `.config/dotfiles/`:
 
 ```bash
-mise run --cd ~/.config/dotfiles shell:test
+mise run --cd ~/.config/dotfiles -E dotfiles-dev shell:test
 ```
 
 Run a single shell's unit specs and startup checks:
 
 ```bash
-mise run --cd ~/.config/dotfiles shell:test:posix
-mise run --cd ~/.config/dotfiles shell:test:bash
-mise --cd ~/.config/dotfiles exec shellspec -- shellspec --shell zsh spec/unit spec/startup/zsh_spec.sh
+mise run --cd ~/.config/dotfiles -E dotfiles-dev shell:test:posix
+mise run --cd ~/.config/dotfiles -E dotfiles-dev shell:test:bash
+mise --cd ~/.config/dotfiles -E dotfiles-dev exec shellspec -- shellspec --shell zsh spec/unit spec/startup/zsh_spec.sh
 ```
 
 Keep reusable function and cache tests in `spec/unit/`; run them under `sh`, `bash`,
@@ -246,20 +246,20 @@ and completion/plugin startup.
 Run isolated warm-start benchmarks:
 
 ```bash
-mise run --cd ~/.config/dotfiles shell:bench
+mise run --cd ~/.config/dotfiles -E dotfiles-dev shell:bench
 ```
 
 Increase the sample count:
 
 ```bash
-RUNS=50 mise run --cd ~/.config/dotfiles shell:bench
+RUNS=50 mise run --cd ~/.config/dotfiles -E dotfiles-dev shell:bench
 ```
 
 Export sanitized samples and metadata to a chosen directory (requires Python 3):
 
 ```bash
 BENCH_JSON=./shell-profile/results.json BENCH_METADATA=./shell-profile/metadata.json \
-  mise run --cd ~/.config/dotfiles shell:bench
+  mise run --cd ~/.config/dotfiles -E dotfiles-dev shell:bench
 ```
 
 Check both shell exit statuses before measuring; then use `hyperfine` warmup and repeated runs.

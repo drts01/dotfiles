@@ -1,11 +1,8 @@
 [settings]
-enable_tools        = [ "hyperfine", "prek", "shellspec", "zola" ]  # Prevents tool install from other configurations
+enable_tools        = [ "prek" ]  # Prevents tool install from other configurations
 locked              = true
 lockfile_mode       = "generate"
 minimum_release_age = "3d"
-
-[env]
-DEST_DIR = "{{ env.HOME }}/.local/share/dotfiles"  # Bare git repository
 
 [tools]
 prek = "latest"
@@ -17,68 +14,16 @@ run         = "sh mise-tasks/install-ignore.sh"
 [tasks."install-hooks"]
 description = "Install prek pre-commit hooks patched for the bare repo"
 tools       = { prek = "latest" }
-env         = { BASEDIR = "{{config_root}}" }
+env         = { BASEDIR = "{{config_root}}", DEST_DIR = "{{ env.HOME }}/.local/share/dotfiles" }
 
 [tasks.bootstrap]
 description = "Bootstrap dotfiles"
 
-[tasks."lint"]
-description = "Run lint checks (auto-detects CI)"
-dir         = "{{ env.GITHUB_WORKSPACE | default(value=env.PWD) }}"
-run         = "prek run --config .config/dotfiles/prek.toml --all-files ${CI_FLAGS:-}"
-env         = {
-  # Populate CI_FLAGS if in CI, otherwise leave it empty
-  CI_FLAGS = "{% if env.CI is defined %}--show-diff-on-failure --color=always --stage manual{% endif %}"
-}
-
 [tasks.doctor]
-description = "Verify bootstrap succeeded: tools and hooks"
+description = "Verify bare repository and git hooks"
+env         = { DEST_DIR = "{{ env.HOME }}/.local/share/dotfiles" }
 run         = "doctor.sh"
 
-[tasks."shell:test"]
-description = "Run ShellSpec unit and startup tests"
-tools       = { shellspec = "latest" }
-run         = "shellspec --shell /bin/sh"
-
-[tasks."shell:test:tools"]
-description = "Smoke-test pinned mise tools in isolated sh, Bash, and Zsh startup"
-run         = "sh tests/mise-smoke.sh"
-
-[tasks."shell:test:posix"]
-description = "Test the OS /bin/sh shell configuration"
-tools       = { shellspec = "latest" }
-run         = "shellspec --shell /bin/sh spec/unit spec/startup/posix_spec.sh"
-
-[tasks."shell:test:bash"]
-description = "Test Bash shell configuration"
-tools       = { shellspec = "latest" }
-run         = "TEST_BASH=required shellspec --shell bash spec/unit spec/startup/bash_spec.sh"
-
-[tasks."bootstrap:test"]
-description = "Test bootstrap in throwaway home directories without mise, including a repeat run"
-run         = "sh tests/bootstrap.sh"
-
-[tasks."bootstrap:test:container"]
-description = "Run bootstrap and shell tests as non-root in containers (podman or docker); pass images to select"
-run         = "sh tests/bootstrap-container.sh"
-
-[tasks."shell:bench"]
-description = "Benchmark isolated warm shell startup"
-tools       = { hyperfine = "latest" }
-run         = "sh bench/shell-startup.sh"
-
 [tasks.update]
-description = "Pull latest dotfiles, sync submodules, and run mise bootstrap from global config"
+description = "Pull latest dotfiles, sync submodules, and install hooks"
 run         = "update.sh"
-
-[tasks."docs:serve"]
-description = "Preview documentation site locally"
-tools       = { zola = "latest" }
-dir         = "{{config_root}}/docs"
-run         = "zola serve --open"
-
-[tasks."docs:build"]
-description = "Build static documentation site"
-tools       = { zola = "latest" }
-dir         = "{{config_root}}/docs"
-run         = "zola build"

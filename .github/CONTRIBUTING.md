@@ -28,17 +28,19 @@ git submodule update --init --recursive
 Install the pinned development tools:
 
 ```bash
-mise --cd .config/dotfiles install
+mise --cd .config/dotfiles -E dotfiles-dev install shellspec
 ```
 
 ## Run tasks
 
-Define tasks in `.config/dotfiles/mise.toml` and `.config/dotfiles/mise-tasks/`.
-Run them from the repository root with `--cd`; plain `mise run` from the root does not load that config.
+Define installed-dotfiles tasks in `.config/dotfiles/mise.toml` and `.config/dotfiles/mise-tasks/`;
+keep development tasks in `.config/dotfiles/mise.dotfiles-dev.toml`.
+Run development tasks from the repository root with `--cd` and `-E dotfiles-dev`;
+plain `mise run` from the root does not load that config.
 
 ```bash
-mise --cd .config/dotfiles tasks ls
-mise --cd .config/dotfiles run <task>
+mise --cd .config/dotfiles -E dotfiles-dev tasks ls
+mise --cd .config/dotfiles -E dotfiles-dev run <task>
 ```
 
 | Task                       | Purpose                                                       |
@@ -57,7 +59,7 @@ mise --cd .config/dotfiles run <task>
 Preview lint hooks without changing files:
 
 ```bash
-mise --cd .config/dotfiles run lint --dry-run
+mise --cd .config/dotfiles -E dotfiles-dev run lint --dry-run
 ```
 
 `lint` applies auto-fixes.
@@ -96,15 +98,15 @@ Ignore rules do not hide tracked files; untrack them first if necessary.
 
 Run the checks that match the change:
 
-| Change                       | Run                                                       |
-| ---------------------------- | --------------------------------------------------------- |
-| Any tracked file             | `mise --cd .config/dotfiles run lint`                     |
-| `.profile`, `.bashrc`, Zsh   | `mise --cd .config/dotfiles run shell:test`               |
-| Shell unit specs             | `cd .config/dotfiles && shellspec --shell sh spec/unit`   |
-| Shell startup specs          | `cd .config/dotfiles && shellspec spec/startup`           |
-| `bootstrap.sh`, `mise-tasks` | `mise --cd .config/dotfiles run bootstrap:test`           |
-| Bootstrap portability        | `mise --cd .config/dotfiles run bootstrap:test:container` |
-| Documentation site           | `mise --cd .config/dotfiles run docs:build`               |
+| Change                       | Run                                                                       |
+| ---------------------------- | ------------------------------------------------------------------------- |
+| Any tracked file             | `mise --cd .config/dotfiles -E dotfiles-dev run lint`                     |
+| `.profile`, `.bashrc`, Zsh   | `mise --cd .config/dotfiles -E dotfiles-dev run shell:test`               |
+| Shell unit specs             | `cd .config/dotfiles && shellspec --shell sh spec/unit`                   |
+| Shell startup specs          | `cd .config/dotfiles && shellspec spec/startup`                           |
+| `bootstrap.sh`, `mise-tasks` | `mise --cd .config/dotfiles -E dotfiles-dev run bootstrap:test`           |
+| Bootstrap portability        | `mise --cd .config/dotfiles -E dotfiles-dev run bootstrap:test:container` |
+| Documentation site           | `mise --cd .config/dotfiles -E dotfiles-dev run docs:build`               |
 
 CI runs lint, `spec/unit` under `sh`, `bash`, and `zsh` on Ubuntu and macOS, `spec/startup` once per host,
 and bootstrap tests on hosts and in containers on every push.

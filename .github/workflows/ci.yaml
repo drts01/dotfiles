@@ -22,6 +22,7 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     env:
+
       MISE_EXPERIMENTAL: true
       MISE_IGNORED_CONFIG_PATHS: ${{ github.workspace }}/.config/mise
       XDG_CONFIG_HOME: ${{ github.workspace }}/.config
@@ -43,7 +44,7 @@ jobs:
           restore-keys: |
             lint-
       - name: Run prek
-        run: mise task run lint
+        run: mise --cd .config/dotfiles -E dotfiles-dev task run lint
 
   shell:
     name: Shell unit (${{ matrix.runner }}, ${{ matrix.shell }})
@@ -197,7 +198,7 @@ jobs:
         uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca  # v5.1.1
         with:
           install_args: shellspec
-      # Same runner as `mise run bootstrap:test:container` locally.
+      # Same runner as `mise -E dotfiles-dev run bootstrap:test:container` locally.
       - name: Test bootstrap as non-root (container)
         if: matrix.image
         env:
