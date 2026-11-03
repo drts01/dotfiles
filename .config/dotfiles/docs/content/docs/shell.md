@@ -246,23 +246,77 @@ and completion/plugin startup.
 Run isolated warm-start benchmarks:
 
 ```bash
-mise run --cwd ~/.config/dotfiles shell:bench
+mise run --cd ~/.config/dotfiles shell:bench
 ```
 
 Increase the sample count:
 
 ```bash
-RUNS=50 mise run --cwd ~/.config/dotfiles shell:bench
+RUNS=50 mise run --cd ~/.config/dotfiles shell:bench
 ```
 
-Profile Zsh functions:
+Export sanitized samples and metadata to a chosen directory (requires Python 3):
+
+```bash
+BENCH_JSON=./shell-profile/results.json BENCH_METADATA=./shell-profile/metadata.json \
+  mise run --cd ~/.config/dotfiles shell:bench
+```
+
+Check both shell exit statuses before measuring; then use `hyperfine` warmup and repeated runs.
+Link checked-out Zsh plugins into a throwaway home and use `PATH=/usr/bin:/bin` inside the measured commands.
+This baseline does **not** exercise mise-installed tools;
+keep it separate from the pinned `shell:test:tools` smoke test.
+Keep `hyperfine` in the mise task context; do not assume a host shim is active.
+
+Run the [Shell startup comparison](https://github.com/drts01/dotfiles/actions/workflows/shell-compare.yaml) manually
+**from `trunk`** with the full commit SHA of a candidate in this repository.
+The read-only workflow measures `trunk`, candidate, candidate, then `trunk` on each fixed Linux/macOS runner.
+It uses the trusted `trunk` benchmark harness for both checkouts and reports paired medians
+and sample dispersion in the job summary; download the `shell-compare-*` artifacts for all four raw sanitized exports.
+Candidate measurements are not archived on the history branch and cannot push to it.
+A saved historical baseline is useful for triage, but compare revisions from the same run to assess a change.
+
+The [Shell profile history workflow](https://github.com/drts01/dotfiles/actions/workflows/shell-profile.yaml) records
+`trunk` after relevant shell or benchmark changes are pushed; dispatch it from `trunk` to refresh the baseline after a
+runner-image upgrade or when no source files changed.
+It is independent of the main CI jobs and has no performance threshold.
+Read the history table in the chart job's GitHub summary
+and use its link to download the `shell-profile-trends` artifact: four SVG charts, one per shell and runner.
+Each chart plots per-run median with within-run sample standard deviation, selecting only results with matching OS,
+architecture, runner-image release, shell versions, workload, and benchmark settings.
+A single comparable run shows a point, not a trend.
+Charts are generated from archived data rather than committed to `benchmarks`;
+their artifact and the raw `shell-profile-*` artifacts expire after up to 90 days
+(or the repository's lower allowed retention limit).
+Browse durable per-run JSON and metadata in the
+[`benchmarks` branch](https://github.com/drts01/dotfiles/tree/benchmarks/results).
+The archive job requires repository Actions token write permission to that branch and branch rules allowing bot pushes.
+If policy blocks it, keep the downloadable artifacts and configure an organization-approved external archive.
+Retain one file per run and attempt, review branch growth periodically, and never rewrite old results.
+
+Read per-command median and sample standard deviation, grouped by OS, architecture, runner image/version, scenario,
+runner label, `hyperfine` version, sample/warmup counts, and submodule state:
+
+```bash
+git clone --branch benchmarks https://github.com/drts01/dotfiles.git shell-profile-history
+python3 ~/.config/dotfiles/bench/profile-data.py read shell-profile-history
+```
+
+Regenerate charts from the durable history by passing a recorded run ID and attempt:
+
+```bash
+python3 ~/.config/dotfiles/bench/profile-data.py chart shell-profile-history ./shell-profile-charts 123456789 1
+```
+
+Replace the example ID and attempt with the filename of an existing `results/<os>-<arch>/<run-id>-<attempt>.meta.json`;
+the selected run must include both Linux and macOS measurements.
+Compare only like-for-like groups; treat runner-image upgrades as a new baseline.
+Do not enforce performance thresholds in hosted CI; runner variance makes them unreliable.
+Profile Zsh functions separately from the timed loop:
 
 ```bash
 ZSH_PROFILE=1 zsh -lic exit
 ```
-
-Compare warm results.
-Do not enforce performance thresholds in hosted CI; runner variance makes them unreliable.
 
 ## Reload configuration
 
