@@ -26,4 +26,4 @@ run         = "doctor.sh"
 
 [tasks.update]
 description = "Pull latest dotfiles, sync submodules, and install hooks"
-run         = "update.sh"
+run         = "bootstrap.sh"
