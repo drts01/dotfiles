@@ -1,0 +1,7 @@
+[settings]
+locked             = true
+lockfile_platforms = [ "linux-x64", "macos-arm64" ]
+
+[tools]
+zoxide = "0.10.0"
+atuin  = "18.24.4"

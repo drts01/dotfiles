@@ -104,6 +104,56 @@ jobs:
           path: .config/dotfiles/report/
           if-no-files-found: ignore
 
+  mise-tools:
+    name: Mise tools (${{ matrix.runner }})
+    needs: [shell, shell-startup]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, macos-15-arm64]
+    env:
+      MISE_GLOBAL_CONFIG_FILE: ${{ github.workspace }}/.config/dotfiles/tests/mise/mise.toml
+      MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}/.config/dotfiles/tests/mise
+      MISE_IGNORED_CONFIG_PATHS: ${{ github.workspace }}/.config/mise:${{ github.workspace }}/.config/dotfiles/mise.toml
+      MISE_CEILING_PATHS: ${{ github.workspace }}:${{ runner.temp }}
+      MISE_CONFIG_DIR: ${{ runner.temp }}/mise-smoke-config/mise
+      MISE_ENABLE_TOOLS: zoxide,atuin
+      MISE_DATA_DIR: ${{ runner.temp }}/mise-smoke-data
+      MISE_CACHE_DIR: ${{ runner.temp }}/mise-smoke-cache
+      MISE_STATE_DIR: ${{ runner.temp }}/mise-smoke-state
+      XDG_CONFIG_HOME: ${{ runner.temp }}/mise-smoke-config
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+          submodules: true
+      - name: Install Zsh
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install --yes zsh
+      - name: Install mise
+        uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca  # v5.1.1
+        with:
+          install: false
+          cache: false
+          add_shims_to_path: false
+          env: false
+          export_path: false
+      - name: Install pinned tools
+        working-directory: .config/dotfiles/tests/mise
+        run: |
+          echo "Runner: $ImageOS $ImageVersion ($RUNNER_ARCH)"
+          mise --version
+          mise install --locked
+          mise exec --locked -- zoxide --version
+          mise exec --locked -- atuin --version
+      - name: Test real tool startup
+        run: sh .config/dotfiles/tests/mise-smoke.sh
+
   bootstrap:
     name: Bootstrap (${{ matrix.name }})
     runs-on: ${{ matrix.runner }}

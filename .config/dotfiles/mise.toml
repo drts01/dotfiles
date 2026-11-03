@@ -40,6 +40,10 @@ description = "Run ShellSpec unit and startup tests"
 tools       = { shellspec = "latest" }
 run         = "shellspec --shell /bin/sh"
 
+[tasks."shell:test:tools"]
+description = "Smoke-test pinned mise tools in isolated sh, Bash, and Zsh startup"
+run         = "sh tests/mise-smoke.sh"
+
 [tasks."shell:test:posix"]
 description = "Test the OS /bin/sh shell configuration"
 tools       = { shellspec = "latest" }
