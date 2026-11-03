@@ -1,7 +1,11 @@
 ---
 name: CI
 
-on: [push, workflow_call]
+on:
+  push:
+    branches-ignore:
+      - benchmarks
+  workflow_call: {}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}

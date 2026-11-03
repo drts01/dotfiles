@@ -1,0 +1,112 @@
+---
+name: Shell profile
+
+on:
+  push:
+    branches:
+      - trunk
+    paths:
+      - .profile
+      - .bashrc
+      - .bash_profile
+      - .zshenv
+      - .gitmodules
+      - .config/sh/**
+      - .config/zsh/**
+      - .config/spaceship.zsh
+      - .local/share/zsh/**
+      - .config/dotfiles/bench/**
+      - .config/dotfiles/mise.toml
+      - .config/dotfiles/mise.lock
+      - .github/workflows/shell-profile.yaml
+  workflow_dispatch: {}
+
+concurrency:
+  group: shell-profile-history
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  MISE_GLOBAL_CONFIG_FILE: ${{ github.workspace }}/.config/dotfiles/mise.toml
+  MISE_IGNORED_CONFIG_PATHS: ${{ github.workspace }}/.config/mise
+
+jobs:
+  measure:
+    if: github.ref == 'refs/heads/trunk'
+    name: Measure (${{ matrix.runner }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            slug: linux-x64
+          - runner: macos-15-arm64
+            slug: macos-arm64
+    steps:
+      - name: Checkout trusted trunk with plugins
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          ref: trunk
+          persist-credentials: false
+          submodules: true
+      - name: Verify trusted revision
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - name: Install Zsh
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install --yes zsh
+      - name: Install mise
+        uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca  # v5.1.1
+        with:
+          install: false
+          cache: false
+          add_shims_to_path: false
+          env: false
+          export_path: false
+      - name: Benchmark isolated system PATH
+        env:
+          PROFILE_RUNNER_LABEL: ${{ matrix.runner }}
+          BENCH_JSON: ${{ runner.temp }}/shell-profile/results.json
+          BENCH_METADATA: ${{ runner.temp }}/shell-profile/metadata.json
+        run: mise run --cd .config/dotfiles shell:bench
+      - name: Upload measurements
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: shell-profile-${{ matrix.slug }}
+          path: ${{ runner.temp }}/shell-profile/
+          if-no-files-found: warn
+          retention-days: 90
+
+  archive:
+    if: github.ref == 'refs/heads/trunk'
+    needs: measure
+    name: Archive benchmark history
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout trusted trunk for archive
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          ref: trunk
+          persist-credentials: true
+      - name: Verify trusted revision
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - name: Download completed measurements
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
+        with:
+          pattern: shell-profile-*
+          path: ${{ runner.temp }}/shell-profile-artifacts
+      - name: Append history to benchmarks branch
+        env:
+          ARTIFACTS: ${{ runner.temp }}/shell-profile-artifacts
+        run: python3 .config/dotfiles/bench/profile-data.py archive "$ARTIFACTS" "$GITHUB_WORKSPACE"

@@ -1,0 +1,94 @@
+---
+name: Shell startup comparison
+
+on:
+  workflow_dispatch:
+    inputs:
+      candidate_sha:
+        description: Full commit SHA to compare with trunk (from this repository)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+env:
+  MISE_GLOBAL_CONFIG_FILE: ${{ github.workspace }}/.config/dotfiles/mise.toml
+  MISE_IGNORED_CONFIG_PATHS: ${{ github.workspace }}/.config/mise
+
+jobs:
+  compare:
+    if: github.ref == 'refs/heads/trunk'
+    name: Compare (${{ matrix.runner }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            slug: linux-x64
+          - runner: macos-15-arm64
+            slug: macos-arm64
+    steps:
+      - name: Checkout trusted benchmark harness
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          ref: trunk
+          persist-credentials: false
+          submodules: true
+      - name: Verify revisions
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+          CANDIDATE_SHA: ${{ inputs.candidate_sha }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          [[ "$CANDIDATE_SHA" =~ ^[0-9a-f]{40}$ ]] || { echo 'Supply a full lowercase commit SHA' >&2; exit 1; }
+          test "$CANDIDATE_SHA" != "$EXPECTED_SHA"
+      - name: Checkout candidate with plugins
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          ref: ${{ inputs.candidate_sha }}
+          path: candidate
+          persist-credentials: false
+          submodules: true
+      - name: Verify candidate checkout
+        env:
+          CANDIDATE_SHA: ${{ inputs.candidate_sha }}
+        run: test "$(git -C candidate rev-parse HEAD)" = "$CANDIDATE_SHA"
+      - name: Install Zsh
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install --yes zsh
+      - name: Install mise
+        uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca  # v5.1.1
+        with:
+          install: false
+          cache: false
+          add_shims_to_path: false
+          env: false
+          export_path: false
+      - name: Measure trunk and candidate in alternating order
+        env:
+          PROFILE_RUNNER_LABEL: ${{ matrix.runner }}
+          OUTPUT: ${{ runner.temp }}/shell-compare
+          CANDIDATE_ROOT: ${{ github.workspace }}/candidate
+        run: |
+          set -euo pipefail
+          mkdir -p "$OUTPUT"
+          BENCH_JSON="$OUTPUT/trunk-1.json" BENCH_METADATA="$OUTPUT/trunk-1.meta.json" \
+            mise run --cd .config/dotfiles shell:bench
+          BENCH_SOURCE_ROOT="$CANDIDATE_ROOT" BENCH_JSON="$OUTPUT/candidate-1.json" \
+            BENCH_METADATA="$OUTPUT/candidate-1.meta.json" mise run --cd .config/dotfiles shell:bench
+          BENCH_SOURCE_ROOT="$CANDIDATE_ROOT" BENCH_JSON="$OUTPUT/candidate-2.json" \
+            BENCH_METADATA="$OUTPUT/candidate-2.meta.json" mise run --cd .config/dotfiles shell:bench
+          BENCH_JSON="$OUTPUT/trunk-2.json" BENCH_METADATA="$OUTPUT/trunk-2.meta.json" \
+            mise run --cd .config/dotfiles shell:bench
+          python3 .config/dotfiles/bench/profile-data.py compare "$OUTPUT" | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Upload paired measurements
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: shell-compare-${{ matrix.slug }}
+          path: ${{ runner.temp }}/shell-compare/
+          if-no-files-found: warn
+          retention-days: 90
