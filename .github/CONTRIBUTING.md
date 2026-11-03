@@ -172,6 +172,7 @@ Every tracked file is checked out into `$HOME`.
 | ----------------------------- | --------------------------------------------------------------- |
 | `.github/README.md`           | Repository landing page: install, basic usage, links            |
 | `.github/CONTRIBUTING.md`     | Development workflow for clones                                 |
+| `.config/dotfiles/README.md`  | Map of the tooling directory: scripts, tasks, tests, docs       |
 | `.config/dotfiles/docs/`      | Full reference site, published to GitHub Pages                  |
 | `.config/dotfiles/LICENSE`    | License text                                                    |
 
