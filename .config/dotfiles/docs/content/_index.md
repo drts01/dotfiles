@@ -2,16 +2,27 @@
 title = "drts01/dotfiles"
 description = "Personal dotfiles managed via a Git bare repository; mise is optional."
 
-[extra]
-home_layout = "wide"
-home_eyebrow = "Dotfiles documentation"
-home_primary_action_label = "Read the docs"
-home_primary_action_path = "/docs/"
-home_features = [
-  { kicker = "Start", title = "Bootstrap", description = "Install, update, and verify the dotfiles with Git and a POSIX shell." },
-  { kicker = "Configure", title = "Helix & shells", description = "Configure editing and shared sh, Bash, and Zsh environments." },
-  { kicker = "Automate", title = "Git hooks (prek)", description = "Format, lint, and spell-check every commit." },
+[extra.devlab.home]
+layout = "wide"
+
+[[extra.devlab.home.blocks]]
+type = "hero"
+eyebrow = "Dotfiles documentation"
+actions = [
+  { label = "Install", path = "@/docs/bootstrap.md" },
+  { label = "Read the docs", path = "@/docs/_index.md" },
 ]
+
+[[extra.devlab.home.blocks]]
+type = "features"
+items = [
+  { kicker = "Start", title = "Bootstrap", path = "@/docs/bootstrap.md", description = "Install, update, and verify the dotfiles with Git and a POSIX shell." },
+  { kicker = "Configure", title = "Helix & shells", path = "@/docs/shell.md", description = "Configure editing and shared sh, Bash, and Zsh environments." },
+  { kicker = "Automate", title = "Git hooks (prek)", path = "@/docs/prek.md", description = "Format, lint, and spell-check every commit." },
+]
+
+[[extra.devlab.home.blocks]]
+type = "content"
 +++
 
 Manage system environment configurations via a Git bare repository.

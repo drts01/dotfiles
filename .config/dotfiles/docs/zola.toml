@@ -30,13 +30,11 @@ note = "Copyright © 2026 digitalroots"
 [extra.devlab.navigation]
 links = [
   { name = "Home", path = "/" },
-  { name = "Docs", kind = "docs" },
+  { name = "Docs", collection = "docs" },
 ]
 
-[extra.devlab.docs]
-section          = "docs/_index.md"
-path             = "/docs/"
-get_started_path = "/docs/bootstrap/"
+[extra.devlab.collections.docs]
+section = "docs/_index.md"
 
 [extra.devlab.docs.page_actions]
 show_last_updated = true
