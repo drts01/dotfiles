@@ -67,7 +67,8 @@ Update the machine toolchain separately with `mise --cd ~/.config/mise bootstrap
 Read the [full documentation](https://drts01.github.io/dotfiles/):
 
 - [Start here](https://drts01.github.io/dotfiles/docs/start/install/): install on a new machine and verify
-- [How-to guides](https://drts01.github.io/dotfiles/docs/how-to/): pin, update, customize, uninstall, troubleshoot
+- [How-to guides](https://drts01.github.io/dotfiles/docs/how-to/): pin, update, customize, Helix, uninstall,
+  troubleshoot
 - [Concepts](https://drts01.github.io/dotfiles/docs/concepts/): the bare repository, the installer, shell startup,
   security
 - [Reference](https://drts01.github.io/dotfiles/docs/reference/): variables, tasks, shell files, hooks, platforms

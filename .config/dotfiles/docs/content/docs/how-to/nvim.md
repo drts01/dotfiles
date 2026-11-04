@@ -7,7 +7,8 @@ weight = 70
 type = "how-to"
 +++
 
-Neovim is a legacy configuration; use Helix, the primary editor, for new work.
+Neovim is a legacy configuration; use Helix, the primary editor, for new work;
+see [Set up Helix](@/docs/how-to/helix.md).
 Follow these steps to keep the Neovim plugins working for existing workflows.
 
 ## Prerequisites
