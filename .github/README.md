@@ -71,7 +71,8 @@ Read the [full documentation](https://drts01.github.io/dotfiles/):
   troubleshoot
 - [Concepts](https://drts01.github.io/dotfiles/docs/concepts/): the bare repository, the installer, shell startup,
   security
-- [Reference](https://drts01.github.io/dotfiles/docs/reference/): variables, tasks, shell files, hooks, platforms
+- [Reference](https://drts01.github.io/dotfiles/docs/reference/): variables, tasks, shell files, hooks, platforms,
+  glossary
 - [Changelog](https://drts01.github.io/dotfiles/docs/reference/changelog/): breaking changes and migrations
 
 Source: [`.config/dotfiles/docs/`](../.config/dotfiles/docs/).
