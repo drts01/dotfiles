@@ -19,6 +19,7 @@ hooks = [
   { id = "check-toml" },
   { id = "check-yaml" },
   { id = "check-vcs-permalinks" },
+  { id = "detect-private-key" },
   { id = "end-of-file-fixer" },
   { id = "trailing-whitespace", args = [ "--markdown-linebreak-ext=md" ] },
   { id = "mixed-line-ending", args = [ "--fix=lf" ] },

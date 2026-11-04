@@ -13,6 +13,7 @@ Hooks defined in `.config/dotfiles/prek.toml` and run by [`prek`](https://github
 | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
 | `meta`                                                         | `check-hooks-apply`, `check-useless-excludes`                                                           |
 | `builtin`                                                      | Large files, case conflicts, shebangs, JSON/YAML/TOML, merge conflicts, symlinks, whitespace, line ends |
+| `builtin`                                                      | `detect-private-key`: blocks files with a private key header (PEM, OpenSSH, PuTTY, PGP)                 |
 | [`typos`](https://github.com/crate-ci/typos)                   | Spelling, with automatic fixes                                                                          |
 | [`shfmt`](https://github.com/scop/pre-commit-shfmt)            | Shell script formatting                                                                                 |
 | [`shellcheck`](https://github.com/shellcheck-py/shellcheck-py) | Shell script linting                                                                                    |
