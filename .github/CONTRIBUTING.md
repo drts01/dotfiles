@@ -89,6 +89,7 @@ mise run <task>
 | `shell:test:zsh`           | Run Zsh unit and startup specs                                |
 | `docs:serve`               | Preview the documentation site                                |
 | `docs:build`               | Build the documentation site with Git-derived page dates      |
+| `docs:check`               | Check page types and internal links, including anchors        |
 | `docs:lint`                | Check documentation prose against the house style             |
 
 The `vale` hook runs `docs:lint`, which uses the locked Vale with the house style in `.config/dotfiles/docs/vale/`.
@@ -157,7 +158,7 @@ Run the checks that match the change:
 | `bootstrap.sh`, `mise-tasks` | `mise run bootstrap:test`                               |
 | `mise-tasks/doctor.sh`       | `sh .config/dotfiles/tests/doctor.sh`                   |
 | Bootstrap portability        | `mise run bootstrap:test:container`                     |
-| Documentation site           | `mise run docs:build`                                   |
+| Documentation site           | `mise run docs:check && mise run docs:build`            |
 
 CI runs lint and the isolated doctor test, `spec/unit` under `sh`, `bash`, and `zsh` on Ubuntu and macOS,
 `spec/startup` once per host, and bootstrap tests on hosts and in containers on every push.

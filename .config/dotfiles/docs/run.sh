@@ -1,6 +1,7 @@
 #!/bin/sh
 # Build or preview the documentation site from a development clone.
 #   sh run.sh build [zola build options]  Build into ./public with git-derived page dates.
+#   sh run.sh check [zola check options]  Check page types and internal links, including anchors.
 #   sh run.sh serve [zola serve options]  Serve the source tree with live reload (no dates).
 # Pages never carry a hand-maintained `updated` field: the build stamps each page with the
 # date of the last commit that touched it, or today for uncommitted edits.
@@ -121,6 +122,14 @@ build() {
   zola --root "$stage" build --output-dir "$DOCS_DIR/public" --force "$@"
 }
 
+# Plain checks need no dates; the build stamps them into a staged copy.
+check() {
+  ensure_theme
+  check_types
+  cd "$DOCS_DIR"
+  exec zola check "$@"
+}
+
 serve() {
   ensure_theme
   cd "$DOCS_DIR"
@@ -131,9 +140,10 @@ command=${1-}
 if [ "$#" -gt 0 ]; then shift; fi
 case "$command" in
   build) build "$@" ;;
+  check) check "$@" ;;
   serve) serve "$@" ;;
   *)
-    echo "usage: sh run.sh build|serve [zola options]" >&2
+    echo "usage: sh run.sh build|check|serve [zola options]" >&2
     exit 2
     ;;
 esac

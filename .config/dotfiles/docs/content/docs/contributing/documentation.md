@@ -44,7 +44,7 @@ Pages outside `contributing/` state user requirements only: Git and a POSIX `sh`
    ```
 
 3. Link other pages by source path, for example `@/docs/how-to/update.md#verify`.
-   The build fails on a missing page or anchor.
+   `docs:check` fails on a missing page or anchor; `docs:build` checks pages only.
 
 Do not add `updated`; the build stamps each page with the author date of its last commit,
 or today for uncommitted edits.
@@ -53,8 +53,9 @@ or today for uncommitted edits.
 
 ```bash
 mise run docs:lint -- .config/dotfiles/docs/content
+mise run docs:check -- --skip-external-links
 mise run docs:build
 ```
 
-`docs:build` fails when a page lacks `extra.type` or its type does not match its section.
+`docs:check` and `docs:build` fail when a page lacks `extra.type` or its type does not match its section.
 Preview with `mise run docs:serve`; the preview shows no dates.
