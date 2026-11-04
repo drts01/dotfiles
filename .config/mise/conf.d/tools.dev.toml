@@ -12,6 +12,7 @@ idiomatic_version_file_enable_tools = [
 [tools]
 "aqua:blopker/codebook" = "latest"                                  # Spell checker for code
 jnv                     = "latest"                                  # Interactive terminal JSON filter and visualization UI
+hexyl                   = "latest"                                  # Hex Editor
 lima                    = { version = "latest", os = [ "macos" ] }  # Lightweight VM manager
 prek                    = "latest"                                  # Git hook manager (pre-commit configuration compatible)
 uv                      = "latest"
