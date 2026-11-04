@@ -206,6 +206,16 @@ if run "$HOME_C" DOTFILES_SKIP_MISE_INSTALL=1 DOTFILES_REF=000000000000000000000
 fi
 if [ -e "$HOME_C/.local" ] || [ -e "$HOME_C/.config" ]; then fail "unknown commit modified $HOME_C"; fi
 
+step "Installer: reject unauthenticated transports before touching \$HOME"
+for script in "$ENTRYPOINT" "$DEPLOY"; do
+  if run "$HOME_C" REPO_URL=http://example.invalid/dotfiles DOTFILES_SKIP_MISE_INSTALL=1 sh "$script" \
+    > "$TMP/transport-out" 2>&1; then
+    fail "$script accepted an http:// REPO_URL"
+  fi
+  grep -q 'unauthenticated transport' "$TMP/transport-out" || fail "$script: missing transport error"
+done
+if [ -e "$HOME_C/.local" ] || [ -e "$HOME_C/.config" ]; then fail "http:// REPO_URL modified $HOME_C"; fi
+
 step "Entrypoint: pinned fresh install, then follow the default branch"
 run "$HOME_C" DOTFILES_SKIP_MISE_INSTALL=1 DOTFILES_REF="$PINNED" sh "$ENTRYPOINT"
 assert_deployed "$HOME_C"

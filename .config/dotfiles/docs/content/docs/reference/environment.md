@@ -17,7 +17,7 @@ Each applies to one run.
 | `DOTFILES_REF`               | default branch                       | Entrypoint  | Branch, tag, or full commit ID to install                |
 | `DOTFILES_SKIP_MISE_INSTALL` | unset                                | Entrypoint  | Any value skips installing mise                          |
 | `MISE_INSTALL_PATH`          | `~/.local/bin/mise`                  | Entrypoint  | mise binary location, added to `PATH`                    |
-| `REPO_URL`                   | `https://github.com/drts01/dotfiles` | Both        | Repository to fetch and clone                            |
+| `REPO_URL`                   | `https://github.com/drts01/dotfiles` | Both        | Repository to fetch; `https://`, `ssh://`, or local path |
 | `DEST_DIR`                   | `~/.local/share/dotfiles`            | Both        | Bare repository location; also read by the doctor        |
 | `DOTFILES_SUBMODULES`        | `auto`                               | Deploy      | Plugin groups to initialize; see below                   |
 | `DOTFILES_SKIP_SUBMODULES`   | unset                                | Deploy      | `all`, or a comma-separated list of groups to exclude    |
@@ -25,6 +25,7 @@ Each applies to one run.
 | `DOTFILES_BRANCH`            | remote default branch                | Both        | Branch that a commit or tag pin tracks                   |
 
 The entrypoint passes `REPO_URL`, `DEST_DIR`, `DOTFILES_BRANCH`, and the plugin-group variables to the deploy script.
+Both scripts reject `http://`, `git://`, and `ftp://` URLs; those transports do not authenticate the server.
 
 ## Plugin groups
 

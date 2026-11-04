@@ -6,6 +6,7 @@
 # DOTFILES_REF selects a branch, tag, or full commit ID (verified); DOTFILES_SKIP_MISE_INSTALL=1 skips mise;
 # DOTFILES_BRANCH names the branch a commit or tag pin tracks;
 # DOTFILES_SUBMODULES and DOTFILES_SKIP_SUBMODULES select/exclude plugin groups.
+# REPO_URL must use an authenticated transport (https, ssh) or a local path.
 
 set -eu
 
@@ -20,6 +21,16 @@ is_commit_id() {
     '' | *[!0-9a-f]*) return 1 ;;
   esac
   [ "${#1}" -eq 40 ] || [ "${#1}" -eq 64 ]
+}
+
+# Plain http, git, and ftp transports carry no server authentication; a network attacker could swap the content.
+check_repo_url() {
+  case "$1" in
+    http://* | git://* | ftp://*)
+      echo "ERROR: REPO_URL $1 uses an unauthenticated transport; use https://, ssh://, or a local path." >&2
+      exit 1
+      ;;
+  esac
 }
 
 # mise is optional: a missing downloader or failed install must not block deploying the dotfiles.
@@ -46,6 +57,7 @@ install_mise() {
 
 # Wrapped in main so `curl | sh` never executes a partially downloaded script.
 main() {
+  check_repo_url "$REPO_URL"
   if ! command -v git > /dev/null 2>&1; then
     echo "ERROR: git is required." >&2
     exit 1

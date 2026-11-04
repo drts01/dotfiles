@@ -29,6 +29,14 @@ if [ -n "$DOTFILES_COMMIT" ] && ! is_commit_id "$DOTFILES_COMMIT"; then
   exit 1
 fi
 
+# Plain http, git, and ftp transports carry no server authentication; a network attacker could swap the content.
+case "$REPO_URL" in
+  http://* | git://* | ftp://*)
+    echo "ERROR: REPO_URL $REPO_URL uses an unauthenticated transport; use https://, ssh://, or a local path." >&2
+    exit 1
+    ;;
+esac
+
 # Validate both selections before cloning or changing the working tree.
 parse_groups() {
   value=$1

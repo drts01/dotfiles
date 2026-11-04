@@ -14,11 +14,12 @@ Rerun the installer after every fix; each step is idempotent and resumes an inte
 
 The installer resolves the commit before it changes `$HOME`, so a failed fetch leaves your files unchanged.
 
-| Message                       | Fix                                                                                                 |
-| ----------------------------- | --------------------------------------------------------------------------------------------------- |
-| `ERROR: git is required.`     | Install Git.                                                                                        |
-| `fatal: unable to access ...` | Check network access to `github.com`; behind a proxy, set `https_proxy`.                            |
-| `curl: (6) Could not resolve` | Check DNS, or [install with Git only](@/docs/how-to/install-without-mise.md#install-with-git-only). |
+| Message                                          | Fix                                                                                                 |
+| ------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| `ERROR: git is required.`                        | Install Git.                                                                                        |
+| `ERROR: REPO_URL ... unauthenticated transport;` | Use an `https://` or `ssh://` URL, or a local path.                                                 |
+| `fatal: unable to access ...`                    | Check network access to `github.com`; behind a proxy, set `https_proxy`.                            |
+| `curl: (6) Could not resolve`                    | Check DNS, or [install with Git only](@/docs/how-to/install-without-mise.md#install-with-git-only). |
 
 To install from a mirror, set `REPO_URL` on the `sh` that reads the pipe,
 for example `| REPO_URL=https://git.example.com/dotfiles sh`.

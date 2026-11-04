@@ -10,6 +10,18 @@ type = "reference"
 Breaking changes, newest first.
 Routine updates need no action beyond [Update the dotfiles](@/docs/how-to/update.md).
 
+## 2026-11-03: installer rejects unauthenticated transports
+
+The entrypoint and the deploy script stop when `REPO_URL` starts with `http://`, `git://`, or `ftp://`.
+Installs that use the default URL need no migration.
+
+If you install from a mirror over one of those transports, pass an `https://` or `ssh://` `REPO_URL` instead.
+Updates pull from the `origin` remote, so switch it as well:
+
+```bash
+git --git-dir="$HOME/.local/share/dotfiles" remote set-url origin https://git.example.com/dotfiles
+```
+
 ## 2026-11-03: documentation restructured
 
 Documentation URLs changed; the old URLs return 404.
