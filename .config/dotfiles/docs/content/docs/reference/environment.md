@@ -22,9 +22,9 @@ Each applies to one run.
 | `DOTFILES_SUBMODULES`        | `auto`                               | Deploy      | Plugin groups to initialize; see below                   |
 | `DOTFILES_SKIP_SUBMODULES`   | unset                                | Deploy      | `all`, or a comma-separated list of groups to exclude    |
 | `DOTFILES_COMMIT`            | set by the entrypoint                | Deploy      | Full commit ID to deploy and verify                      |
-| `DOTFILES_BRANCH`            | remote default branch                | Deploy      | Branch that a pinned fresh install tracks                |
+| `DOTFILES_BRANCH`            | remote default branch                | Both        | Branch that a commit or tag pin tracks                   |
 
-The entrypoint passes `REPO_URL`, `DEST_DIR`, and the plugin-group variables through to the deploy script.
+The entrypoint passes `REPO_URL`, `DEST_DIR`, `DOTFILES_BRANCH`, and the plugin-group variables to the deploy script.
 
 ## Plugin groups
 
