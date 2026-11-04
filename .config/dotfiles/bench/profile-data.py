@@ -122,7 +122,7 @@ def archive(artifacts, repository):
             raise ValueError(f"artifact identity mismatch: {slug}")
         expected = {
             "linux-x64": ("Linux", "X64", "ubuntu-24.04"),
-            "macos-arm64": ("macOS", "ARM64", "macos-15-arm64"),
+            "macos-arm64": ("macOS", "ARM64", "macos-15"),
         }[slug]
         if (meta["runner_os"], meta["runner_arch"], meta["runner_label"]) != expected:
             raise ValueError(f"runner identity mismatch: {slug}")

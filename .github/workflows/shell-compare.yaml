@@ -28,7 +28,7 @@ jobs:
         include:
           - runner: ubuntu-24.04
             slug: linux-x64
-          - runner: macos-15-arm64
+          - runner: macos-15
             slug: macos-arm64
     steps:
       - name: Checkout trusted benchmark harness

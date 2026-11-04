@@ -132,7 +132,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [ubuntu-24.04, macos-15-arm64]
+        runner: [ubuntu-24.04, macos-15]
     env:
       MISE_GLOBAL_CONFIG_FILE: ${{ github.workspace }}/.config/dotfiles/tests/mise/mise.toml
       MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}/.config/dotfiles/tests/mise

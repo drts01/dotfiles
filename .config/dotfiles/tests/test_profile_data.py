@@ -22,7 +22,7 @@ class ProfileChartTest(unittest.TestCase):
         self.output = Path(self.tmp.name) / "charts"
         for slug, os_name, arch, runner in (
             ("linux-x64", "Linux", "X64", "ubuntu-24.04"),
-            ("macos-arm64", "macOS", "ARM64", "macos-15-arm64"),
+            ("macos-arm64", "macOS", "ARM64", "macos-15"),
         ):
             for run_id, image_version, seconds in (
                 ("100", "image-1", 0.10),
