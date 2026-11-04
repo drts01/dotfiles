@@ -54,6 +54,8 @@ Run this before invoking mise in the clone:
 the root `.miserc.toml` prevents mise from treating the clone's `.config/mise` as a project config.
 Setup links the ignored root `mise.local.lock` to the tracked `.config/dotfiles/mise.lock`.
 Both configurations require locked installs.
+The development config leaves global tools enabled so commands such as `gh` remain available in the clone;
+setup installs only prek and ShellSpec explicitly.
 The deployment config keeps only prek enabled;
 its other tool declarations retain the development tools in the shared lock without installing them by default.
 If either local config already exists with different contents, setup stops rather than overwriting it.

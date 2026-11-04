@@ -1,5 +1,4 @@
 [settings]
-enable_tools        = [ "hyperfine", "prek", "shellspec", "zola" ]
 locked              = true
 http_timeout        = "10s"
 minimum_release_age = "3d"
