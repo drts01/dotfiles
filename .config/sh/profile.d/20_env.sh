@@ -21,6 +21,8 @@ export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker" MINIKUBE_HOME="$XDG_DATA_HOME/min
 export TFENV_ROOT="$XDG_DATA_HOME/tfenv" TOFUENV_ROOT="$XDG_DATA_HOME/tofu" TENV_ROOT="$XDG_DATA_HOME/tenv"
 export VAGRANT_HOME="$XDG_DATA_HOME/vagrant" VAGRANT_ALIAS_FILE="$XDG_DATA_HOME/vagrant/aliases" _ZL_DATA="$XDG_DATA_HOME/zlua"
 
+has rg && export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgreprc"
+
 if has hx; then
   VISUAL="hx"
 elif has nvim; then

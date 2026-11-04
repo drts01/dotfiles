@@ -1,0 +1,10 @@
+# Always use smart-case (case-insensitive unless pattern has uppercase)
+--smart-case
+
+# Always search hidden files
+--hidden
+
+# Ignore some directories globally
+--glob=!.git/
+--glob=!node_modules/
+--glob=!.venv/
