@@ -112,41 +112,49 @@ Alternatives: Systems & Infrastructure (configuration management) or the co-loca
 
 ### Short abstract (print)
 
-> Your dotfiles pass lint. Do they deploy? This talk treats $HOME as a small production system: bootstrap with only
-> Git and a POSIX shell (no sudo, symlinks, or templating), test installs as a non-root user in clean Linux
-> containers, prove startup survives missing tools, and keep secrets out of the repository. Live demo: fresh container
-> to working shell.
+Do your dotfiles pass validation test?
+Do they deploy?
+This talk treats $HOME as a small production system: bootstrap with only Git and a POSIX shell
+(no sudo, symlinks, or templating),
+test installs as a non-root user in clean Linux containers, prove startup survives missing tools,
+and keep secrets out of the repository.
+Live demo: fresh container to working shell.
 
 ### Long abstract (online)
 
-> Keeping dotfiles in Git is the easy part. A passing lint check proves the files parse; it doesn't prove that a fresh
-> machine without sudo ends up with a working shell, or that uninstalling a tool leaves startup clean. My dotfiles
-> passed every lint check while hiding bugs that only appeared on deployment: an installer that re-downloaded itself
-> forever, a shell that errored when a plugin was missing, and a startup that silently returned a failing exit status.
->
-> AI-assisted tinkering made trying a new editor or terminal an afternoon's work, so tools now arrive in, and leave,
-> my $HOME faster than my setup was built to handle, often on machines I don't control.
->
-> This talk picks up where the widely copied bare-Git-repository dotfiles tutorial stops. The base needs only Git and
-> POSIX sh; everything else is an optional layer. You will learn how to:
->
-> - Use Git as the installer: no sudo, no symlink farm, no runtime templating, no new DSL, and a bootstrap that is
->   safe to run twice.
-> - Pin plugins with Git submodules and install user-space tools with mise, then prove zsh still starts silently with
->   exit status 0 when either is missing.
-> - Test deployment, not just syntax: install as a non-root user in clean Debian (dash), Alpine (BusyBox sh), and
->   Fedora (bash) containers in CI, and run the same matrix locally with Podman or Docker.
-> - Layer a private work repository over a public personal base, with both sharing $HOME as their working tree.
-> - Keep secrets out of a public repository: commit references instead of values, resolve them at use time, and
->   confront "secret zero," the credential a fresh machine needs before it can fetch anything else.
->
-> Each deployment-only bug appears with the line that failed and the test that caught it. The live demo takes a fresh
-> container to a working shell using the same steps CI runs. You'll also see the problems I haven't solved, and when
-> GNU Stow, chezmoi, yadm, vcsh, or Nix home-manager is the better choice. You'll leave with a five-level maturity
-> model for rating your own setup and an open-source starter template you can use the same day.
->
-> For developers, SREs, and anyone who works across personal, work, and temporary machines. Assumes comfort with Git
-> and a Unix shell; no Nix, Ansible, or dotfiles-manager experience needed.
+Keeping dotfiles in Git is the easy part.
+A passing lint check proves the files parse;
+it doesn't prove that a fresh machine without sudo ends up with a working shell,
+or that uninstalling a tool leaves startup clean.
+My dotfiles passed every lint check while hiding bugs that only appeared on deployment:
+an installer that re-downloaded itself forever, a shell that errored when a plugin was missing,
+and a startup that silently returned a failing exit status.
+
+AI-assisted tinkering made trying a new editor or terminal an afternoon's work, so tools now arrive in, and leave,
+my $HOME faster than my setup was built to handle, often on machines I don't control.
+
+This talk picks up where the widely copied bare-Git-repository dotfiles tutorial stops.
+The base needs only Git and POSIX sh; everything else is an optional layer.
+You will learn how to:
+
+- Use Git as the installer: no sudo, no symlink farm, no runtime templating, no new DSL,
+  and a bootstrap that is safe to run twice.
+- Pin plugins with Git submodules and install optional user-space tools with mise,
+  then prove zsh still starts silently with exit status 0 when either is missing.
+- Test deployment, not just syntax: install as a non-root user in clean Debian (dash), Alpine
+  (BusyBox sh), and Fedora (bash) containers in CI, and run the same matrix locally with Podman or Docker.
+- Layer a private work repository over a public personal base, with both sharing $HOME as their working tree.
+- Keep secrets out of a public repository: commit references instead of values.
+
+Each deployment-only bug appears with the line that failed and the test that caught it.
+The live demo takes a fresh container to a working shell using the same steps CI runs.
+You'll also see the problems I haven't solved, and when GNU Stow, chezmoi, yadm, vcsh,
+or Nix home-manager is the better choice.
+You'll leave with a five-level maturity model for rating your own setup
+and an open-source starter template you can use the same day.
+
+For developers, SREs, and anyone who works across personal, work, and temporary machines.
+Assumes comfort with Git and a Unix shell; no Nix, Ansible, or dotfiles-manager experience needed.
 
 **Abstract policy:** The short abstract names only Git and POSIX sh.
 The long abstract names open-source projects and Linux distributions: reviewers score open-source relevance,
