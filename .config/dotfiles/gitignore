@@ -3,12 +3,13 @@
 /.miserc.toml
 /mise.local.toml
 /mise.local.lock
-/.cache/
+/.*cache/
 /.df-bak/
 /.local/share/dotfiles/
 /.config/dotfiles/.shellspec-local
 /.config/dotfiles/.shellspec-quick.log
 /.config/dotfiles/report/
 /.config/dotfiles/coverage/
+/.config/dotfiles/plans/
 /.config/mise/locks/
 /.config/mise/mise.lock
