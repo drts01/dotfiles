@@ -44,7 +44,8 @@ The deploy script backs up conflicting files to `~/.df-bak`, as the one-line ins
 sh ~/.config/dotfiles/mise-tasks/doctor.sh
 ```
 
-The doctor reports mise as an optional `WARN`; every other check passes.
+The doctor reports `WARN` for mise; without `prek`, it also reports `WARN` for `prek` and the pre-commit hook.
+These components are optional; every other check passes.
 
 ## Add mise later
 
