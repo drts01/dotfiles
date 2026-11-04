@@ -1,3 +1,5 @@
+default_install_hook_types = [ "commit-msg", "pre-commit", "pre-push" ]
+
 [[repos]]
 repo  = "meta"
 hooks = [
@@ -62,14 +64,14 @@ hooks = [
 
 [[repos]]
 repo  = "https://github.com/tombi-toml/tombi-pre-commit"
-rev   = "b3f6e09de51290a21d6c7b05b4f5cbe6cfe65b4f"        # frozen: v1.9.6
+rev   = "10da57f75d36ba93b257a4e7f2c70796fa2da683"        # frozen: v1.9.8
 hooks = [
   { id = "tombi-format" },                                # Tombi does not have a way to pass a custom path for the configuration
 ]
 
 [[repos]]
 repo = "https://github.com/owenlamont/ryl-pre-commit"
-rev  = "ebab13c478952f480f31b75f3fd7649993a4ce5e"      # frozen: v0.26.1
+rev  = "ba2d2344c24a99c2e87325bb4f9b966692ff3c53"      # frozen: v0.28.0
 
 [[repos.hooks]]
 id       = "ryl-check-markdown"
@@ -93,18 +95,22 @@ stages   = [ "manual" ]
 
 [[repos]]
 repo  = "https://github.com/vale-cli/vale"
-rev   = "v3.26.0"
+rev   = "e2d4374b1c66c8a1dd6d912bebc135040d8833fa"                                                                      # frozen: v3.26.0
 hooks = [
   {
     id             = "vale",
     alias          = "vale-sync",
     name           = "vale sync",
     pass_filenames = false,
-    args           = [ "sync" ],
+    args           = [
+      "--config=.config/vale/.vale.ini",
+      "sync",
+    ],
+    stages         = [ "pre-push" ]
   },
   {
     id   = "vale",
-    args = [ "--output=line", "--minAlertLevel=error" ],
+    args = [ "--config=.config/vale/.vale.ini" ],
   },
-  { id = "vale-commit-msg" }
+  { id = "vale-commit-msg", entry = "sh -c 'vale --config=.config/vale/.vale.ini --path=COMMIT_EDITMSG < \"$1\"' --" }
 ]
