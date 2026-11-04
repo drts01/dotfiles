@@ -8,8 +8,9 @@ zoxide = "latest"  # Smarter directory jumper that tracks your path history
 # --- Search, Inspection, & Filtering ---
 bat     = "latest"  # 'cat' clone with syntax highlighting and Git delta flags
 fd      = "latest"  # Sane, rapid alternative to 'find' that honors .gitignore
-ripgrep = "latest"  # The fastest string search utility (grep) available
 jaq     = "latest"  # JSON query tool (jq replacement)
+jc      = "latest"  # Converts the output of popular CLIs, file-types, and common strings to JSON and YAML
+ripgrep = "latest"  # The fastest string search utility (grep) available
 sd      = "latest"  # Intuitive find & replace CLI (sed alternative)
 
 # --- Core System Utilities ---
