@@ -1,0 +1,11 @@
+---
+extends: substitution
+message: Use '%s' instead of '%s'.
+level: error
+ignorecase: true
+# Trailing periods defeat word boundaries; anchor the start explicitly instead.
+nonword: true
+swap:
+  \be\.g\.: for example
+  \betc\.: and so on
+  \bi\.e\.: that is

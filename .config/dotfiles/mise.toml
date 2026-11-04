@@ -10,6 +10,7 @@ minimum_release_age = "3d"
 hyperfine = "latest"
 prek      = "latest"
 shellspec = "latest"
+vale      = "latest"
 zola      = "latest"
 
 [tasks."install-ignore"]
@@ -28,6 +29,13 @@ description = "Bootstrap dotfiles"
 description = "Check bare repository, tracked changes, and optional tooling"
 env         = { DEST_DIR = "{{ env.HOME }}/.local/share/dotfiles" }
 run         = "doctor.sh"
+
+[tasks."docs:lint"]
+description = "Check documentation prose against the house style; pass files relative to the repository root"
+tools       = { vale = "latest" }
+# The repository root: the clone root, or $HOME for the bare install.
+dir         = "{{config_root}}/../.."
+run         = "vale --config={{config_root}}/docs/.vale.ini"
 
 [tasks.update]
 description = "Pull dotfiles, initialize available-tool submodules except exclusions, and install hooks"

@@ -1,33 +1,53 @@
 +++
 title = "Bootstrap"
+description = "Install, update, and verify the dotfiles with Git and a POSIX shell."
 weight = 1
 +++
 
+Install the dotfiles into your home directory with one command, and rerun it to update.
+
 ## Install
 
-Deploy the dotfiles into your home directory with Git and a POSIX shell.
-Using the one-line command requires curl to fetch the entrypoint; the installer requires curl or wget to fetch mise.
-Mise is optional: use [git alone](#install-with-git-only) if no downloader is available.
+Prerequisites:
+
+- Git and a POSIX `sh`.
+- curl, to fetch the one-line entrypoint.
+  Without curl, [install with Git only](#install-with-git-only).
+- Optional: curl or wget, so the installer can fetch mise.
+  mise is optional; the dotfiles work without it.
+
+The installer changes your home directory:
+
+- Moves existing files that conflict with tracked files to `~/.df-bak`, created with mode `700`.
+  A later backup of the same path overwrites the earlier one.
+- Installs mise to `~/.local/bin/mise` if it is missing, unless you [skip mise](#skip-mise).
+- Installs a pre-commit hook in the bare repository when mise or `prek` is available.
+
+Run the entrypoint:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | sh
 ```
 
-The entrypoint, `.config/dotfiles/bootstrap.sh`:
+### Verify the install
 
-1. Fetches the repository with git and resolves the commit to install.
-   Nothing in `$HOME` changes if this fails.
-2. Tries to install optional [mise](https://mise.jdx.dev) with curl or wget unless `DOTFILES_SKIP_MISE_INSTALL` is set.
-   Without a downloader, or if the install fails, it warns and continues.
-3. Runs the deploy script, `.config/dotfiles/mise-tasks/bootstrap.sh`, from that same commit:
-   1. Clones the bare repo to `~/.local/share/dotfiles`.
-   2. Checks out tracked files into `$HOME`, moving conflicting files to the private `~/.df-bak` directory;
-      later runs fast-forward instead.
-   3. Initializes plugin submodules for tools on `PATH`.
-   4. Installs git hooks when `prek` is available.
-4. Verifies that `~/.local/share/dotfiles` is at the resolved commit.
+Run the doctor:
 
-Rerun the command at any time to update.
+```bash
+sh ~/.config/dotfiles/mise-tasks/doctor.sh
+```
+
+Expect `All installation checks passed.` or `Installation checks passed with warnings.` Warnings for mise, `prek`,
+and the pre-commit hook report optional components.
+Fix every `FAIL` line before you use the dotfiles.
+
+Start a new login shell to load the configuration:
+
+```bash
+exec "$SHELL" -l
+```
+
+## Install options
 
 ### Review before running
 
@@ -40,15 +60,20 @@ DOTFILES_REF=<commit> sh dotfiles-bootstrap.sh
 ```
 
 `DOTFILES_REF` accepts a branch, a tag, or a full commit ID.
-Git verifies a full commit ID: every deployed file, including the deploy script, is addressed by that ID.
+Git verifies a full commit ID, and every deployed file, including the deploy script, comes from that commit.
 Later runs without `DOTFILES_REF` follow the default branch again.
 
 - A pin older than the installed commit fails and leaves the checkout unchanged.
-- A pin must include pinning support in its deploy script.
-  Older commits deploy the default branch instead,
-  and the installer then fails rather than report an unverified install.
+- A pin to a commit without pinning support deploys the default branch,
+  then fails instead of reporting an unverified install.
 - The mise installer, `https://mise.run`, is outside this verification.
   Set `DOTFILES_SKIP_MISE_INSTALL=1` to skip it.
+
+Verify that the bare repository is at the pinned commit:
+
+```bash
+git --git-dir="$HOME/.local/share/dotfiles" rev-parse HEAD
+```
 
 ### Choose plugin groups
 
@@ -62,43 +87,86 @@ Set `DOTFILES_SUBMODULES` to `auto` (default), `all`, `none`, or a comma-separat
 | `docs` | `zola`            | Theme for building this documentation | `all`, explicitly |
 
 Helix needs no submodules.
-Every selection still requires the matching tool.
+Every group requires its tool, even when selected explicitly.
 Unknown group names fail before checkout.
-Exclude groups with `DOTFILES_SKIP_SUBMODULES=nvim,lua`, or everything with `DOTFILES_SKIP_SUBMODULES=all`.
+
+Exclude groups with `DOTFILES_SKIP_SUBMODULES=nvim,lua`, or all groups with `DOTFILES_SKIP_SUBMODULES=all`.
 Set either variable on the `sh` that reads the pipe:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | DOTFILES_SKIP_SUBMODULES=nvim sh
 ```
 
-Zsh and Neovim start without their plugins, but plugin-dependent features remain unavailable.
-To install a skipped group later, first install its tool; for example, with `nvim` on `PATH`, run:
+Zsh and Neovim start without their plugins; plugin features stay unavailable.
+Both variables apply to one run only.
+Later runs without them detect tools again.
+Skipping a group does not remove plugins that are already initialized.
+
+Add a skipped group later: install its tool, then run the deploy script with the group selected:
 
 ```bash
 DOTFILES_SUBMODULES=nvim sh ~/.config/dotfiles/mise-tasks/bootstrap.sh
 ```
 
-Selection and exclusion apply to each run, including `mise run --cd ~/.config/dotfiles update`;
-future runs without either variable detect tools again.
-Skipping does not remove already initialized plugins.
+Verify the result from your home directory; a leading `-` marks an uninitialized submodule:
 
-The `docs` group exists only to build this site from an installed `$HOME`.
-In a development clone, `mise run docs:build` initializes the theme itself;
-see [Contributing](https://github.com/drts01/dotfiles/blob/trunk/.github/CONTRIBUTING.md).
+```bash
+cd ~ && git --git-dir="$HOME/.local/share/dotfiles" --work-tree="$HOME" submodule status
+```
 
 ### Skip mise
+
+Install the dotfiles without downloading mise:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | DOTFILES_SKIP_MISE_INSTALL=1 sh
 ```
 
-### Install with git only
+Verify with the [doctor](#verify-the-install); it reports mise as an optional warning.
 
-Without curl or wget, run the deploy script straight from the cloned bare repo:
+### Install with Git only
+
+Clone the bare repository, then run the deploy script from it, without curl or wget:
 
 ```bash
 git clone --bare --single-branch --depth=1 https://github.com/drts01/dotfiles ~/.local/share/dotfiles
 sh -c "$(git --git-dir="$HOME/.local/share/dotfiles" show HEAD:.config/dotfiles/mise-tasks/bootstrap.sh)"
+```
+
+Verify with the [doctor](#verify-the-install).
+
+## Update
+
+Rerun the one-line entrypoint, or run the installed deploy script:
+
+```bash
+sh ~/.config/dotfiles/mise-tasks/bootstrap.sh
+```
+
+With mise, run `mise run --cd ~/.config/dotfiles update`.
+Updates fast-forward only and never create merge commits in `$HOME`.
+Verify with the [doctor](#verify-the-install).
+
+Update the machine toolchain separately:
+
+```bash
+mise --cd ~/.config/mise bootstrap
+```
+
+### Upgrade from a deploy script that sets `core.worktree`
+
+Older deploy scripts write `core.worktree` to the bare repository after each pull, which makes Git warn.
+Run the remote entrypoint once; it replaces the installed script with one that removes the setting:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | DOTFILES_SKIP_MISE_INSTALL=1 sh
+```
+
+Do not run `mise run update` for this upgrade; it runs the old installed script, which restores the setting.
+Verify that this command prints nothing:
+
+```bash
+git config --file "$HOME/.local/share/dotfiles/config" --get core.worktree
 ```
 
 ## How it works
@@ -141,41 +209,32 @@ hasmise -->|no| direct
 {% </devlab.diagram> %}
 <!-- rumdl-enable MD013 MD075 -->
 
-- **Idempotent:** Rerun safely; later runs pull and initialize the selected submodules.
-- **First checkout:** Keyed on `~/.local/share/dotfiles/index`, not the repo directory.
-  Resumes interrupted installs and supports a manually cloned bare repo.
-- **Bare repo config:** Keep `core.bare=true`; remove the legacy `core.worktree` setting on reruns.
-  Work-tree commands pass `--work-tree="$HOME"` explicitly, and submodules run from `$HOME`.
-- **Backups:** Tracked paths already in `$HOME` move to `~/.df-bak`, created with mode `700`.
-  A later backup of the same path overwrites the earlier one.
-- **Pulls:** Fast-forward only; never creates merge commits in `$HOME`.
-  Entrypoint runs fast-forward to the resolved commit; local `update` runs pull the tracked branch.
-- **Fetch refspec:** Set on the bare clone so `origin/<branch>` updates.
-- **Same-commit execution:** The entrypoint never downloads the deploy script separately.
-  It runs the script from the git-fetched commit, and both scripts check the installed `HEAD` against that commit.
-- **Downloads:** The mise installer is saved to a temp file before running, over HTTPS and TLS 1.2 or later with curl;
-  a failed fetch aborts instead of piping nothing into `sh`.
-- **mise:** Optional.
-  The installer needs curl or wget to fetch mise, not to deploy the dotfiles.
-  Without either downloader, or if installation fails, it warns and continues.
+The entrypoint, `.config/dotfiles/bootstrap.sh`:
 
-### Upgrade an installation with the legacy deploy script
+1. Fetches the repository with Git and resolves the commit to install.
+   Nothing in `$HOME` changes if this step fails.
+2. Saves the mise installer to a temporary file, then runs it;
+   a failed download aborts the mise step. curl is restricted to HTTPS with TLS 1.2 or later;
+   wget uses its default protocol settings.
+   Without curl or wget, or if the install fails, it warns and continues.
+3. Runs the deploy script, `.config/dotfiles/mise-tasks/bootstrap.sh`, from the fetched commit;
+   it never downloads the deploy script separately.
+4. Verifies that `~/.local/share/dotfiles` is at the resolved commit.
 
-After this fix is published, run the remote entrypoint for the first upgrade instead of `mise run bootstrap`
-or `mise run update`.
-The old installed deploy script writes `core.worktree` again after it pulls;
-the entrypoint fetches and runs the new script, which clears that setting and replaces the installed script:
+The deploy script:
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | DOTFILES_SKIP_MISE_INSTALL=1 sh
-```
+1. Clones the bare repository to `~/.local/share/dotfiles` and sets its fetch refspec, so `origin/<branch>` updates.
+2. Checks out tracked files into `$HOME` on the first run; later runs fast-forward.
+   The first checkout is keyed on `~/.local/share/dotfiles/index`,
+   so it resumes interrupted installs and adopts a manually cloned bare repository.
+3. Keeps `core.bare=true`, removes a legacy `core.worktree`, and passes `--work-tree="$HOME"` explicitly.
+4. Initializes the selected submodules from `$HOME`.
+5. Links the bare repository's `info/exclude` to the tracked `.config/dotfiles/gitignore`.
+6. Installs Git hooks through mise when available, or directly when `prek` is on `PATH`.
 
-Subsequent local updates use the new installed script.
-To silence the warning before the fix is published,
-run `git config --file "$HOME/.local/share/dotfiles/config" --unset-all core.worktree`.
-The old installed script will restore it if run again.
+Every step is idempotent; rerun the entrypoint safely at any time.
 
-### Environment variables
+## Environment variables
 
 | Variable                     | Default                              | Purpose                                                                   |
 | ---------------------------- | ------------------------------------ | ------------------------------------------------------------------------- |
@@ -189,11 +248,42 @@ The old installed script will restore it if run again.
 | `DOTFILES_COMMIT`            | set by the entrypoint                | Deploy script: full commit ID to deploy and verify                        |
 | `DOTFILES_BRANCH`            | remote default branch                | Deploy script: branch that a pinned fresh install tracks                  |
 
-### Testing
+## Tasks
 
-In a development clone, first run `sh .config/dotfiles/dev-setup.sh`
-(see [Contributing](https://github.com/drts01/dotfiles/blob/trunk/.github/CONTRIBUTING.md)).
-Then run the bootstrap integration test from the clone root (requires git and network access for submodules):
+Deployment tasks live in `.config/dotfiles/mise.toml` and `.config/dotfiles/mise-tasks/`.
+Without mise, run `bootstrap.sh` and `doctor.sh` with `sh`,
+as shown in [Update](#update) and [Verify the install](#verify-the-install).
+Run a task with mise from any directory:
+
+```bash
+mise run --cd ~/.config/dotfiles <task>
+```
+
+| Task            | Description                                                                       |
+| --------------- | --------------------------------------------------------------------------------- |
+| `bootstrap`     | Check out or pull the dotfiles, initialize selected submodules, and install hooks |
+| `update`        | Same as `bootstrap`; use it after the first install                               |
+| `install-hooks` | Install [`prek` Git hooks](@/docs/prek.md) patched for the bare repository        |
+| `doctor`        | Check the bare repository, tracked changes, and optional tools and hooks          |
+| `docs:lint`     | Check documentation prose against the house style; used by the `vale` hook        |
+
+Deployment installs only `prek`; tools for `docs:lint` install on first use.
+Both are pinned in the shared `.config/dotfiles/mise.lock`.
+
+## Test the installer
+
+This section is for contributors.
+It requires a development clone set up with `sh .config/dotfiles/dev-setup.sh`, which requires mise;
+see [Contributing](https://github.com/drts01/dotfiles/blob/trunk/.github/CONTRIBUTING.md#run-tasks).
+
+Development tasks live in `.config/dotfiles/dev-tasks.toml`, included by the clone's ignored `mise.local.toml`.
+Development setup copies the `dev-miserc.toml` and `dev-mise-local.toml` templates to the clone root
+and links the ignored `mise.local.lock` to the tracked `.config/dotfiles/mise.lock`.
+Installed dotfiles never receive these files.
+
+### Run the host test
+
+Run the bootstrap integration test from the clone root; it needs network access for submodules:
 
 ```bash
 mise run bootstrap:test
@@ -201,22 +291,23 @@ mise run bootstrap:test
 
 The test deploys into throwaway home directories with mise off `PATH` and checks:
 
-- Fresh install through the entrypoint, including backup of a conflicting `.bashrc` into a private directory.
-- Repeat run removes a legacy `core.worktree`, leaves `$HOME` unchanged, and keeps `dotfiles status --porcelain` empty.
+- A fresh install through the entrypoint, including backup of a conflicting `.bashrc` into a private directory.
+- A repeat run removes a legacy `core.worktree`, leaves `$HOME` unchanged,
+  and keeps `dotfiles status --porcelain` empty.
 - Upstream commits fast-forward.
-- Upgrade via the remote entrypoint replaces the old installed script; later local runs do not restore `core.worktree`.
+- An upgrade through the remote entrypoint replaces the old installed script;
+  later local runs do not restore `core.worktree`.
 - Commit pinning: a pinned fresh install, a return to the default branch,
   and rejection of unknown commits and of pins older than the installation.
-- Git-only install into a pre-cloned bare repo.
-- An offline submodule selection test covers tool detection, exclusions, explicit groups,
-  and Neovim startup without plugins (when Neovim is available).
+- A Git-only install into a pre-cloned bare repository.
+- Submodule selection, offline: tool detection, exclusions, explicit groups,
+  and Neovim startup without plugins when Neovim is available.
 
-Run the same bootstrap test and ShellSpec shell specs as a non-root user in clean containers
-(podman, else docker; override with `CONTAINER_ENGINE`).
-The container test task installs locked ShellSpec on demand;
-the container driver mounts that mise installation read-only.
-Running `sh .config/dotfiles/tests/bootstrap-container.sh` directly also installs it on demand.
-Pass image names to select containers; omit them to run all defaults:
+### Run the container tests
+
+Run the bootstrap test and the POSIX ShellSpec specs as a non-root user in clean containers.
+The driver uses podman, else docker; override it with `CONTAINER_ENGINE`.
+Pass image names to select containers, or omit them to run all defaults:
 
 ```bash
 mise run bootstrap:test:container
@@ -224,88 +315,34 @@ mise run bootstrap:test:container -- alpine:latest
 mise run bootstrap:test:container -- cgr.dev/chainguard/git:latest-dev fedora:latest
 ```
 
-| Image                               | Coverage                                                       |
-| ----------------------------------- | -------------------------------------------------------------- |
-| `buildpack-deps:stable-scm`         | Debian, dash `sh`, git and curl preinstalled (no apt)          |
-| `alpine:latest`                     | BusyBox `sh`, curl and git installed with `apk`                |
-| `fedora:latest`                     | bash `sh`, git installed with `dnf`                            |
-| `cgr.dev/chainguard/git:latest-dev` | Wolfi, dash `sh`, git and GNU wget only (no curl)              |
+| Image                               | Coverage                                              |
+| ----------------------------------- | ----------------------------------------------------- |
+| `buildpack-deps:stable-scm`         | Debian, dash `sh`, Git and curl preinstalled (no apt) |
+| `alpine:latest`                     | BusyBox `sh`, curl and Git installed with `apk`       |
+| `fedora:latest`                     | Bash `sh`, Git installed with `dnf`                   |
+| `cgr.dev/chainguard/git:latest-dev` | Wolfi, dash `sh`, Git and GNU wget only (no curl)     |
 
-`tests/bootstrap-container.sh` starts each image as root with a `/bin/sh` entrypoint
-and mounts the checkout read-only at `/src` and the host ShellSpec installation at `/opt/shellspec`.
-`tests/bootstrap-container-setup.sh` installs missing tools, creates the `tester` user, then runs bootstrap,
-POSIX unit specs, and POSIX startup specs as that user.
-The POSIX startup specs check each image's `/bin/sh` login profile and interactive `$ENV` startup;
-unit specs check shared functions and cache behavior.
-Set `TEST_BASH=required` to fail if Bash is absent, `TEST_BASH=skip` to omit Bash,
-or leave it unset (`auto`) to run Bash unit and startup specs when Bash is present.
+Control Bash coverage with `TEST_BASH`: `required` fails without Bash, `skip` omits it,
+and `auto` (default) runs Bash specs when Bash is present.
 CI requires Bash on Debian, Fedora, and Chainguard, and skips it on Alpine.
 
-Network overrides:
+Work around blocked registries:
 
-- Set `ALPINE_MIRROR` (e.g. `https://mirrors.edge.kernel.org/alpine`) on networks that block `dl-cdn.alpinelinux.org`.
-- Use `docker.io/chainguard/git:latest-dev` (same digest) on networks that block `cgr.dev` blob storage.
+- Set `ALPINE_MIRROR`, for example `https://mirrors.edge.kernel.org/alpine`, when `dl-cdn.alpinelinux.org` is blocked.
+- Use `docker.io/chainguard/git:latest-dev`, the same digest, when `cgr.dev` blob storage is blocked.
 
-CI runs one parallel bootstrap job per image and the host bootstrap test on Ubuntu and macOS.
-On both hosts it runs `spec/unit` under `sh`, `bash`, and `zsh`, plus `spec/startup` once;
-failed ShellSpec jobs upload JUnit reports.
-Run `mise run shell:test:posix` to test the host's `/bin/sh` separately,
-or `mise run shell:test:bash` to test Bash from a development clone.
+How the driver works:
 
-## mise tasks
+- The task installs the locked ShellSpec on demand and mounts it read-only at `/opt/shellspec`;
+  `sh .config/dotfiles/tests/bootstrap-container.sh` does the same.
+- `tests/bootstrap-container.sh` starts each image as root with a `/bin/sh` entrypoint
+  and mounts the checkout read-only at `/src`.
+- `tests/bootstrap-container-setup.sh` installs missing tools, creates the `tester` user,
+  then runs bootstrap, POSIX unit specs, and POSIX startup specs as that user.
+- Startup specs check each image's `/bin/sh` login profile and interactive `$ENV` startup;
+  unit specs check shared functions and cache behavior.
 
-Deployment tasks live in `.config/dotfiles/mise.toml` and `.config/dotfiles/mise-tasks/`;
-development tasks live in `.config/dotfiles/dev-tasks.toml`, included by an ignored, clone-local `mise.local.toml`.
-Development setup copies tracked `dev-miserc.toml`
-and `dev-mise-local.toml` templates from `.config/dotfiles/` to the clone root;
-the installed dotfiles never receive these root configs.
-The clone's ignored `mise.local.lock` links to the tracked `.config/dotfiles/mise.lock`;
-both environments resolve locked tool versions from that file.
-Deployment installs only prek by default.
-They are re-runnable independently of the curl install:
-
-| Task                       | Description                                                                                         |
-| -------------------------- | --------------------------------------------------------------------------------------------------- |
-| `bootstrap`                | Check out or pull dotfiles, initialize selected submodules, and install [git hooks](#install-hooks) |
-| `update`                   | Pull dotfiles, initialize selected submodules, and install hooks                                    |
-| `install-hooks`            | Install [`prek`](#prek) git hooks patched for the bare repo                                         |
-| `doctor`                   | Check the bare repo, tracked changes, and optional tools and hooks                                  |
-| `bootstrap:test`           | Test bootstrap, repeat runs, and submodule selection in throwaway homes without mise                |
-| `bootstrap:test:container` | Run `bootstrap:test` as non-root in containers; pass images to select                               |
-
-Run any task from an installed dotfiles home with:
-
-```bash
-mise run --cd ~/.config/dotfiles <deployment-task>
-# From the root of a development clone after running dev-setup.sh:
-mise run <development-task>
-```
-
-Run `mise --cd ~/.config/mise bootstrap` separately to update the machine toolchain.
-
-To run tasks from a clone of this repository,
-see [CONTRIBUTING.md](https://github.com/drts01/dotfiles/blob/trunk/.github/CONTRIBUTING.md#run-tasks).
-
-### `prek`
-
-Installed via `[tools] prek` in `.config/dotfiles/mise.toml`;
-the shared `mise.lock` pins prek and the task-only development tools without enabling them for deployment.
-
-### `install-hooks`
-
-Runs `prek install` against `.config/dotfiles/prek.toml` and patches the generated pre-commit hook
-so it targets the bare repo's `GIT_DIR`/ `GIT_WORK_TREE` instead of a normal working copy.
-See [Git hooks](/docs/prek/).
-
-## Verifying an install
-
-Run the doctor directly, including after a git-only install:
-
-```bash
-sh ~/.config/dotfiles/mise-tasks/doctor.sh
-```
-
-Check that git and the bare repository are usable and that untracked files are hidden from its status.
-Report tracked changes as a warning, not an installation failure.
-Report missing mise, prek, and pre-commit hooks as optional warnings; fail for a broken installed hook.
-With mise installed, `mise run --cd ~/.config/dotfiles doctor` runs the same check.
+CI runs one bootstrap job per image, plus the host bootstrap test on Ubuntu and macOS.
+On both hosts, it runs `spec/unit` under `sh`, `bash`, and `zsh`, and `spec/startup` once.
+Failed ShellSpec jobs upload JUnit reports.
+For shell specs on the host, see [Shell environments](@/docs/shell.md#test-shell-configuration).

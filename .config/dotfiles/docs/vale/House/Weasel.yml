@@ -1,0 +1,22 @@
+---
+extends: existence
+message: Remove '%s'; state the fact instead.
+level: error
+ignorecase: true
+tokens:
+  - actually
+  - basically
+  - blazing(?:ly)?
+  - clearly
+  - easily
+  - effortless(?:ly)?
+  - extremely
+  - just
+  - obviously
+  - of course
+  - powerful
+  - quite
+  - really
+  - seamless(?:ly)?
+  - simply
+  - very

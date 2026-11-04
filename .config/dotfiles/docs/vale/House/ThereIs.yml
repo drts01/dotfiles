@@ -1,0 +1,7 @@
+---
+extends: existence
+message: Rewrite '%s' with the subject first.
+level: error
+ignorecase: false
+raw:
+  - \b(?:There|there) (?:is|are)\b

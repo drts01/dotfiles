@@ -1,0 +1,12 @@
+---
+extends: substitution
+message: Use '%s' instead of '%s'.
+level: error
+ignorecase: true
+swap:
+  a number of: several
+  in order to: to
+  is able to: can
+  leverage: use
+  prior to: before
+  utilize: use

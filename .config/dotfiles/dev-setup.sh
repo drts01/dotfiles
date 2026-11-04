@@ -58,6 +58,8 @@ if printf '%s\n' "$loaded_configs" | grep -F "\"path\": \"$ROOT/.config/mise/" >
 fi
 
 mise trust "$ROOT/mise.local.toml"
+# The vale hook runs deployment tasks from .config/dotfiles, as in an installed home.
+mise trust "$BASEDIR/mise.toml"
 mise --cd "$ROOT" install --locked prek
 GIT_DIR=$(git -C "$ROOT" rev-parse --absolute-git-dir)
 mise --cd "$ROOT" exec prek -- prek install --config "$BASEDIR/prek.toml" --git-dir "$GIT_DIR"

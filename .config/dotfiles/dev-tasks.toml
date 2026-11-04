@@ -63,3 +63,10 @@ description = "Build static documentation site with git-derived page dates"
 tools       = { zola = "latest" }
 dir         = "{{config_root}}/.config/dotfiles/docs"
 run         = "sh run.sh build"
+
+# Mirrors the deployment task so the clone's lock view retains vale.
+["docs:lint"]
+description = "Check documentation prose against the house style; pass files or directories"
+tools       = { vale = "latest" }
+dir         = "{{config_root}}"
+run         = "vale --config=.config/dotfiles/docs/.vale.ini"

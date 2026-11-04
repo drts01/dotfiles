@@ -8,7 +8,7 @@ Manage system environment configurations via a Git bare repository.
 - No dependencies other than Git and a POSIX shell; the one-line install also uses curl
 - Support shells: Bourne, Bash, Zsh
 
-Mise is optional; the installer needs curl or wget to fetch it, but Git and a POSIX shell suffice to use the dotfiles.
+mise is optional; the installer needs curl or wget to fetch it, but Git and a POSIX shell suffice to use the dotfiles.
 The one-line command below also needs curl to fetch the entrypoint.
 
 ## Choose a workflow
@@ -20,13 +20,13 @@ The one-line command below also needs curl to fetch the entrypoint.
 
 ## Installation
 
-Deploy the configuration files into `$HOME` (requires git and a POSIX shell):
+Deploy the configuration files into `$HOME` (requires Git and a POSIX shell):
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | sh
 ```
 
-The installer fetches the repository with git, runs its deploy script from that same commit,
+The installer fetches the repository with Git, runs its deploy script from that same commit,
 and moves conflicting files to `~/.df-bak`.
 It tries to install optional [mise](https://mise.jdx.dev) with curl or wget;
 a missing downloader or failed install only warns.
@@ -34,7 +34,7 @@ Plugin submodules are initialized only for selected tools on `PATH`.
 Re-running the command is safe: it fast-forwards the existing checkout.
 
 To review the script first, pin a commit, choose plugin groups, set `DOTFILES_SKIP_MISE_INSTALL=1`,
-or install with git alone, see [Bootstrap](https://drts01.github.io/dotfiles/docs/bootstrap/).
+or install with Git alone, see [Bootstrap](https://drts01.github.io/dotfiles/docs/bootstrap/).
 
 Verify the install (with or without mise):
 
@@ -64,7 +64,7 @@ Update the machine toolchain separately with `mise --cd ~/.config/mise bootstrap
 
 ## Documentation
 
-Read the full documentation at [drts01.github.io/dotfiles](https://drts01.github.io/dotfiles/):
+Read the [full documentation](https://drts01.github.io/dotfiles/):
 
 - [Bootstrap](https://drts01.github.io/dotfiles/docs/bootstrap/): install options, environment variables, mise tasks,
   testing

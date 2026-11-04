@@ -88,7 +88,15 @@ mise run <task>
 | `shell:test:bash`          | Run Bash unit and startup specs                               |
 | `shell:test:zsh`           | Run Zsh unit and startup specs                                |
 | `docs:serve`               | Preview the documentation site                                |
-| `docs:build`               | Build the documentation site with git-derived page dates      |
+| `docs:build`               | Build the documentation site with Git-derived page dates      |
+| `docs:lint`                | Check documentation prose against the house style             |
+
+The `vale` hook runs `docs:lint`, which uses the locked Vale with the house style in `.config/dotfiles/docs/vale/`.
+Check prose without committing:
+
+```bash
+mise run docs:lint -- .config/dotfiles/docs/content
+```
 
 Update tool pins from the root of a configured development clone:
 
@@ -112,7 +120,7 @@ mise run --dry-run lint
 `lint` applies auto-fixes.
 Commit or stash unrelated work before running it.
 
-## Install git hooks
+## Install Git hooks
 
 `dev-setup.sh` installs hooks into the regular clone.
 To reinstall them without rerunning setup:

@@ -11,7 +11,7 @@ Bootstrap deploys this directory to `~/.config/dotfiles`.
 
 | Path                  | Purpose                                                                    |
 | --------------------- | -------------------------------------------------------------------------- |
-| `bootstrap.sh`        | Remote one-line installer; git-fetches a commit and runs its deploy script |
+| `bootstrap.sh`        | One-line installer; fetches a commit with Git and runs its deploy script   |
 | `mise-tasks/`         | Installed task scripts: bootstrap/update, doctor, hooks, ignore link       |
 | `mise.toml`           | Installed task definitions and deployment tool settings                    |
 | `mise.lock`           | Shared tool lockfile for deployment and development                        |
@@ -26,7 +26,7 @@ Bootstrap deploys this directory to `~/.config/dotfiles`.
 | `spec/`               | ShellSpec unit and shell startup specs                                     |
 | `tests/`              | Bootstrap, submodule selection, doctor, container, and mise smoke tests    |
 | `bench/`              | Shell startup benchmark and profile analysis                               |
-| `docs/`               | Zola documentation site source; `docs/site.sh` builds it with git dates    |
+| `docs/`               | Zola documentation site source; `docs/run.sh` builds it with Git dates     |
 | `LICENSE`             | Apache License, Version 2.0                                                |
 
 ## Constraints

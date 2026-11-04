@@ -1,39 +1,65 @@
 +++
 title = "Git hooks (prek)"
+description = "Install and run the pre-commit hooks for the bare repository."
 weight = 4
 +++
 
-Hooks are managed with [`prek`](https://github.com/j178/prek) — a fast, Rust-based pre-commit-compatible runner —
-configured in `.config/dotfiles/prek.toml`.
+Run formatting, linting, and spelling checks on every commit to the dotfiles.
+The hooks use [`prek`](https://github.com/j178/prek), configured in `.config/dotfiles/prek.toml`.
 
-## Why not plain pre-commit?
+## Install hooks
 
-`prek` is a drop-in replacement for the Python `pre-commit` tool with the same `.pre-commit-config.yaml`-style hook
-definitions (here in TOML), but faster and installed as a versioned `mise` tool — see
-[Bootstrap](/docs/bootstrap/#prek).
+Prerequisites: `prek` on `PATH`, or mise to install the locked version.
+
+Bootstrap installs the hooks automatically when either is available.
+Install or repair them manually with mise:
+
+```bash
+mise run --cd ~/.config/dotfiles install-hooks
+```
+
+Without mise, run the script from the configuration directory:
+
+```bash
+cd ~/.config/dotfiles && sh mise-tasks/install-hooks.sh
+```
+
+The script runs `prek install`, then patches the generated hook to export `GIT_DIR` and `GIT_WORK_TREE`.
+A bare repository checked out against `$HOME` has no `.git` directory, so Git cannot find it from the hook otherwise.
+
+Verify the install with the [doctor](@/docs/bootstrap.md#verify-the-install);
+it fails if the hook lacks the bare-repository overrides.
+
+In a development clone, `sh .config/dotfiles/dev-setup.sh` installs ordinary hooks instead.
+
+## Run hooks
+
+Run every hook against all tracked files.
+`prek` cannot find a bare repository from `$HOME` on its own, so set `GIT_DIR` and `GIT_WORK_TREE`:
+
+```bash
+cd ~ && GIT_DIR="$HOME/.local/share/dotfiles" GIT_WORK_TREE="$HOME" \
+  prek run --config .config/dotfiles/prek.toml --all-files
+```
+
+Fixers such as `typos`, `end-of-file-fixer`, and `ryl` rewrite files in place; review `dotfiles diff` afterwards.
+
+In a development clone, run `mise run lint`.
 
 ## Configured hooks
 
-| Repo                                                           | Hooks                                                                                                                                        |
-| -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `meta`                                                         | `check-hooks-apply`, `check-useless-excludes`                                                                                                |
-| `builtin`                                                      | File hygiene: large files, case conflicts, shebangs, JSON/YAML/TOML validation, merge conflicts, symlinks, trailing whitespace, line endings |
-| [`typos`](https://github.com/crate-ci/typos)                   | Spell-checking, auto-fix                                                                                                                     |
-| [`shfmt`](https://github.com/scop/pre-commit-shfmt)            | Shell script formatting                                                                                                                      |
-| [`shellcheck`](https://github.com/shellcheck-py/shellcheck-py) | Shell script linting                                                                                                                         |
-| [`tombi`](https://github.com/tombi-toml/tombi-pre-commit)      | TOML formatting                                                                                                                              |
-| [`ryl`](https://github.com/owenlamont/ryl-pre-commit)          | YAML/Markdown linting, with a GitHub-annotated variant on the `manual` stage                                                                 |
+| Repository                                                     | Hooks                                                                                                   |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `meta`                                                         | `check-hooks-apply`, `check-useless-excludes`                                                           |
+| `builtin`                                                      | Large files, case conflicts, shebangs, JSON/YAML/TOML, merge conflicts, symlinks, whitespace, line ends |
+| [`typos`](https://github.com/crate-ci/typos)                   | Spelling, with automatic fixes                                                                          |
+| [`shfmt`](https://github.com/scop/pre-commit-shfmt)            | Shell script formatting                                                                                 |
+| [`shellcheck`](https://github.com/shellcheck-py/shellcheck-py) | Shell script linting                                                                                    |
+| [`tombi`](https://github.com/tombi-toml/tombi-pre-commit)      | TOML formatting                                                                                         |
+| [`ryl`](https://github.com/owenlamont/ryl-pre-commit)          | YAML and Markdown linting, with a GitHub-annotated variant on the `manual` stage                        |
+| [`vale`](https://github.com/vale-cli/vale)                     | Documentation prose: the house style in `.config/dotfiles/docs/vale/`                                   |
 
-## Bare-repo hook injection
+## Why prek
 
-Because this repo is checked out as a bare repository against `$HOME` rather than a normal working copy,
-the pre-commit hook that `prek install` generates needs `GIT_DIR`/`GIT_WORK_TREE` explicitly set —
-otherwise git can't locate the repo when the hook runs.
-`.config/dotfiles/mise-tasks/install-hooks.sh` patches the generated hook to export these after installation.
-Development clones instead install ordinary hooks with `sh .config/dotfiles/dev-setup.sh` from the clone root.
-
-Re-run this patch at any time with:
-
-```bash
-mise run --cwd ~/.config/dotfiles install-hooks
-```
+`prek` reads the same hook definitions as Python `pre-commit`, here in TOML.
+It is a single binary, so mise installs and pins it like any other tool, without a Python runtime.

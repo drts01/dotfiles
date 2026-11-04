@@ -1,0 +1,16 @@
+---
+extends: substitution
+message: Use '%s' instead of '%s'.
+level: error
+ignorecase: false
+# Prose only: Vale skips code spans, code blocks, and link targets, so `git`, `zsh`, and URLs stay valid.
+swap:
+  Github|github: GitHub
+  homebrew: Homebrew
+  Mise|MISE: mise
+  neovim|NeoVim|NVim: Neovim
+  macos|MacOS|OSX: macOS
+  bash: Bash
+  git: Git
+  posix|Posix: POSIX
+  zsh: Zsh

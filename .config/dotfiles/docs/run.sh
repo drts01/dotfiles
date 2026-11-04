@@ -1,7 +1,7 @@
 #!/bin/sh
 # Build or preview the documentation site from a development clone.
-#   sh site.sh build [zola build options]  Build into ./public with git-derived page dates.
-#   sh site.sh serve [zola serve options]  Serve the source tree with live reload (no dates).
+#   sh run.sh build [zola build options]  Build into ./public with git-derived page dates.
+#   sh run.sh serve [zola serve options]  Serve the source tree with live reload (no dates).
 # Pages never carry a hand-maintained `updated` field: the build stamps each page with the
 # date of the last commit that touched it, or today for uncommitted edits.
 set -eu
@@ -83,7 +83,7 @@ case "$command" in
   build) build "$@" ;;
   serve) serve "$@" ;;
   *)
-    echo "usage: sh site.sh build|serve [zola options]" >&2
+    echo "usage: sh run.sh build|serve [zola options]" >&2
     exit 2
     ;;
 esac
