@@ -1,7 +1,6 @@
 +++
 title = "Shell environments"
 description = "Load and maintain shared POSIX sh, Bash, and Zsh configuration."
-updated = 2026-11-02
 weight = 3
 +++
 

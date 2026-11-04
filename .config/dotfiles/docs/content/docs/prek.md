@@ -1,6 +1,5 @@
 +++
 title = "Git hooks (prek)"
-updated = 2026-11-02
 weight = 4
 +++
 

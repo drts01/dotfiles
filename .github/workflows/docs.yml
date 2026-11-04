@@ -3,34 +3,45 @@ name: Documentation
 on:
   push:
     branches:
-      - trunk
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+      - '**'
+  pull_request: {}
+  workflow_dispatch: {}
+concurrency:
+  group: documentation-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/trunk' }}
 env:
   MISE_GLOBAL_CONFIG_FILE: ${{ github.workspace }}/.config/dotfiles/mise.toml
   MISE_IGNORED_CONFIG_PATHS: ${{ github.workspace }}/.config/mise
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d  # v6.0.0
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
+          fetch-depth: 0  # Full history: page dates come from each file's last commit.
           persist-credentials: false
       - uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca  # v5.1.1
         with:
           install: false
       - run: sh .config/dotfiles/dev-setup.sh
       - run: mise install zola
-      - run: git submodule update --init -- .config/dotfiles/docs/themes
       - run: mise run docs:build
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9  # v5.0.0
         with:
           path: .config/dotfiles/docs/public
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/trunk'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d  # v6.0.0
       - uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346  # v5.0.1
         id: deployment

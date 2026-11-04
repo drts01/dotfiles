@@ -53,13 +53,13 @@ dir         = "{{config_root}}/.config/dotfiles"
 run         = "sh bench/shell-startup.sh"
 
 ["docs:serve"]
-description = "Preview documentation site locally"
+description = "Preview documentation site locally; initializes the theme submodule if missing"
 tools       = { zola = "latest" }
 dir         = "{{config_root}}/.config/dotfiles/docs"
-run         = "zola serve --open"
+run         = "sh run.sh serve --open"
 
 ["docs:build"]
-description = "Build static documentation site"
+description = "Build static documentation site with git-derived page dates"
 tools       = { zola = "latest" }
 dir         = "{{config_root}}/.config/dotfiles/docs"
-run         = "zola build"
+run         = "sh run.sh build"

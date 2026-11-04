@@ -1,71 +1,100 @@
 +++
 title = "Bootstrap"
-updated = 2026-10-31
 weight = 1
 +++
 
-## Installation
+## Install
+
+Deploy the dotfiles into your home directory with Git and a POSIX shell.
+Using the one-line command requires curl to fetch the entrypoint; the installer requires curl or wget to fetch mise.
+Mise is optional: use [git alone](#install-with-git-only) if no downloader is available.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | sh
 ```
 
-Bootstrap is split into two scripts:
+The entrypoint, `.config/dotfiles/bootstrap.sh`:
 
-- `.config/dotfiles/bootstrap.sh` — remote entrypoint.
-  Installs [mise](https://mise.jdx.dev)
-  (skip with `SKIP_MISE_INSTALL=1`; failures are non-fatal), then downloads and runs the deploy script.
-- `.config/dotfiles/mise-tasks/bootstrap.sh` — deploy script.
-  Requires only git and a POSIX shell:
-  1. Clones the bare repo to `~/.local/share/dotfiles`.
-  2. Checks out tracked files into `$HOME` on first run, backing up conflicting
-     pre-existing files to `~/.df-bak`; pulls (fast-forward only) on later runs.
-  3. Reports and initializes submodules for tools available on `PATH`, subject to explicit exclusions.
-  4. Installs git hooks via `mise run install-hooks` when mise is available;
-     otherwise runs `install-hooks.sh` directly (skipped if `prek` is absent).
+1. Fetches the repository with git and resolves the commit to install.
+   Nothing in `$HOME` changes if this fails.
+2. Tries to install optional [mise](https://mise.jdx.dev) with curl or wget unless `DOTFILES_SKIP_MISE_INSTALL` is set.
+   Without a downloader, or if the install fails, it warns and continues.
+3. Runs the deploy script, `.config/dotfiles/mise-tasks/bootstrap.sh`, from that same commit:
+   1. Clones the bare repo to `~/.local/share/dotfiles`.
+   2. Checks out tracked files into `$HOME`, moving conflicting files to the private `~/.df-bak` directory;
+      later runs fast-forward instead.
+   3. Initializes plugin submodules for tools on `PATH`.
+   4. Installs git hooks when `prek` is available.
+4. Verifies that `~/.local/share/dotfiles` is at the resolved commit.
 
-Choose submodules before installation with `DOTFILES_SUBMODULES=auto` (default), `all`, `none`,
-or comma-separated groups such as `zsh,nvim`.
-Both `auto` and `all` select every group whose tool is on `PATH`:
+Rerun the command at any time to update.
 
-| Group  | Required tool     | Submodules             |
-| ------ | ----------------- | ---------------------- |
-| `zsh`  | `zsh`             | Zsh plugins and prompt |
-| `nvim` | `nvim`            | Legacy Neovim plugins  |
-| `lua`  | `lua` or `luajit` | `z.lua`                |
-| `docs` | `zola`            | Documentation theme    |
+### Review before running
+
+Download the entrypoint, read it, then run it pinned to the commit you reviewed:
+
+```bash
+curl -fsSLo dotfiles-bootstrap.sh https://raw.githubusercontent.com/drts01/dotfiles/<commit>/.config/dotfiles/bootstrap.sh
+less dotfiles-bootstrap.sh
+DOTFILES_REF=<commit> sh dotfiles-bootstrap.sh
+```
+
+`DOTFILES_REF` accepts a branch, a tag, or a full commit ID.
+Git verifies a full commit ID: every deployed file, including the deploy script, is addressed by that ID.
+Later runs without `DOTFILES_REF` follow the default branch again.
+
+- A pin older than the installed commit fails and leaves the checkout unchanged.
+- A pin must include pinning support in its deploy script.
+  Older commits deploy the default branch instead,
+  and the installer then fails rather than report an unverified install.
+- The mise installer, `https://mise.run`, is outside this verification.
+  Set `DOTFILES_SKIP_MISE_INSTALL=1` to skip it.
+
+### Choose plugin groups
+
+Set `DOTFILES_SUBMODULES` to `auto` (default), `all`, `none`, or a comma-separated list such as `zsh,nvim`:
+
+| Group  | Required tool     | Submodules                            | Selected by       |
+| ------ | ----------------- | ------------------------------------- | ----------------- |
+| `zsh`  | `zsh`             | Zsh plugins and prompt                | `auto`, `all`     |
+| `nvim` | `nvim`            | Legacy Neovim plugins                 | `auto`, `all`     |
+| `lua`  | `lua` or `luajit` | `z.lua`                               | `auto`, `all`     |
+| `docs` | `zola`            | Theme for building this documentation | `all`, explicitly |
 
 Helix needs no submodules.
-Explicit group selections still require the matching tool.
-Use `DOTFILES_SKIP_SUBMODULES=nvim,docs` to exclude individual groups,
-or `DOTFILES_SKIP_SUBMODULES=all` to exclude everything (equivalent to `DOTFILES_SUBMODULES=none`).
+Every selection still requires the matching tool.
 Unknown group names fail before checkout.
-Set either variable on the consuming `sh` process when piping the entrypoint:
+Exclude groups with `DOTFILES_SKIP_SUBMODULES=nvim,lua`, or everything with `DOTFILES_SKIP_SUBMODULES=all`.
+Set either variable on the `sh` that reads the pipe:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | DOTFILES_SKIP_SUBMODULES=nvim sh
 ```
 
 Zsh and Neovim start without their plugins, but plugin-dependent features remain unavailable.
-Building the documentation requires the `docs` theme.
 To install a skipped group later, first install its tool; for example, with `nvim` on `PATH`, run:
 
 ```bash
 DOTFILES_SUBMODULES=nvim sh ~/.config/dotfiles/mise-tasks/bootstrap.sh
 ```
 
-`all` still skips groups whose tools are unavailable.
 Selection and exclusion apply to each run, including `mise run --cd ~/.config/dotfiles update`;
 future runs without either variable detect tools again.
 Skipping does not remove already initialized plugins.
 
-Deploy without mise:
+The `docs` group exists only to build this site from an installed `$HOME`.
+In a development clone, `mise run docs:build` initializes the theme itself;
+see [Contributing](https://github.com/drts01/dotfiles/blob/trunk/.github/CONTRIBUTING.md).
+
+### Skip mise
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | SKIP_MISE_INSTALL=1 sh
+curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | DOTFILES_SKIP_MISE_INSTALL=1 sh
 ```
 
-Deploy without curl or wget, using git as the installer:
+### Install with git only
+
+Without curl or wget, run the deploy script straight from the cloned bare repo:
 
 ```bash
 git clone --bare --single-branch --depth=1 https://github.com/drts01/dotfiles ~/.local/share/dotfiles
@@ -75,23 +104,26 @@ sh -c "$(git --git-dir="$HOME/.local/share/dotfiles" show HEAD:.config/dotfiles/
 ## How it works
 
 <!-- rumdl-disable MD013 MD075 -->
-{% <devlab.diagram id="bootstrap-flow" label="Bootstrap flow" description="The entrypoint optionally installs mise, then runs the git-only deploy script. The deploy script hands off to mise for git hooks only when mise is on PATH."> %}
+{% <devlab.diagram id="bootstrap-flow" label="Bootstrap flow" description="The entrypoint fetches and resolves a commit with git, optionally installs mise, then runs the deploy script from that commit. The deploy script hands off to mise for git hooks only when mise is on PATH."> %}
 flowchart TD
 curl["curl -fsSL bootstrap.sh piped to sh"]
+fetch["git fetch DOTFILES_REF, resolve and verify the commit"]
 gitonly["git clone --bare, then git show the deploy script"]
-skip{"SKIP_MISE_INSTALL set?"}
+skip{"DOTFILES_SKIP_MISE_INSTALL set?"}
 mise["Install mise, non-fatal"]
-deploy["Run mise-tasks/bootstrap.sh"]
-clone["Clone bare repo if missing"]
+deploy["Run mise-tasks/bootstrap.sh from the fetched commit"]
+clone["Clone bare repo at the commit if missing"]
 index{"Bare repo has an index?"}
 checkout["Check out, back up conflicts to ~/.df-bak"]
-pull["git pull --ff-only"]
+pull["Fast-forward to the commit"]
+verify["Fail unless HEAD is the resolved commit"]
 subs["Initialize selected submodules or skip"]
 hasmise{"mise on PATH?"}
 hooks["mise trust, then mise run install-hooks"]
 direct["install-hooks.sh, skipped without prek"]
 
-curl --> skip
+curl --> fetch
+fetch --> skip
 skip -->|no| mise
 skip -->|yes| deploy
 mise --> deploy
@@ -100,8 +132,9 @@ deploy --> clone
 clone --> index
 index -->|no| checkout
 index -->|yes| pull
-checkout --> subs
-pull --> subs
+checkout --> verify
+pull --> verify
+verify --> subs
 subs --> hasmise
 hasmise -->|yes| hooks
 hasmise -->|no| direct
@@ -113,13 +146,18 @@ hasmise -->|no| direct
   Resumes interrupted installs and supports a manually cloned bare repo.
 - **Bare repo config:** Keep `core.bare=true`; remove the legacy `core.worktree` setting on reruns.
   Work-tree commands pass `--work-tree="$HOME"` explicitly, and submodules run from `$HOME`.
-- **Backups:** Tracked paths already in `$HOME` move to `~/.df-bak`.
+- **Backups:** Tracked paths already in `$HOME` move to `~/.df-bak`, created with mode `700`.
   A later backup of the same path overwrites the earlier one.
 - **Pulls:** Fast-forward only; never creates merge commits in `$HOME`.
+  Entrypoint runs fast-forward to the resolved commit; local `update` runs pull the tracked branch.
 - **Fetch refspec:** Set on the bare clone so `origin/<branch>` updates.
-- **Downloads:** Saved to temp files before running; a failed fetch aborts instead of piping nothing into `sh`.
+- **Same-commit execution:** The entrypoint never downloads the deploy script separately.
+  It runs the script from the git-fetched commit, and both scripts check the installed `HEAD` against that commit.
+- **Downloads:** The mise installer is saved to a temp file before running, over HTTPS and TLS 1.2 or later with curl;
+  a failed fetch aborts instead of piping nothing into `sh`.
 - **mise:** Optional.
-  Install failures warn and continue.
+  The installer needs curl or wget to fetch mise, not to deploy the dotfiles.
+  Without either downloader, or if installation fails, it warns and continues.
 
 ### Upgrade an installation with the legacy deploy script
 
@@ -129,7 +167,7 @@ The old installed deploy script writes `core.worktree` again after it pulls;
 the entrypoint fetches and runs the new script, which clears that setting and replaces the installed script:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | SKIP_MISE_INSTALL=1 sh
+curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | DOTFILES_SKIP_MISE_INSTALL=1 sh
 ```
 
 Subsequent local updates use the new installed script.
@@ -139,22 +177,23 @@ The old installed script will restore it if run again.
 
 ### Environment variables
 
-| Variable                   | Default                                                   | Purpose                                                 |
-| -------------------------- | --------------------------------------------------------- | ------------------------------------------------------- |
-| `SKIP_MISE_INSTALL`        | unset                                                     | Any value skips installing mise                         |
-| `MISE_INSTALL_PATH`        | `~/.local/bin/mise`                                       | mise binary location, added to `PATH`                   |
-| `RAW_URL`                  | `https://raw.githubusercontent.com/drts01/dotfiles/trunk` | Source of the deploy script                             |
-| `REPO_URL`                 | `https://github.com/drts01/dotfiles`                      | Repository to clone                                     |
-| `DEST_DIR`                 | `~/.local/share/dotfiles`                                 | Bare repository location                                |
-| `DOTFILES_SUBMODULES`      | `auto`                                                    | `auto`, `all`, `none`, or `zsh,nvim,lua,docs` groups    |
-| `DOTFILES_SKIP_SUBMODULES` | unset                                                     | `all` or comma-separated `zsh,nvim,lua,docs` exclusions |
+| Variable                     | Default                              | Purpose                                                                   |
+| ---------------------------- | ------------------------------------ | ------------------------------------------------------------------------- |
+| `DOTFILES_REF`               | default branch                       | Entrypoint: branch, tag, or full commit ID to install                     |
+| `DOTFILES_SKIP_MISE_INSTALL` | unset                                | Any value skips installing mise                                           |
+| `MISE_INSTALL_PATH`          | `~/.local/bin/mise`                  | mise binary location, added to `PATH`                                     |
+| `REPO_URL`                   | `https://github.com/drts01/dotfiles` | Repository to fetch and clone                                             |
+| `DEST_DIR`                   | `~/.local/share/dotfiles`            | Bare repository location                                                  |
+| `DOTFILES_SUBMODULES`        | `auto`                               | `auto` (runtime groups), `all` (adds `docs`), `none`, or a list of groups |
+| `DOTFILES_SKIP_SUBMODULES`   | unset                                | `all` or comma-separated `zsh,nvim,lua,docs` exclusions                   |
+| `DOTFILES_COMMIT`            | set by the entrypoint                | Deploy script: full commit ID to deploy and verify                        |
+| `DOTFILES_BRANCH`            | remote default branch                | Deploy script: branch that a pinned fresh install tracks                  |
 
 ### Testing
 
 In a development clone, first run `sh .config/dotfiles/dev-setup.sh`
 (see [Contributing](https://github.com/drts01/dotfiles/blob/trunk/.github/CONTRIBUTING.md)).
-Then run the bootstrap integration test from the clone root
-(requires git, curl or wget, and network access for submodules):
+Then run the bootstrap integration test from the clone root (requires git and network access for submodules):
 
 ```bash
 mise run bootstrap:test
@@ -162,10 +201,12 @@ mise run bootstrap:test
 
 The test deploys into throwaway home directories with mise off `PATH` and checks:
 
-- Fresh install through the entrypoint (curl, or wget when curl is absent), including backup of a conflicting `.bashrc`.
+- Fresh install through the entrypoint, including backup of a conflicting `.bashrc` into a private directory.
 - Repeat run removes a legacy `core.worktree`, leaves `$HOME` unchanged, and keeps `dotfiles status --porcelain` empty.
 - Upstream commits fast-forward.
 - Upgrade via the remote entrypoint replaces the old installed script; later local runs do not restore `core.worktree`.
+- Commit pinning: a pinned fresh install, a return to the default branch,
+  and rejection of unknown commits and of pins older than the installation.
 - Git-only install into a pre-cloned bare repo.
 - An offline submodule selection test covers tool detection, exclusions, explicit groups,
   and Neovim startup without plugins (when Neovim is available).
@@ -188,7 +229,7 @@ mise run bootstrap:test:container -- cgr.dev/chainguard/git:latest-dev fedora:la
 | `buildpack-deps:stable-scm`         | Debian, dash `sh`, git and curl preinstalled (no apt)          |
 | `alpine:latest`                     | BusyBox `sh`, curl and git installed with `apk`                |
 | `fedora:latest`                     | bash `sh`, git installed with `dnf`                            |
-| `cgr.dev/chainguard/git:latest-dev` | Wolfi, dash `sh`, git and GNU wget only (entrypoint wget path) |
+| `cgr.dev/chainguard/git:latest-dev` | Wolfi, dash `sh`, git and GNU wget only (no curl)              |
 
 `tests/bootstrap-container.sh` starts each image as root with a `/bin/sh` entrypoint
 and mounts the checkout read-only at `/src` and the host ShellSpec installation at `/opt/shellspec`.

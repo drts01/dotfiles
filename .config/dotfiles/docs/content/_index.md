@@ -1,6 +1,6 @@
 +++
 title = "drts01/dotfiles"
-description = "Personal dotfiles managed via a Git bare repository, bootstrapped with mise."
+description = "Personal dotfiles managed via a Git bare repository; mise is optional."
 
 [extra]
 home_layout = "wide"
@@ -15,6 +15,7 @@ home_features = [
 +++
 
 Manage system environment configurations via a Git bare repository.
+Use Git and a POSIX shell; mise is optional.
 
 This repo tracks dotfiles (`.config/`, `.zshenv`, etc.) directly against `$HOME` using a bare git repository at
 `~/.local/share/dotfiles`, rather than symlinking from a separate clone.

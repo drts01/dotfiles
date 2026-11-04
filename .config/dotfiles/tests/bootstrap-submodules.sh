@@ -105,15 +105,19 @@ fi
 HOME_DIR="$TMP/home-auto"
 mkdir -p "$HOME_DIR"
 run_auto "$TMP/tools-bin" > "$TMP/auto-out"
-grep -q 'Initializing 4 submodules' "$TMP/auto-out" || fail 'auto stage count incorrect'
-check_groups installed installed installed installed
+# auto covers runtime plugins only; the docs theme stays opt-in even with zola present.
+grep -q 'Initializing 3 submodules' "$TMP/auto-out" || fail 'auto stage count incorrect'
+check_groups installed installed installed absent
 run_auto "$TMP/core-bin" all > "$TMP/skip-all-out"
+check_groups installed installed installed absent
+run all "$TMP/tools-bin" > "$TMP/all-out"
+grep -q 'Initializing 4 submodules' "$TMP/all-out" || fail 'all stage count incorrect'
 check_groups installed installed installed installed
 
 HOME_DIR="$TMP/home-skip"
 mkdir -p "$HOME_DIR"
 run_auto "$TMP/tools-bin" nvim > "$TMP/skip-out"
-check_groups installed installed absent installed
+check_groups installed installed absent absent
 run all "$TMP/tools-bin" nvim > "$TMP/skip-out"
 check_groups installed installed absent installed
 run auto "$TMP/tools-bin" all > "$TMP/skip-out"

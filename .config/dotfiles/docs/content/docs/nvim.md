@@ -1,6 +1,5 @@
 +++
 title = "Neovim (legacy)"
-updated = 2026-11-01
 weight = 2
 +++
 

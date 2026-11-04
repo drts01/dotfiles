@@ -1,10 +1,10 @@
 #!/bin/sh
 # Integration test: deploy the dotfiles into throwaway home directories without mise.
 # Covers the remote entrypoint, backups, a repeat run (idempotency), a
-# fast-forward pull, and the git-only install path. The scripts under test are
-# the working-tree copies; the deployed content is the committed HEAD.
-# Requires git, curl or wget, and network access for submodules. Without curl,
-# the entrypoint's wget branch is exercised instead.
+# fast-forward pull, commit pinning, and the git-only install path. The scripts under
+# test are the working-tree copies; the deployed content is the committed HEAD.
+# Requires git and network access for submodules. With mise skipped, the entrypoint
+# fetches only through git, so neither curl nor wget is exercised.
 set -eu
 
 CDPATH=
@@ -78,7 +78,7 @@ assert_deployed() {
     fail "$_home: remote.origin.fetch refspec not set"
   [ -z "$(dfg "$_home" status --porcelain)" ] || fail "$_home: work tree is not clean"
   for pair in 'zsh .local/share/zsh' 'nvim .config/nvim/pack/plugins/start' \
-    'lua .local/share/z.lua' 'zola .config/dotfiles/docs/themes'; do
+    'lua .local/share/z.lua'; do
     tool=${pair%% *}
     path=${pair#* }
     available=false
@@ -97,29 +97,17 @@ assert_deployed() {
       fail "$_home: $tool submodules initialized without tool on PATH"
     fi
   done
+  # The docs theme is opt-in: the default selection never installs it, even with zola present.
+  if (cd "$_home" && dfg "$_home" submodule status -- .config/dotfiles/docs/themes) | grep -qv '^-'; then
+    fail "$_home: docs theme initialized by the default selection"
+  fi
+}
+
+assert_head() {
+  [ "$(dfg "$1" rev-parse HEAD)" = "$2" ] || fail "$1: HEAD is not $2"
 }
 
 env -i PATH="$TEST_PATH" sh -c 'command -v git' > /dev/null || fail "git not found in $TEST_PATH"
-if env -i PATH="$TEST_PATH" sh -c 'command -v curl' > /dev/null; then
-  FETCHER=curl
-elif REAL_WGET=$(env -i PATH="$TEST_PATH" sh -c 'command -v wget'); then
-  FETCHER=wget
-  # wget has no file:// support; serve fixture URLs from disk so the
-  # entrypoint's wget branch still runs unmodified.
-  mkdir -p "$TMP/bin"
-  cat > "$TMP/bin/wget" << EOF
-#!/bin/sh
-for url do :; done
-case "\$url" in
-  file://*) exec cat "\${url#file://}" ;;
-esac
-exec "$REAL_WGET" "\$@"
-EOF
-  chmod +x "$TMP/bin/wget"
-  TEST_PATH="$TMP/bin:$TEST_PATH"
-else
-  fail "neither curl nor wget found in $TEST_PATH"
-fi
 if env -i PATH="$TEST_PATH" sh -c 'command -v mise' > /dev/null; then
   fail "mise found in $TEST_PATH; the test requires a mise-free PATH"
 fi
@@ -139,20 +127,31 @@ git -C "$TMP/fixture" add .config/dotfiles/gitignore .config/dotfiles/mise-tasks
 git -C "$TMP/fixture" -c user.name=test -c user.email=test@example.invalid \
   commit -q --allow-empty --no-verify -m "test: publish ignore installer"
 git -C "$TMP/fixture" push -q --no-verify origin HEAD:trunk
+# The first commit whose deploy script supports DOTFILES_COMMIT; later steps pin to it.
+PINNED=$(git -C "$TMP/fixture" rev-parse HEAD)
 
 HOME_A="$TMP/home-a"
 mkdir -p "$HOME_A"
 printf 'pre-existing\n' > "$HOME_A/.bashrc"
 
-step "Entrypoint ($FETCHER): fresh install with a conflicting file"
-run "$HOME_A" SKIP_MISE_INSTALL=1 RAW_URL="file://$ROOT" sh "$ENTRYPOINT"
+step "Entrypoint: fresh install with a conflicting file"
+mkdir -p "$TMP/bin"
+# Expand the marker in the downloader stub, not while writing it.
+# shellcheck disable=SC2016
+printf '%s\n' '#!/bin/sh' ': > "$TEST_FETCH_MARKER"' 'exit 1' > "$TMP/bin/curl"
+chmod +x "$TMP/bin/curl"
+run "$HOME_A" PATH="$TMP/bin:$TEST_PATH" TEST_FETCH_MARKER="$TMP/mise-fetch-called" \
+  DOTFILES_SKIP_MISE_INSTALL=1 sh "$ENTRYPOINT"
+[ ! -e "$TMP/mise-fetch-called" ] || fail "mise download attempted despite DOTFILES_SKIP_MISE_INSTALL"
 assert_deployed "$HOME_A"
+assert_head "$HOME_A" "$PINNED"
 [ "$(cat "$HOME_A/.df-bak/.bashrc")" = pre-existing ] || fail "conflicting .bashrc not backed up"
+[ -n "$(find "$HOME_A/.df-bak" -prune -perm 700)" ] || fail "backup directory is not private"
 
 step "Entrypoint: repeat run removes legacy core.worktree and is idempotent"
 BEFORE=$(snapshot "$HOME_A")
 git config --file "$HOME_A/.local/share/dotfiles/config" core.worktree "$HOME_A"
-run "$HOME_A" SKIP_MISE_INSTALL=1 RAW_URL="file://$ROOT" sh "$ENTRYPOINT" 2> "$TMP/repeat-stderr"
+run "$HOME_A" DOTFILES_SKIP_MISE_INSTALL=1 sh "$ENTRYPOINT" 2> "$TMP/repeat-stderr"
 if grep -q 'core.bare and core.worktree' "$TMP/repeat-stderr"; then
   fail "repeat run emitted the bare repo worktree warning"
 fi
@@ -178,7 +177,7 @@ git -C "$TMP/upstream" -c user.name=test -c user.email=test@example.invalid \
   commit -q --allow-empty --no-verify -m "test: publish current deploy script"
 git -C "$TMP/upstream" push -q --no-verify origin HEAD:trunk
 git config --file "$HOME_A/.local/share/dotfiles/config" core.worktree "$HOME_A"
-run "$HOME_A" SKIP_MISE_INSTALL=1 RAW_URL="file://$ROOT" sh "$ENTRYPOINT" 2> "$TMP/upgrade-stderr"
+run "$HOME_A" DOTFILES_SKIP_MISE_INSTALL=1 sh "$ENTRYPOINT" 2> "$TMP/upgrade-stderr"
 if grep -q 'core.bare and core.worktree' "$TMP/upgrade-stderr"; then
   fail "upgrade emitted the bare repo worktree warning"
 fi
@@ -188,6 +187,33 @@ git diff --no-index --quiet "$DEPLOY" "$HOME_A/.config/dotfiles/mise-tasks/boots
   fail "upgrade did not replace the installed deploy script"
 run "$HOME_A" sh "$HOME_A/.config/dotfiles/mise-tasks/bootstrap.sh"
 assert_deployed "$HOME_A"
+TIP=$(git --git-dir="$ORIGIN" rev-parse trunk)
+assert_head "$HOME_A" "$TIP"
+
+step "Entrypoint: refuse a pin older than the installed commit"
+if run "$HOME_A" DOTFILES_SKIP_MISE_INSTALL=1 DOTFILES_REF="$PINNED" sh "$ENTRYPOINT" > "$TMP/older-out" 2>&1; then
+  fail "pin older than the installed commit was accepted"
+fi
+grep -q 'not DOTFILES_COMMIT' "$TMP/older-out" || fail "missing pin mismatch error"
+assert_head "$HOME_A" "$TIP"
+
+step "Entrypoint: reject an unknown commit before touching \$HOME"
+HOME_C="$TMP/home-c"
+mkdir -p "$HOME_C"
+if run "$HOME_C" DOTFILES_SKIP_MISE_INSTALL=1 DOTFILES_REF=0000000000000000000000000000000000000000 \
+  sh "$ENTRYPOINT" > "$TMP/unknown-out" 2>&1; then
+  fail "unknown commit was accepted"
+fi
+if [ -e "$HOME_C/.local" ] || [ -e "$HOME_C/.config" ]; then fail "unknown commit modified $HOME_C"; fi
+
+step "Entrypoint: pinned fresh install, then follow the default branch"
+run "$HOME_C" DOTFILES_SKIP_MISE_INSTALL=1 DOTFILES_REF="$PINNED" sh "$ENTRYPOINT"
+assert_deployed "$HOME_C"
+assert_head "$HOME_C" "$PINNED"
+[ ! -e "$HOME_C/.bootstrap-test" ] || fail "pinned install deployed a later commit"
+run "$HOME_C" DOTFILES_SKIP_MISE_INSTALL=1 sh "$ENTRYPOINT"
+assert_deployed "$HOME_C"
+assert_head "$HOME_C" "$TIP"
 
 step "Deploy: git-only install into a pre-cloned bare repo"
 HOME_B="$TMP/home-b"

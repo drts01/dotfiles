@@ -6,9 +6,9 @@ Use the bare-repository install only for deploying them into `$HOME`.
 ## Prerequisites
 
 - Git
-- A POSIX shell, Bash, and Zsh
-- [mise](https://mise.jdx.dev); development setup installs prek and ShellSpec
-- Podman or Docker for the container bootstrap tests
+- A POSIX shell and [mise](https://mise.jdx.dev); development setup installs prek and ShellSpec
+- The Zola theme submodule for documentation development (`docs:build` initializes it)
+- Bash and Zsh for shell tests; Podman or Docker for container bootstrap tests
 
 ## Set up a working copy
 
@@ -33,14 +33,6 @@ fi
 
 For Neovim development, initialize its plugins
 when `nvim` is installed with `git submodule update --init -- .config/nvim/pack/plugins/start`.
-To build documentation after development setup, install Zola and initialize its theme:
-
-```bash
-mise install zola
-git submodule update --init -- .config/dotfiles/docs/themes
-mise run docs:build
-```
-
 Set up the development clone (re-runnable):
 
 ```bash
@@ -62,6 +54,17 @@ its other tool declarations retain the development tools in the shared lock with
 If either local config already exists with different contents, setup stops rather than overwriting it.
 Compare it with the tracked template and merge changes manually before re-running setup.
 If `mise.local.lock` already exists and points elsewhere, reconcile it manually.
+
+To build documentation, install Zola and build;
+the docs tasks initialize the required theme submodule when it is missing:
+
+```bash
+mise install zola
+mise run docs:build
+```
+
+The installer's `docs` submodule group is unrelated to this workflow:
+it exists only to build the site from an installed `$HOME`, and the default selection skips it.
 
 ## Run tasks
 
@@ -85,7 +88,7 @@ mise run <task>
 | `shell:test:bash`          | Run Bash unit and startup specs                               |
 | `shell:test:zsh`           | Run Zsh unit and startup specs                                |
 | `docs:serve`               | Preview the documentation site                                |
-| `docs:build`               | Build the documentation site                                  |
+| `docs:build`               | Build the documentation site with git-derived page dates      |
 
 Update tool pins from the root of a configured development clone:
 
@@ -167,7 +170,8 @@ Every tracked file is checked out into `$HOME`.
 - Start every `.editorconfig` section glob with `/` (for example `[/.config/sh/**]`).
   Anchored globs match only files tracked here; `[*.sh]` would match scripts in every project under `$HOME`.
 - Add plugins and themes as shallow submodules in `.gitmodules`.
-- Keep `bootstrap.sh` dependent only on Git, a POSIX shell, and curl or wget.
+- Keep `bootstrap.sh` dependent only on Git and a POSIX shell; curl or wget is needed only to fetch optional mise.
+  The one-line install also requires curl to fetch the entrypoint.
 
 ## Documentation layout
 
@@ -181,6 +185,9 @@ Every tracked file is checked out into `$HOME`.
 
 GitHub detects `README.md` and `CONTRIBUTING.md` in `.github/`.
 Add reference material to the documentation site, not the README.
+Do not add `updated` to page front matter: `docs:build` stamps each page with its last commit date,
+or today for uncommitted edits.
+`docs:serve` shows no dates.
 
 ## Commit messages
 

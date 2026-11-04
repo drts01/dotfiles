@@ -11,7 +11,7 @@ ROOT=$(cd -- "$(dirname -- "$0")/../../.." && pwd)
 if [ $# -eq 0 ]; then
   # buildpack-deps:stable-scm is Debian stable with git and curl preinstalled,
   # which avoids apt on networks that block deb.debian.org.
-  # The Chainguard image (Wolfi, dash, git + GNU wget, no curl) covers the wget path.
+  # The Chainguard image (Wolfi, dash, git + GNU wget, no curl) covers a curl-free host.
   set -- buildpack-deps:stable-scm alpine:latest fedora:latest \
     cgr.dev/chainguard/git:latest-dev
 fi

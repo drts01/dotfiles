@@ -5,10 +5,11 @@ Manage system environment configurations via a Git bare repository.
 ## Features
 
 - Manage local environment without root access
-- No dependencies other than Git, a POSIX shell, and curl or wget for the one-line install
+- No dependencies other than Git and a POSIX shell; the one-line install also uses curl
 - Support shells: Bourne, Bash, Zsh
 
-mise is not required to deploy the dotfiles. mise only manages CLI tools and git hooks after deployment.
+Mise is optional; the installer needs curl or wget to fetch it, but Git and a POSIX shell suffice to use the dotfiles.
+The one-line command below also needs curl to fetch the entrypoint.
 
 ## Choose a workflow
 
@@ -19,48 +20,21 @@ mise is not required to deploy the dotfiles. mise only manages CLI tools and git
 
 ## Installation
 
-Run the bootstrap script to deploy configuration files onto a fresh machine:
+Deploy the configuration files into `$HOME` (requires git and a POSIX shell):
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | sh
 ```
 
-This installs [mise](https://mise.jdx.dev)
-(a failed install only warns),
-clones the bare repo to `~/.local/share/dotfiles`, checks out the tracked files into `$HOME`
-(backing up any conflicting pre-existing files to `~/.df-bak`),
-initializes submodules only for tools already on `PATH` in a separate, reported stage,
-and installs `prek` git hooks when available.
-Re-running the command is safe: it fast-forwards the existing checkout instead of re-cloning.
+The installer fetches the repository with git, runs its deploy script from that same commit,
+and moves conflicting files to `~/.df-bak`.
+It tries to install optional [mise](https://mise.jdx.dev) with curl or wget;
+a missing downloader or failed install only warns.
+Plugin submodules are initialized only for selected tools on `PATH`.
+Re-running the command is safe: it fast-forwards the existing checkout.
 
-To select or skip groups, set `DOTFILES_SUBMODULES` or `DOTFILES_SKIP_SUBMODULES` on the shell reading the pipe:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | DOTFILES_SUBMODULES=none sh
-curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | DOTFILES_SKIP_SUBMODULES=nvim sh
-```
-
-`auto` (default) and `all` select the groups whose tools are available: `zsh` for Zsh plugins,
-`nvim` for legacy Neovim plugins, `lua` (or `luajit`) for `z.lua`, and `zola` for the `docs` theme.
-Helix needs no submodules.
-Select groups explicitly with `DOTFILES_SUBMODULES=zsh,nvim`; selections still require their tools.
-Exclude a group with `DOTFILES_SKIP_SUBMODULES=nvim` or exclude everything with `DOTFILES_SKIP_SUBMODULES=all`
-(equivalent to `DOTFILES_SUBMODULES=none`).
-On each update, tool detection and exclusions run again; unselected groups are left unchanged, not removed.
-To install a previously skipped group, install its tool, then rerun bootstrap without that exclusion.
-
-Skip mise and deploy with git only:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | SKIP_MISE_INSTALL=1 sh
-```
-
-Without curl or wget, use git as the installer:
-
-```bash
-git clone --bare --single-branch --depth=1 https://github.com/drts01/dotfiles ~/.local/share/dotfiles
-sh -c "$(git --git-dir="$HOME/.local/share/dotfiles" show HEAD:.config/dotfiles/mise-tasks/bootstrap.sh)"
-```
+To review the script first, pin a commit, choose plugin groups, set `DOTFILES_SKIP_MISE_INSTALL=1`,
+or install with git alone, see [Bootstrap](https://drts01.github.io/dotfiles/docs/bootstrap/).
 
 Verify the install (with or without mise):
 
@@ -70,20 +44,21 @@ sh ~/.config/dotfiles/mise-tasks/doctor.sh
 
 ## Usage
 
-Interact with the repository using the system alias:
+Manage tracked files with the `dotfiles` alias, a `git` wrapper for the bare repository:
 
 ```bash
 dotfiles status
 dotfiles add .config/helix/config.toml
 dotfiles commit --message "feat(helix): update config"
-dotfiles push
 ```
 
-Pull the latest dotfiles, initialize submodules for available tools, and set up git hooks when available:
+Pull the latest dotfiles and initialize submodules for available tools (without mise):
 
 ```bash
-mise run --cd ~/.config/dotfiles update
+sh ~/.config/dotfiles/mise-tasks/bootstrap.sh
 ```
+
+If mise is installed, `mise run --cd ~/.config/dotfiles update` runs the same update task.
 
 Update the machine toolchain separately with `mise --cd ~/.config/mise bootstrap`.
 
@@ -91,8 +66,10 @@ Update the machine toolchain separately with `mise --cd ~/.config/mise bootstrap
 
 Read the full documentation at [drts01.github.io/dotfiles](https://drts01.github.io/dotfiles/):
 
-- [Bootstrap](https://drts01.github.io/dotfiles/docs/bootstrap/): install flow, environment variables, mise tasks,
+- [Bootstrap](https://drts01.github.io/dotfiles/docs/bootstrap/): install options, environment variables, mise tasks,
   testing
+- [Shell environments](https://drts01.github.io/dotfiles/docs/shell/): POSIX `sh`, Bash, and Zsh startup and maintenance
+- [Neovim (legacy)](https://drts01.github.io/dotfiles/docs/nvim/): legacy editor configuration
 - [Git hooks](https://drts01.github.io/dotfiles/docs/prek/): `prek` setup for the bare repository
 
 Source: [`.config/dotfiles/docs/`](../.config/dotfiles/docs/).
