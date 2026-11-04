@@ -68,7 +68,8 @@ Read the [full documentation](https://drts01.github.io/dotfiles/):
 
 - [Start here](https://drts01.github.io/dotfiles/docs/start/install/): install on a new machine and verify
 - [How-to guides](https://drts01.github.io/dotfiles/docs/how-to/): pin, update, customize, uninstall, troubleshoot
-- [Concepts](https://drts01.github.io/dotfiles/docs/concepts/): the bare repository, the installer, shell startup
+- [Concepts](https://drts01.github.io/dotfiles/docs/concepts/): the bare repository, the installer, shell startup,
+  security
 - [Reference](https://drts01.github.io/dotfiles/docs/reference/): variables, tasks, shell files, hooks, platforms
 - [Changelog](https://drts01.github.io/dotfiles/docs/reference/changelog/): breaking changes and migrations
 

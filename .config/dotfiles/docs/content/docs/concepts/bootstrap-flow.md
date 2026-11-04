@@ -87,7 +87,7 @@ The script body runs inside one function, so `curl | sh` never executes a partia
   The commit resolves in a temporary directory before `$HOME` changes.
 - **mise is optional.**
   A missing downloader or a failed mise install warns and continues.
-  The mise installer is outside commit verification.
+  The mise installer is outside commit verification; see [Security model](@/docs/concepts/security.md).
 - **Fast-forward only.**
   Updates never create merge commits in `$HOME`; diverged history stops the update.
 - **Private backups.**
@@ -103,3 +103,4 @@ The script body runs inside one function, so `curl | sh` never executes a partia
 - [Install on a new machine](@/docs/start/install.md)
 - [Review the installer and pin a commit](@/docs/how-to/pin-a-commit.md)
 - [Environment variables](@/docs/reference/environment.md)
+- [Security model](@/docs/concepts/security.md)

@@ -45,6 +45,7 @@ Every deployed file, including the deploy script, comes from that commit.
 
 The pin does not cover the mise installer from `https://mise.run`.
 To skip it, add `DOTFILES_SKIP_MISE_INSTALL=1` to the command in step 4.
+[Security model](@/docs/concepts/security.md) lists what a pin covers.
 
 ## Verify
 
