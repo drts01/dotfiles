@@ -38,9 +38,6 @@ copy_local_config() {
   cp "$source" "$ROOT/$path"
 }
 
-if [ -f "$BASEDIR/dev-mise-local.toml" ] || [ -f "$BASEDIR/dev-miserc.toml" ]; then
-  fail 'missing development config template'
-fi
 copy_local_config dev-miserc.toml .miserc.toml
 copy_local_config dev-mise-local.toml mise.local.toml
 
@@ -51,8 +48,9 @@ if [ -L "$ROOT/mise.local.lock" ]; then
     fail 'mise.local.lock already links elsewhere; reconcile it manually'
 elif [ -e "$ROOT/mise.local.lock" ]; then
   fail 'mise.local.lock already exists; reconcile it manually'
+else
+  ln -s "$LOCK_TARGET" "$ROOT/mise.local.lock"
 fi
-ln -s "$LOCK_TARGET" "$ROOT/mise.local.lock"
 
 loaded_configs=$(mise --cd "$ROOT" config ls --json) || fail 'mise could not read development configuration'
 if printf '%s\n' "$loaded_configs" | grep -F "\"path\": \"$ROOT/.config/mise/" > /dev/null; then
