@@ -91,16 +91,20 @@ files    = '.*\.(ya?ml|md|markdown|mdx|qmd|Rmd)$'
 exclude  = '\.config/zed/AGENTS\.md$'
 stages   = [ "manual" ]
 
-# House style for published docs and READMEs; styles are local, so no `vale sync` download.
-# Runs the vale binary pinned in mise.lock; the upstream golang hook compiles Vale and a Go toolchain.
 [[repos]]
-repo  = "local"
+repo  = "https://github.com/vale-cli/vale"
+rev   = "v3.26.0"
 hooks = [
   {
-    id       = "vale",
-    name     = "vale",
-    language = "system",
-    entry    = "sh -c 'command -v mise > /dev/null || { echo \"vale: mise not found; skipping\"; exit 0; }; exec mise --cd .config/dotfiles run docs:lint -- \"$@\"' --",
-    files    = '^(\.config/dotfiles/(docs/content/.*|README)|\.github/(README|CONTRIBUTING))\.md$',
+    id             = "vale",
+    alias          = "vale-sync",
+    name           = "vale sync",
+    pass_filenames = false,
+    args           = [ "sync" ],
   },
+  {
+    id   = "vale",
+    args = [ "--output=line", "--minAlertLevel=error" ],
+  },
+  { id = "vale-commit-msg" }
 ]
