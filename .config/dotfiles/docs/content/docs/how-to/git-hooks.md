@@ -20,7 +20,7 @@ The installer installs the hook automatically when either is available.
 With mise:
 
 ```bash
-mise run --cd ~/.config/dotfiles install-hooks
+mise run --cd ~/.config/dotfiles install:git-hooks
 ```
 
 Without mise:

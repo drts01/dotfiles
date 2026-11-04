@@ -44,13 +44,12 @@ copies `.config/dotfiles/dev-miserc.toml` and `.config/dotfiles/dev-mise-local.t
 and `mise.local.toml`, installs prek with mise, and installs ordinary pre-commit hooks into the clone.
 Run this before invoking mise in the clone:
 the root `.miserc.toml` prevents mise from treating the clone's `.config/mise` as a project config.
-Setup links the ignored root `mise.local.lock` to the tracked `.config/dotfiles/mise.lock`.
-Both configurations require locked installs.
+Setup links the ignored root `mise.local.lock` to the tracked `.config/dotfiles/dev-mise.lock`.
+The deployed `.config/dotfiles/mise.lock` is separate; both configurations require locked installs.
 The development config leaves global tools enabled so commands such as `gh` remain available in the clone;
 setup installs only prek explicitly.
 ShellSpec is installed on demand by shell and container test tasks.
-The deployment config keeps only prek enabled;
-its other tool declarations retain the development tools in the shared lock without installing them by default.
+The deployment config declares only prek; development tools are pinned in `dev-mise.lock`, not the deployment lock.
 If either local config already exists with different contents, setup stops rather than overwriting it.
 Compare it with the tracked template and merge changes manually before re-running setup.
 If `mise.local.lock` already exists and points elsewhere, reconcile it manually.
@@ -92,25 +91,21 @@ mise run <task>
 | `docs:check`               | Check page types and internal links, including anchors        |
 | `docs:lint`                | Check documentation prose against the house style             |
 
-The `vale` hook runs `docs:lint`, which uses the locked Vale with the house style in `.config/dotfiles/docs/vale/`.
-Check prose without committing:
-
-```bash
-mise run docs:lint -- .config/dotfiles/docs/content
-```
+The `vale` hook runs independently from `.config/dotfiles/prek.toml` and uses the house style in `.config/vale/`.
 
 Update tool pins from the root of a configured development clone:
 
 ```bash
 mise lock --bump
+MISE_CEILING_PATHS="$PWD/.config" mise --cd .config/dotfiles lock --bump
 mise lock --dry-run --json
-mise --cd .config/dotfiles lock --dry-run --json
+MISE_CEILING_PATHS="$PWD/.config" mise --cd .config/dotfiles lock --dry-run --json
 ```
 
-Both dry runs should return `[]`.
-The first updates the shared tracked lockfile;
-the second checks that the deployment config still retains every development tool.
-CI checks both views of the lockfile before linting.
+The bump commands update the tracked development lock (`.config/dotfiles/dev-mise.lock`)
+and deployment lock (`.config/dotfiles/mise.lock`) separately.
+Both dry runs should return `[]`; the ceiling path keeps the deployment check from loading clone tasks.
+CI checks both locks before linting.
 
 Preview the lint task command without changing files:
 
@@ -130,8 +125,8 @@ To reinstall them without rerunning setup:
 prek install --config .config/dotfiles/prek.toml
 ```
 
-Do not use `mise run install-hooks` in a clone:
-that task patches hooks for the bare repository in `~/.local/share/dotfiles`.
+Do not use `mise run install:git-hooks` or `mise run install:gitignore` in a clone:
+these tasks modify the bare repository in `~/.local/share/dotfiles`.
 
 ## Ignore local files
 

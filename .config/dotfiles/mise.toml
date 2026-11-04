@@ -1,26 +1,20 @@
 [settings]
-enable_tools        = [ "prek" ]  # Prevents tool install from other configurations
 locked              = true
 lockfile_mode       = "generate"
 http_timeout        = "10s"
 minimum_release_age = "3d"
 
 [tools]
-# Keep task-only development tools in the shared lock without installing them on deployment.
-hyperfine = "latest"
-prek      = "latest"
-shellspec = "latest"
-vale      = "latest"
-zola      = "latest"
+prek = "latest"
 
-[tasks."install-ignore"]
+[tasks."install:gitignore"]
 description = "Link this clone's Git exclude file to the tracked dotfiles ignore list"
-run         = "sh mise-tasks/install-ignore.sh"
 
-[tasks."install-hooks"]
+[tasks."install:git-hooks"]
 description = "Install prek pre-commit hooks patched for the bare repo"
 tools       = { prek = "latest" }
-env         = { BASEDIR = "{{config_root}}", DEST_DIR = "{{ env.HOME }}/.local/share/dotfiles" }
+dir         = "{{config_root}}"
+env         = { BASEDIR = "{{config_root}}" }
 
 [tasks.bootstrap]
 description = "Bootstrap dotfiles"
@@ -28,15 +22,7 @@ description = "Bootstrap dotfiles"
 [tasks.doctor]
 description = "Check bare repository, tracked changes, and optional tooling"
 env         = { DEST_DIR = "{{ env.HOME }}/.local/share/dotfiles" }
-run         = "doctor.sh"
-
-[tasks."docs:lint"]
-description = "Check documentation prose against the house style; pass files relative to the repository root"
-tools       = { vale = "latest" }
-# The repository root: the clone root, or $HOME for the bare install.
-dir         = "{{config_root}}/../.."
-run         = "vale --config={{config_root}}/docs/.vale.ini"
 
 [tasks.update]
 description = "Pull dotfiles, initialize available-tool submodules except exclusions, and install hooks"
-run         = "bootstrap.sh"
+depends     = [ "bootstrap" ]

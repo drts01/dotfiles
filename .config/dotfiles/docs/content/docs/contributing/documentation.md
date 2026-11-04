@@ -51,11 +51,14 @@ or today for uncommitted edits.
 
 ## Verify
 
+From a configured development clone (the installed deployment has no `docs:lint` task):
+
 ```bash
 mise run docs:lint -- .config/dotfiles/docs/content
 mise run docs:check -- --skip-external-links
 mise run docs:build
 ```
 
+The Vale hook in `prek.toml` runs independently of `docs:lint`.
 `docs:check` and `docs:build` fail when a page lacks `extra.type` or its type does not match its section.
 Preview with `mise run docs:serve`; the preview shows no dates.

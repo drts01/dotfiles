@@ -19,6 +19,7 @@ on:
       - .config/dotfiles/dev-setup.sh
       - .config/dotfiles/dev-miserc.toml
       - .config/dotfiles/dev-mise-local.toml
+      - .config/dotfiles/dev-mise.lock
       - .config/dotfiles/dev-tasks.toml
       - .config/dotfiles/mise.toml
       - .config/dotfiles/mise.lock

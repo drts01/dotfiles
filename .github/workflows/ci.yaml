@@ -37,10 +37,12 @@ jobs:
           install: false
       - name: Set up development clone
         run: sh .config/dotfiles/dev-setup.sh
-      - name: Check shared lock coverage
+      - name: Check development and deployment lockfiles
         run: |
           test "$(mise lock --dry-run --json)" = '[]'
-          test "$(mise --cd .config/dotfiles lock --dry-run --json)" = '[]'
+          test "$(
+            MISE_CEILING_PATHS=${{ github.workspace }}/.config mise --cd .config/dotfiles lock --dry-run --json
+          )" = '[]'
       - name: Test doctor against an isolated bare repository
         run: sh .config/dotfiles/tests/doctor.sh
       - name: Test selective submodule installation

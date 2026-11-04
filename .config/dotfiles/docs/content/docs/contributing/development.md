@@ -39,7 +39,8 @@ The documentation theme submodule is required for site builds; `docs:build` and 
    mise tasks ls
    ```
 
-Do not run the installer, `mise-tasks/bootstrap.sh`, or `install-hooks` in a clone; they target the bare repository.
+Do not run the installer, `mise-tasks/bootstrap.sh`, `install:gitignore`, or `install:git-hooks` in a clone;
+they target the bare repository.
 
 ## Verify
 

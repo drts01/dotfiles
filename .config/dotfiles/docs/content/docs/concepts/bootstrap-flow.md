@@ -28,7 +28,7 @@ pull["Fast-forward to the commit"]
 verify["Fail unless HEAD is the resolved commit"]
 subs["Initialize selected submodules or skip"]
 hasmise{"mise on PATH?"}
-hooks["mise trust, then mise run install-hooks"]
+hooks["mise trust, then mise run install:git-hooks"]
 direct["install-hooks.sh, skipped without prek"]
 
 curl --> fetch

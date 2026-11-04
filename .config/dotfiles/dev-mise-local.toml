@@ -4,7 +4,11 @@ http_timeout        = "10s"
 minimum_release_age = "3d"
 
 [tools]
-prek = "latest"
+hyperfine = "latest"
+prek      = "latest"
+shellspec = "latest"
+vale      = "latest"
+zola      = "latest"
 
 [task_config]
 includes = [ ".config/dotfiles/dev-tasks.toml" ]

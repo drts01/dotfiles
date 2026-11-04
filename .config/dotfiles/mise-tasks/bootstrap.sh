@@ -237,16 +237,16 @@ else
   (cd "$HOME" && df submodule update --init -- "$@")
 fi
 
-sh "$BASEDIR/mise-tasks/install-ignore.sh" "$DEST_DIR"
+sh "$BASEDIR/mise-tasks/install/gitignore.sh" "$DEST_DIR"
 
 echo "Running post-clone setup..."
 if command -v mise > /dev/null 2>&1; then
   # A fresh machine has not trusted this config; mise refuses to load it otherwise.
   mise trust "$BASEDIR/mise.toml"
-  mise --cd "$BASEDIR" task run install-hooks
+  mise --cd "$BASEDIR" task run install:git-hooks
 else
   echo "mise not found; skipping mise-managed tools."
-  (cd "$BASEDIR" && sh ./mise-tasks/install-hooks.sh)
+  (cd "$BASEDIR" && sh ./mise-tasks/install/git-hooks.sh)
 fi
 
 echo "Dotfiles bootstrap complete."

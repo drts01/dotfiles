@@ -46,7 +46,8 @@ Every tracked file lands at its repository path.
 | --------------------------- | ----------------------------------------------------------------------- |
 | `bootstrap.sh`              | One-line installer entrypoint                                           |
 | `mise-tasks/`               | Deploy script, doctor, hook installer, ignore link                      |
-| `mise.toml`, `mise.lock`    | Installed tasks and the shared tool lockfile                            |
+| `mise.toml`, `mise.lock`    | Installed tasks and deployment lock (prek only)                         |
+| `dev-mise.lock`             | Development lock; linked as `mise.local.lock` in a clone                |
 | `prek.toml`                 | Hook configuration                                                      |
 | `gitignore`                 | Ignore rules linked into `info/exclude`                                 |
 | `docs/`                     | Source of this site                                                     |

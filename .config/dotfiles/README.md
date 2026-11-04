@@ -14,7 +14,8 @@ Bootstrap deploys this directory to `~/.config/dotfiles`.
 | `bootstrap.sh`        | One-line installer; fetches a commit with Git and runs its deploy script   |
 | `mise-tasks/`         | Installed task scripts: bootstrap/update, doctor, hooks, ignore link       |
 | `mise.toml`           | Installed task definitions and deployment tool settings                    |
-| `mise.lock`           | Shared tool lockfile for deployment and development                        |
+| `mise.lock`           | Deployment tool lockfile (prek only)                                       |
+| `dev-mise.lock`       | Development tool lockfile; linked as `mise.local.lock` in a clone          |
 | `dev-setup.sh`        | One-time setup for a regular development clone                             |
 | `dev-tasks.toml`      | Development tasks: lint, tests, benchmarks, documentation builds           |
 | `dev-miserc.toml`     | Template for the clone's ignored root `.miserc.toml`                       |
@@ -33,4 +34,5 @@ Bootstrap deploys this directory to `~/.config/dotfiles`.
 
 - Keep `bootstrap.sh` and `mise-tasks/bootstrap.sh` dependent only on Git and a POSIX shell;
   curl or wget is needed only to fetch optional mise; the one-line entrypoint command itself requires curl.
-- Do not run `mise-tasks/bootstrap.sh` or `install-hooks` in a development clone; they target the bare repository.
+- Do not run `mise-tasks/bootstrap.sh`, `install:gitignore`, or `install:git-hooks` in a development clone;
+  they target the bare repository.

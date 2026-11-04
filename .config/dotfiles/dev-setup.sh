@@ -41,11 +41,17 @@ copy_local_config() {
 copy_local_config dev-miserc.toml .miserc.toml
 copy_local_config dev-mise-local.toml mise.local.toml
 
-LOCK_TARGET=.config/dotfiles/mise.lock
-[ -f "$ROOT/$LOCK_TARGET" ] || fail 'missing shared mise lockfile'
+LOCK_TARGET=.config/dotfiles/dev-mise.lock
+[ -f "$ROOT/$LOCK_TARGET" ] || fail 'missing development mise lockfile'
 if [ -L "$ROOT/mise.local.lock" ]; then
-  [ "$(readlink "$ROOT/mise.local.lock")" = "$LOCK_TARGET" ] ||
-    fail 'mise.local.lock already links elsewhere; reconcile it manually'
+  case $(readlink "$ROOT/mise.local.lock") in
+    "$LOCK_TARGET") ;;
+    .config/dotfiles/mise.lock)
+      rm "$ROOT/mise.local.lock"
+      ln -s "$LOCK_TARGET" "$ROOT/mise.local.lock"
+      ;;
+    *) fail 'mise.local.lock already links elsewhere; reconcile it manually' ;;
+  esac
 elif [ -e "$ROOT/mise.local.lock" ]; then
   fail 'mise.local.lock already exists; reconcile it manually'
 else
@@ -58,7 +64,7 @@ if printf '%s\n' "$loaded_configs" | grep -F "\"path\": \"$ROOT/.config/mise/" >
 fi
 
 mise trust "$ROOT/mise.local.toml"
-# The vale hook runs deployment tasks from .config/dotfiles, as in an installed home.
+# Trust the installed maintenance tasks as well as the clone's development tasks.
 mise trust "$BASEDIR/mise.toml"
 mise --cd "$ROOT" install --locked prek
 GIT_DIR=$(git -C "$ROOT" rev-parse --absolute-git-dir)
