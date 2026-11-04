@@ -137,14 +137,16 @@ jobs:
       MISE_GLOBAL_CONFIG_FILE: ${{ github.workspace }}/.config/dotfiles/tests/mise/mise.toml
       MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}/.config/dotfiles/tests/mise
       MISE_IGNORED_CONFIG_PATHS: ${{ github.workspace }}/.config/mise:${{ github.workspace }}/.config/dotfiles/mise.toml
-      MISE_CEILING_PATHS: ${{ github.workspace }}:${{ runner.temp }}
-      MISE_CONFIG_DIR: ${{ runner.temp }}/mise-smoke-config/mise
       MISE_ENABLE_TOOLS: zoxide,atuin
-      MISE_DATA_DIR: ${{ runner.temp }}/mise-smoke-data
-      MISE_CACHE_DIR: ${{ runner.temp }}/mise-smoke-cache
-      MISE_STATE_DIR: ${{ runner.temp }}/mise-smoke-state
-      XDG_CONFIG_HOME: ${{ runner.temp }}/mise-smoke-config
     steps:
+      - name: Configure isolated mise paths
+        run: |
+          printf 'MISE_CEILING_PATHS=%s:%s\n' "$GITHUB_WORKSPACE" "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'MISE_CONFIG_DIR=%s/mise-smoke-config/mise\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'MISE_DATA_DIR=%s/mise-smoke-data\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'MISE_CACHE_DIR=%s/mise-smoke-cache\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'MISE_STATE_DIR=%s/mise-smoke-state\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'XDG_CONFIG_HOME=%s/mise-smoke-config\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
