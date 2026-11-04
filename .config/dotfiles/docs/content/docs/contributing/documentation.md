@@ -55,4 +55,5 @@ mise run docs:lint -- .config/dotfiles/docs/content
 mise run docs:build
 ```
 
+`docs:build` fails when a page lacks `extra.type` or its type does not match its section.
 Preview with `mise run docs:serve`; the preview shows no dates.

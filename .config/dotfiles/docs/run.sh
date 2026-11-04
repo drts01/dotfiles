@@ -4,6 +4,7 @@
 #   sh run.sh serve [zola serve options]  Serve the source tree with live reload (no dates).
 # Pages never carry a hand-maintained `updated` field: the build stamps each page with the
 # date of the last commit that touched it, or today for uncommitted edits.
+# The build also fails when a docs page lacks the Diátaxis `type` its section requires.
 set -eu
 
 CDPATH=
@@ -58,8 +59,56 @@ stamp_dates() {
   done
 }
 
+# Each docs page declares its Diátaxis type as `type` under `[extra]`; its section fixes the allowed types.
+allowed_types() {
+  case "$1" in
+    docs/start/*/* | docs/how-to/*/* | docs/concepts/*/* | docs/reference/*/* | docs/contributing/*/*) ;;
+    docs/start/*) echo tutorial ;;
+    docs/how-to/*) echo how-to ;;
+    docs/concepts/*) echo explanation ;;
+    docs/reference/*) echo reference ;;
+    docs/contributing/*) echo how-to reference ;;
+  esac
+}
+
+page_type() {
+  awk '
+    NR == 1 { if ($0 != "+++") exit; next }
+    $0 == "+++" { exit }
+    /^\[/ { table = $0; next }
+    table == "[extra]" && /^type[ \t]*=/ {
+      sub(/^type[ \t]*=[ \t]*"/, ""); sub(/".*/, ""); print; exit
+    }
+  ' "$1"
+}
+
+check_types() {
+  find "$DOCS_DIR/content/docs" -name '*.md' ! -name '_index.md' | sort | {
+    failed=0
+    while IFS= read -r page; do
+      relative=${page#"$DOCS_DIR"/content/}
+      allowed=$(allowed_types "$relative")
+      if [ -z "$allowed" ]; then
+        echo "ERROR: $relative must sit directly in docs/start, how-to, concepts, reference, or contributing." >&2
+        failed=1
+        continue
+      fi
+      type=$(page_type "$page")
+      case " $allowed " in
+        *" ${type:-none} "*) ;;
+        *)
+          echo "ERROR: $relative has [extra] type '${type:-}'; expected: $allowed." >&2
+          failed=1
+          ;;
+      esac
+    done
+    exit "$failed"
+  }
+}
+
 build() {
   ensure_theme
+  check_types
   stage=$(mktemp -d "${TMPDIR:-/tmp}/dotfiles-docs.XXXXXX")
   trap 'rm -rf "$stage"' EXIT
   trap 'exit 1' HUP INT TERM
