@@ -46,9 +46,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - runner: ubuntu-24.04
+          - runner: ubuntu-26.04
             slug: linux-x64
-          - runner: macos-15
+          - runner: macos-26
             slug: macos-arm64
     steps:
       - name: Checkout trusted trunk
@@ -94,7 +94,7 @@ jobs:
     if: github.ref == 'refs/heads/trunk'
     needs: measure
     name: Archive benchmark history
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     permissions:
       contents: write
@@ -122,7 +122,7 @@ jobs:
     if: github.ref == 'refs/heads/trunk'
     needs: archive
     name: Chart comparable history
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     permissions:
       contents: read

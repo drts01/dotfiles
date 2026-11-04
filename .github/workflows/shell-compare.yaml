@@ -26,9 +26,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - runner: ubuntu-24.04
+          - runner: ubuntu-26.04
             slug: linux-x64
-          - runner: macos-15
+          - runner: macos-26
             slug: macos-arm64
     steps:
       - name: Checkout trusted benchmark harness

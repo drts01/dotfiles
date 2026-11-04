@@ -14,7 +14,7 @@ env:
   MISE_IGNORED_CONFIG_PATHS: ${{ github.workspace }}/.config/mise
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
     env:
@@ -37,7 +37,7 @@ jobs:
   deploy:
     if: github.event_name == 'push' && github.ref == 'refs/heads/trunk'
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     permissions:
       pages: write
       id-token: write

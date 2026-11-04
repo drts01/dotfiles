@@ -21,7 +21,7 @@ env:
 jobs:
   lint:
     name: Lint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     env:
 
       MISE_EXPERIMENTAL: true
@@ -63,7 +63,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [ubuntu-latest, macos-latest]
+        runner: [ubuntu-26.04, macos-26]
         shell: [sh, bash, zsh]
     steps:
       - name: Checkout
@@ -96,7 +96,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [ubuntu-latest, macos-latest]
+        runner: [ubuntu-26.04, macos-26]
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -132,7 +132,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [ubuntu-24.04, macos-15]
+        runner: [ubuntu-24.04, macos-26]
     env:
       MISE_GLOBAL_CONFIG_FILE: ${{ github.workspace }}/.config/dotfiles/tests/mise/mise.toml
       MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}/.config/dotfiles/tests/mise
@@ -185,25 +185,25 @@ jobs:
       matrix:
         include:
           - name: debian
-            runner: ubuntu-latest
+            runner: ubuntu-26.04
             image: buildpack-deps:stable-scm
             bash_test: required
           - name: alpine
-            runner: ubuntu-latest
+            runner: ubuntu-26.04
             image: alpine:latest
             bash_test: skip
           - name: fedora
-            runner: ubuntu-latest
+            runner: ubuntu-26.04
             image: fedora:latest
             bash_test: required
           - name: chainguard
-            runner: ubuntu-latest
+            runner: ubuntu-26.04
             image: cgr.dev/chainguard/git:latest-dev
             bash_test: required
           - name: ubuntu
-            runner: ubuntu-latest
+            runner: ubuntu-26.04
           - name: macos
-            runner: macos-latest
+            runner: macos-26
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
