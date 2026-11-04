@@ -4,6 +4,7 @@
 # Fetches the repository with git and runs the deploy script from the fetched commit, so the
 # script that runs and the dotfiles it deploys always come from the same commit.
 # DOTFILES_REF selects a branch, tag, or full commit ID (verified); DOTFILES_SKIP_MISE_INSTALL=1 skips mise;
+# DOTFILES_BRANCH names the branch a commit or tag pin tracks;
 # DOTFILES_SUBMODULES and DOTFILES_SKIP_SUBMODULES select/exclude plugin groups.
 
 set -eu
@@ -12,6 +13,7 @@ REPO_URL="${REPO_URL:-https://github.com/drts01/dotfiles}"
 DEST_DIR="${DEST_DIR:-$HOME/.local/share/dotfiles}"
 DOTFILES_REF="${DOTFILES_REF:-HEAD}"
 DOTFILES_SKIP_MISE_INSTALL="${DOTFILES_SKIP_MISE_INSTALL:-}"
+DOTFILES_BRANCH="${DOTFILES_BRANCH-}"
 
 is_commit_id() {
   case "$1" in
@@ -86,7 +88,8 @@ main() {
     install_mise
   fi
 
-  REPO_URL="$REPO_URL" DEST_DIR="$DEST_DIR" DOTFILES_COMMIT="$commit" DOTFILES_BRANCH="$branch" \
+  # A cloned branch wins; commit and tag pins fall back to the caller's DOTFILES_BRANCH.
+  REPO_URL="$REPO_URL" DEST_DIR="$DEST_DIR" DOTFILES_COMMIT="$commit" DOTFILES_BRANCH="${branch:-$DOTFILES_BRANCH}" \
     sh "$TMP_DIR/bootstrap.sh"
 
   # Deploy scripts that predate DOTFILES_COMMIT ignore it; never report an unverified install.

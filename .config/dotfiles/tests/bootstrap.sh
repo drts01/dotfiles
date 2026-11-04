@@ -215,6 +215,14 @@ run "$HOME_C" DOTFILES_SKIP_MISE_INSTALL=1 sh "$ENTRYPOINT"
 assert_deployed "$HOME_C"
 assert_head "$HOME_C" "$TIP"
 
+step "Entrypoint: a commit pin tracks the caller's DOTFILES_BRANCH"
+HOME_D="$TMP/home-d"
+mkdir -p "$HOME_D"
+run "$HOME_D" DOTFILES_SKIP_MISE_INSTALL=1 DOTFILES_SUBMODULES=none DOTFILES_REF="$PINNED" DOTFILES_BRANCH=pinned \
+  sh "$ENTRYPOINT"
+assert_head "$HOME_D" "$PINNED"
+[ "$(dfg "$HOME_D" symbolic-ref --short HEAD)" = pinned ] || fail "commit pin ignored DOTFILES_BRANCH"
+
 step "Deploy: git-only install into a pre-cloned bare repo"
 HOME_B="$TMP/home-b"
 mkdir -p "$HOME_B/.local/share"
