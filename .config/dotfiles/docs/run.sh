@@ -26,11 +26,12 @@ ensure_theme() {
   fi
 }
 
+# Author date: rebases and cherry-picks rewrite the committer date but keep when the content changed.
 page_date() {
   if [ -n "$(git -C "$DOCS_DIR" status --porcelain -- "$1")" ]; then
     date +%Y-%m-%d
   else
-    git -C "$DOCS_DIR" log -1 --format=%cs -- "$1"
+    git -C "$DOCS_DIR" log -1 --format=%as -- "$1"
   fi
 }
 

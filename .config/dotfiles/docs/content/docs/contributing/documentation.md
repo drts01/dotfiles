@@ -46,7 +46,8 @@ Pages outside `contributing/` state user requirements only: Git and a POSIX `sh`
 3. Link other pages by source path, for example `@/docs/how-to/update.md#verify`.
    The build fails on a missing page or anchor.
 
-Do not add `updated`; the build stamps each page with the date of its last commit, or today for uncommitted edits.
+Do not add `updated`; the build stamps each page with the author date of its last commit,
+or today for uncommitted edits.
 
 ## Verify
 

@@ -195,7 +195,7 @@ GitHub detects `README.md` and `CONTRIBUTING.md` in `.github/`.
 Add reference material to the documentation site, not the README.
 Follow [Write documentation](https://drts01.github.io/dotfiles/docs/contributing/documentation/) for page types,
 front matter, and links.
-Do not add `updated` to page front matter: `docs:build` stamps each page with its last commit date.
+Do not add `updated` to page front matter: `docs:build` stamps each page with the author date of its last commit.
 
 ## Commit messages
 
