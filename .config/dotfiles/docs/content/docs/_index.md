@@ -1,6 +1,6 @@
 +++
 title = "Documentation"
-description = "Setup, shell environments, mise tasks, and configuration guides."
+description = "Install the dotfiles, complete common tasks, understand the design, and look up settings."
 sort_by = "weight"
 template = "docs.html"
 page_template = "doc-page.html"

@@ -173,8 +173,8 @@ Every tracked file is checked out into `$HOME`.
 - Place repository-only files under `.config/dotfiles/` or `.github/`.
 - Avoid tracked top-level files; they land directly in `$HOME`.
   Development setup creates ignored root configs only in a clone.
-- Keep tool configs that search parent directories (`.taplo.toml`, `tombi.toml`) out of the root;
-  in `$HOME` they apply to every project below it.
+- Keep tool configs that search parent directories
+  (`.taplo.toml`, `tombi.toml`) out of the root; in `$HOME` they apply to every project below it.
 - Start every `.editorconfig` section glob with `/` (for example `[/.config/sh/**]`).
   Anchored globs match only files tracked here; `[*.sh]` would match scripts in every project under `$HOME`.
 - Add plugins and themes as shallow submodules in `.gitmodules`.
@@ -193,9 +193,9 @@ Every tracked file is checked out into `$HOME`.
 
 GitHub detects `README.md` and `CONTRIBUTING.md` in `.github/`.
 Add reference material to the documentation site, not the README.
-Do not add `updated` to page front matter: `docs:build` stamps each page with its last commit date,
-or today for uncommitted edits.
-`docs:serve` shows no dates.
+Follow [Write documentation](https://drts01.github.io/dotfiles/docs/contributing/documentation/) for page types,
+front matter, and links.
+Do not add `updated` to page front matter: `docs:build` stamps each page with its last commit date.
 
 ## Commit messages
 

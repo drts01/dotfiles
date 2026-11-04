@@ -1,0 +1,58 @@
++++
+title = "Write documentation"
+description = "Add or change a page on this site: page types, front matter, links, and checks."
+weight = 30
+
+[extra]
+type = "how-to"
++++
+
+Add a page that fits the site structure and passes the build.
+
+## Prerequisites
+
+- A [development clone](@/docs/contributing/development.md).
+
+## Choose the page type
+
+The site follows [Diátaxis](https://diataxis.fr/): each page has exactly one type, and its section sets the type.
+
+| Section         | `extra.type`               | Contains                                         |
+| --------------- | -------------------------- | ------------------------------------------------ |
+| `start/`        | `tutorial`                 | One linear path with checkpoints; no options     |
+| `how-to/`       | `how-to`                   | One task: prerequisites, steps, verify, undo     |
+| `concepts/`     | `explanation`              | Design and tradeoffs; no procedures              |
+| `reference/`    | `reference`                | Tables and values; no procedures or rationale    |
+| `contributing/` | `how-to` or `reference`    | Developer tasks; may require mise                |
+
+Pages outside `contributing/` state user requirements only: Git and a POSIX `sh`, with mise optional.
+
+## Add the page
+
+1. Create a regular page under `.config/dotfiles/docs/content/docs/<section>/`, never an `_index.md`.
+2. Add front matter:
+
+   ```toml
+   +++
+   title = "Choose plugin groups"
+   description = "One sentence that states the outcome."
+   weight = 20
+
+   [extra]
+   type = "how-to"
+   +++
+   ```
+
+3. Link other pages by source path, for example `@/docs/how-to/update.md#verify`.
+   The build fails on a missing page or anchor.
+
+Do not add `updated`; the build stamps each page with the date of its last commit, or today for uncommitted edits.
+
+## Verify
+
+```bash
+mise run docs:lint -- .config/dotfiles/docs/content
+mise run docs:build
+```
+
+Preview with `mise run docs:serve`; the preview shows no dates.

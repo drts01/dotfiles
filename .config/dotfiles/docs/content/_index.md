@@ -9,39 +9,27 @@ layout = "wide"
 type = "hero"
 eyebrow = "Dotfiles documentation"
 actions = [
-  { label = "Install", path = "@/docs/bootstrap.md" },
+  { label = "Install", path = "@/docs/start/install.md" },
   { label = "Read the docs", path = "@/docs/_index.md" },
 ]
 
 [[extra.devlab.home.blocks]]
 type = "features"
 items = [
-  { kicker = "Start", title = "Bootstrap", path = "@/docs/bootstrap.md", description = "Install, update, and verify the dotfiles with Git and a POSIX shell." },
-  { kicker = "Configure", title = "Helix & shells", path = "@/docs/shell.md", description = "Configure editing and shared sh, Bash, and Zsh environments." },
-  { kicker = "Automate", title = "Git hooks (prek)", path = "@/docs/prek.md", description = "Format, lint, and spell-check every commit." },
+  { kicker = "Start", title = "Install", path = "@/docs/start/install.md", description = "Deploy the dotfiles with Git and a POSIX shell, then confirm that they load." },
+  { kicker = "Customize", title = "Shell", path = "@/docs/how-to/customize-shell.md", description = "Add aliases, settings, and integrations for sh, Bash, and Zsh." },
+  { kicker = "Contribute", title = "Development", path = "@/docs/contributing/development.md", description = "Change and test the dotfiles from a regular clone." },
 ]
 
 [[extra.devlab.home.blocks]]
 type = "content"
 +++
 
-Manage system environment configurations via a Git bare repository.
+Track your shell and tool configuration in Git, directly in `$HOME`.
 Use Git and a POSIX shell; mise is optional.
 
-This repository tracks dotfiles, such as `.config/` and `.zshenv`,
-directly in `$HOME` through a bare Git repository at `~/.local/share/dotfiles`,
-instead of symlinking them from a separate clone.
-See [Bootstrap](@/docs/bootstrap.md) to install them on a new machine.
-
-## Layout
-
-| Path                                     | Purpose                                                                                   |
-| ---------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `.config/dotfiles/`                      | Bootstrap script, `mise` tasks, and this documentation                                    |
-| `.config/helix/`                         | Helix editor configuration (primary editor)                                               |
-| `.config/nvim/`                          | Legacy Neovim configuration — see [Neovim](@/docs/nvim.md)                                |
-| `.config/sh/`, `.config/zsh/`, `.bashrc` | Shared shell and shell-specific configuration — see [Shell environments](@/docs/shell.md) |
-| `.config/dotfiles/prek.toml`             | Git hooks configuration — see [Git hooks](@/docs/prek.md)                                 |
+A bare Git repository at `~/.local/share/dotfiles` tracks files such as `.profile` and `.config/` in place,
+without symlinks or a separate clone; see [The bare repository](@/docs/concepts/bare-repo.md).
 
 ## Use the repository
 
@@ -52,5 +40,4 @@ dotfiles commit -m "feat(helix): update config"
 dotfiles push
 ```
 
-`dotfiles` is a shell alias, defined in `.config/sh/sh.d/20_aliases.sh`,
-for `git --git-dir=$HOME/.local/share/dotfiles --work-tree=$HOME`.
+`dotfiles` is Git for the bare repository, defined in `.config/sh/sh.d/20_aliases.sh`.

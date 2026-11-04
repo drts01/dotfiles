@@ -34,7 +34,7 @@ Plugin submodules are initialized only for selected tools on `PATH`.
 Re-running the command is safe: it fast-forwards the existing checkout.
 
 To review the script first, pin a commit, choose plugin groups, set `DOTFILES_SKIP_MISE_INSTALL=1`,
-or install with Git alone, see [Bootstrap](https://drts01.github.io/dotfiles/docs/bootstrap/).
+or install with Git alone, see the [how-to guides](https://drts01.github.io/dotfiles/docs/how-to/).
 
 Verify the install (with or without mise):
 
@@ -66,11 +66,11 @@ Update the machine toolchain separately with `mise --cd ~/.config/mise bootstrap
 
 Read the [full documentation](https://drts01.github.io/dotfiles/):
 
-- [Bootstrap](https://drts01.github.io/dotfiles/docs/bootstrap/): install options, environment variables, mise tasks,
-  testing
-- [Shell environments](https://drts01.github.io/dotfiles/docs/shell/): POSIX `sh`, Bash, and Zsh startup and maintenance
-- [Neovim (legacy)](https://drts01.github.io/dotfiles/docs/nvim/): legacy editor configuration
-- [Git hooks](https://drts01.github.io/dotfiles/docs/prek/): `prek` setup for the bare repository
+- [Start here](https://drts01.github.io/dotfiles/docs/start/install/): install on a new machine and verify
+- [How-to guides](https://drts01.github.io/dotfiles/docs/how-to/): pin, update, customize, uninstall, troubleshoot
+- [Concepts](https://drts01.github.io/dotfiles/docs/concepts/): the bare repository, the installer, shell startup
+- [Reference](https://drts01.github.io/dotfiles/docs/reference/): variables, tasks, shell files, hooks, platforms
+- [Changelog](https://drts01.github.io/dotfiles/docs/reference/changelog/): breaking changes and migrations
 
 Source: [`.config/dotfiles/docs/`](../.config/dotfiles/docs/).
 
