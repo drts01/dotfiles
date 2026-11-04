@@ -172,7 +172,9 @@ The test deploys into throwaway home directories with mise off `PATH` and checks
 
 Run the same bootstrap test and ShellSpec shell specs as a non-root user in clean containers
 (podman, else docker; override with `CONTAINER_ENGINE`).
-Development setup installs ShellSpec; the container driver mounts the resolved mise installation read-only.
+The container test task installs locked ShellSpec on demand;
+the container driver mounts that mise installation read-only.
+Running `sh .config/dotfiles/tests/bootstrap-container.sh` directly also installs it on demand.
 Pass image names to select containers; omit them to run all defaults:
 
 ```bash

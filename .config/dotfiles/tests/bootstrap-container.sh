@@ -30,14 +30,22 @@ if [ -z "$ENGINE" ]; then
   exit 1
 fi
 
-if ! command -v mise > /dev/null 2>&1 ||
-  ! SHELLSPEC_HOME=$(mise --cd "$ROOT" where shellspec 2> /dev/null); then
-  echo "ERROR: ShellSpec is required; run 'sh .config/dotfiles/dev-setup.sh' from a development clone first." >&2
+if ! command -v mise > /dev/null 2>&1; then
+  echo 'ERROR: mise is required to install ShellSpec for container tests.' >&2
   exit 1
 fi
-# Task-scoped mise tools may be installed without being active in the calling shell.
-SHELLSPEC_EXEC=$(mise --cd "$ROOT" which shellspec 2> /dev/null) ||
-  SHELLSPEC_EXEC=$(find "$SHELLSPEC_HOME" -type f -name shellspec ! -path '*/stub/*' -print)
+if ! SHELLSPEC_HOME=$(mise --cd "$ROOT" where shellspec@latest 2> /dev/null); then
+  mise --cd "$ROOT" install --locked shellspec@latest || {
+    echo 'ERROR: Could not install locked ShellSpec for container tests.' >&2
+    exit 1
+  }
+  SHELLSPEC_HOME=$(mise --cd "$ROOT" where shellspec@latest) || {
+    echo 'ERROR: Could not locate ShellSpec for container tests.' >&2
+    exit 1
+  }
+fi
+# Task-scoped tools need not be active in the calling shell.
+SHELLSPEC_EXEC=$(find "$SHELLSPEC_HOME" -type f -name shellspec ! -path '*/stub/*' -print)
 if [ -z "$SHELLSPEC_EXEC" ] || [ ! -x "$SHELLSPEC_EXEC" ]; then
   echo "ERROR: ShellSpec executable is missing from its mise installation: $SHELLSPEC_HOME" >&2
   exit 1

@@ -42,6 +42,7 @@ run         = "sh tests/bootstrap.sh && sh tests/bootstrap-submodules.sh"
 
 ["bootstrap:test:container"]
 description = "Run bootstrap and shell tests as non-root in containers (podman or docker); pass images to select"
+tools       = { shellspec = "latest" }
 dir         = "{{config_root}}/.config/dotfiles"
 run         = "sh tests/bootstrap-container.sh"
 

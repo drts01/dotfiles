@@ -58,7 +58,7 @@ if printf '%s\n' "$loaded_configs" | grep -F "\"path\": \"$ROOT/.config/mise/" >
 fi
 
 mise trust "$ROOT/mise.local.toml"
-mise --cd "$ROOT" install --locked prek shellspec
+mise --cd "$ROOT" install --locked prek
 GIT_DIR=$(git -C "$ROOT" rev-parse --absolute-git-dir)
 mise --cd "$ROOT" exec prek -- prek install --config "$BASEDIR/prek.toml" --git-dir "$GIT_DIR"
 printf 'Development clone ready. Run mise tasks ls or mise run lint from %s\n' "$ROOT"
