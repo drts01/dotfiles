@@ -1,6 +1,6 @@
 base_url                           = "https://drts01.github.io/dotfiles/"
 title                              = "drts01/dotfiles"
-description                        = "Personal dotfiles managed via a Git bare repository."
+description                        = "Personal dotfiles managed via a Git bare repository"
 theme                              = "devlab-theme"
 compile_sass                       = true
 build_search_index                 = true
@@ -31,6 +31,8 @@ note = "Copyright © 2026 digitalroots"
 links = [
   { name = "Home", path = "/" },
   { name = "Docs", collection = "docs" },
+  { name = "Changelog", path = "@/docs/reference/changelog.md" },
+  { name = "GitHub", path = "https://github.com/drts01/dotfiles" },
 ]
 
 [extra.devlab.collections.docs]
@@ -40,7 +42,7 @@ section = "docs/_index.md"
 show_last_updated = true
 show_copy_link    = true
 edit_url          = "https://github.com/drts01/dotfiles/edit/trunk/.config/dotfiles/docs/content/"
-report_url        = "https://github.com/drts01/dotfiles/issues/new"
+report_url        = "https://github.com/drts01/dotfiles/issues/new?template=docs.yml"
 date_format       = "%Y-%m-%d"
 
 [extra.devlab.appearance]

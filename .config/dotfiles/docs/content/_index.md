@@ -1,6 +1,6 @@
 +++
 title = "drts01/dotfiles"
-description = "Personal dotfiles managed via a Git bare repository; mise is optional."
+description = "Personal dotfiles managed via a Git bare repository"
 
 [extra.devlab.home]
 layout = "wide"
