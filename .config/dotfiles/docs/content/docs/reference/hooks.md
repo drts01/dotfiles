@@ -19,6 +19,6 @@ Hooks defined in `.config/dotfiles/prek.toml` and run by [`prek`](https://github
 | [`shellcheck`](https://github.com/shellcheck-py/shellcheck-py) | Shell script linting                                                                                    |
 | [`tombi`](https://github.com/tombi-toml/tombi-pre-commit)      | TOML formatting                                                                                         |
 | [`ryl`](https://github.com/owenlamont/ryl-pre-commit)          | YAML and Markdown linting, with a GitHub-annotated variant on the `manual` stage                        |
-| [`vale`](https://github.com/vale-cli/vale)                     | Documentation prose: the house style in `.config/dotfiles/docs/vale/`                                   |
+| [`vale`](https://github.com/vale-cli/vale)                     | Documentation prose: the house style in `.config/vale/`                                                 |
 
 Fixers, such as `typos`, `end-of-file-fixer`, and `ryl`, rewrite files in place.

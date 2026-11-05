@@ -51,12 +51,13 @@ Downloads from outside the commit rely on TLS alone.
 
 The repository tracks configuration, never credentials.
 
-| Kind                                  | Where it lives                                                            |
-| ------------------------------------- | ------------------------------------------------------------------------- |
-| SSH private keys                      | `~/.ssh/`, untracked; the repository tracks only SSH client configuration |
-| Tokens and machine-specific variables | An untracked module such as `~/.config/sh/sh.d/95_local.sh`               |
-| Files the installer replaced          | `~/.df-bak`, mode `700`, ignored by the repository                        |
-| Tool state, caches, and shell history | Under `~/.local/share` and `~/.cache`, untracked                          |
+| Kind                                  | Where it lives                                                                        |
+| ------------------------------------- | ------------------------------------------------------------------------------------- |
+| SSH private keys                      | `~/.ssh/`, untracked; the repository tracks only SSH client configuration             |
+| Tokens and machine-specific variables | An untracked module such as `~/.config/sh/sh.d/95_local.sh`                           |
+| Files the installer replaced          | `~/.df-bak`, mode `700`, ignored by the repository                                    |
+| Tool state and shell history          | Under `~/.local/share` and `$XDG_STATE_HOME` (`~/.local/state` by default), untracked |
+| Caches                                | Under `~/.cache`, untracked                                                           |
 
 Three controls keep credentials out of commits:
 

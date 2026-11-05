@@ -26,7 +26,7 @@ mise run --cd ~/.config/dotfiles install:git-hooks
 Without mise:
 
 ```bash
-cd ~/.config/dotfiles && sh mise-tasks/install-hooks.sh
+cd ~/.config/dotfiles && sh mise-tasks/install/git-hooks.sh
 ```
 
 Rerun either command to repair a hook.
