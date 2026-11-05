@@ -55,7 +55,9 @@ jobs:
           restore-keys: |
             lint-
       - name: Sync Vale styles
-        run: mise exec vale@latest -- vale --config=.config/vale/.vale.ini sync
+        run: |
+          mise install vale
+          mise exec -- vale --config=.config/vale/.vale.ini sync
       - name: Run prek
         run: mise run lint
 
