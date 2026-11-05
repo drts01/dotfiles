@@ -25,8 +25,12 @@ items = [
 type = "content"
 +++
 
-Track your shell and tool configuration in Git, directly in `$HOME`.
-Use Git and a POSIX shell; mise is optional.
+Use one shell and tool configuration on every machine you work on, with only Git and a POSIX shell.
+`$HOME` is the Git working tree: no root access, symlinks, templating, or dotfiles manager.
+Optional tools such as mise add features; the dotfiles work without them.
+CI installs the dotfiles on six platforms on every push.
+
+Compare this with other tools in [Is this approach right for you?](@/docs/concepts/compare-approaches.md)
 
 A bare Git repository at `~/.local/share/dotfiles` tracks files such as `.profile` and `.config/` in place,
 without symlinks or a separate clone; see [The bare repository](@/docs/concepts/bare-repo.md).

@@ -5,14 +5,13 @@
 
 Personal dotfiles managed via a Git bare repository.
 
-## Features
+Use one shell and tool configuration on every machine you work on, with only Git and a POSIX shell.
+`$HOME` is the Git working tree: no root access, symlinks, templating, or dotfiles manager.
+Optional tools such as mise add features; the dotfiles work without them.
+Supports POSIX `sh`, Bash, and Zsh; CI installs the dotfiles on six platforms on every push.
 
-- Manage local environment without root access
-- No dependencies other than Git and a POSIX shell; the one-line install also uses curl
-- Support shells: Bourne, Bash, Zsh
-
-mise is optional; the installer needs curl or wget to fetch it, but Git and a POSIX shell suffice to use the dotfiles.
-The one-line command below also needs curl to fetch the entrypoint.
+Compare this with other tools in
+[Is this approach right for you?](https://drts01.github.io/dotfiles/docs/concepts/compare-approaches/)
 
 ## Choose a workflow
 
@@ -23,7 +22,7 @@ The one-line command below also needs curl to fetch the entrypoint.
 
 ## Installation
 
-Deploy the configuration files into `$HOME` (requires Git and a POSIX shell):
+Deploy the configuration files into `$HOME` (requires Git, a POSIX shell, and curl):
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | sh
@@ -72,8 +71,8 @@ Read the [full documentation](https://drts01.github.io/dotfiles/):
 - [Start here](https://drts01.github.io/dotfiles/docs/start/install/): install on a new machine and verify
 - [How-to guides](https://drts01.github.io/dotfiles/docs/how-to/): pin, update, customize, Helix, uninstall,
   troubleshoot
-- [Concepts](https://drts01.github.io/dotfiles/docs/concepts/): the bare repository, the installer, shell startup,
-  security
+- [Concepts](https://drts01.github.io/dotfiles/docs/concepts/): comparison with other tools, the bare repository,
+  the installer, shell startup, security
 - [Reference](https://drts01.github.io/dotfiles/docs/reference/): variables, tasks, shell files, hooks, platforms,
   glossary
 - [Changelog](https://drts01.github.io/dotfiles/docs/reference/changelog/): breaking changes and migrations
