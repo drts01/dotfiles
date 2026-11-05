@@ -54,6 +54,8 @@ jobs:
           key: lint-${{ runner.os }}-prek-${{ hashFiles('**/.pre-commit-config.yaml', '**/prek.toml') }}
           restore-keys: |
             lint-
+      - name: Sync Vale styles
+        run: mise exec vale@latest -- vale --config=.config/vale/.vale.ini sync
       - name: Run prek
         run: mise run lint
 
