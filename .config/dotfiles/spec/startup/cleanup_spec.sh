@@ -22,7 +22,8 @@ check_order() {
       without_job_control_noise run_isolated env PATH="$BIN:/usr/bin:/bin" XDG_CONFIG_HOME="$HOME_DIR/.config" XDG_DATA_HOME="$HOME_DIR/.local/share" XDG_STATE_HOME="$HOME_DIR/.local/state" XDG_CACHE_HOME="$HOME_DIR/.cache" ENV="$HOME_DIR/.config/sh/.shrc" /bin/sh -ic 'test "$(cat "$HOME/order")" = "05 35 45 95"'
       ;;
     bash)
-      without_job_control_noise run_isolated env PATH="$BIN:/usr/bin:/bin" bash -lic 'test "$(cat "$HOME/order")" = "05 35 45 95"'
+      # Avoid distro /etc/profile resetting the fixture PATH; test our profile explicitly.
+      without_job_control_noise run_isolated env PATH="$BIN:/usr/bin:/bin" bash --noprofile --norc -ic '. "$HOME/.bash_profile"; test "$(cat "$HOME/order")" = "05 35 45 95"'
       ;;
     zsh)
       run_isolated env PATH="$BIN:/usr/bin:/bin" zsh -d -lic 'test "$(cat "$HOME/order")" = "05 35 45 95"'
@@ -44,8 +45,8 @@ The status should be success
 The error should be blank
 End
 
-It 'starts login and interactive Bash under nounset without diagnostics'
-When run without_job_control_noise run_isolated env TERM_PROGRAM=unknown bash -u -lic 'bash -u -ic ":"'
+It 'starts the dotfiles Bash profile and interactive Bash under nounset without diagnostics'
+When run without_job_control_noise run_isolated env TERM_PROGRAM=unknown bash --noprofile --norc -u -ic '. "$HOME/.bash_profile"; bash --noprofile --norc -u -ic ". \"\$HOME/.bashrc\"; :"'
 The status should be success
 The error should be blank
 End
