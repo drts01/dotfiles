@@ -16,7 +16,7 @@ command -v mise > /dev/null 2>&1 || fail 'mise is required for development setup
 [ "$(git -C "$ROOT" rev-parse --show-toplevel 2> /dev/null)" = "$ROOT" ] ||
   fail 'run development setup from a regular clone, not the installed dotfiles'
 
-sh "$BASEDIR/mise-tasks/install-ignore.sh"
+sh "$BASEDIR/mise-tasks/install/gitignore.sh"
 for path in .miserc.toml mise.local.toml mise.local.lock; do
   if git -C "$ROOT" ls-files --error-unmatch -- "$path" > /dev/null 2>&1; then
     fail "$path is tracked; refusing to set up development-only configuration"
