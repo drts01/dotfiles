@@ -1,206 +1,51 @@
 # Contributing
 
-Develop and test changes to these dotfiles from a regular clone.
-Use the bare-repository install only for deploying them into `$HOME`.
+Develop and test changes in a regular clone, not the bare-repository install in `$HOME`.
+For the full workflow, read
+[Set up a development clone](https://drts01.github.io/dotfiles/docs/contributing/development/).
 
 ## Prerequisites
 
-- Git
-- A POSIX shell and [mise](https://mise.jdx.dev); development setup installs prek and ShellSpec
-- The Zola theme submodule for documentation development (`docs:build` initializes it)
-- Bash and Zsh for shell tests; Podman or Docker for container bootstrap tests
+Install Git, a POSIX shell, and [mise](https://mise.jdx.dev).
+Use Bash and Zsh for their shell tests, and Podman or Docker for container tests.
+Documentation builds initialize the Zola theme submodule when needed.
 
-## Set up a working copy
-
-Clone the repository without the legacy Neovim submodules:
+## Set up a clone
 
 ```bash
 git clone https://github.com/drts01/dotfiles
 cd dotfiles
-```
-
-Initialize the Zsh plugins if `zsh` is installed
-(needed for plugin startup tests), and `z.lua` if `lua` or `luajit` is installed:
-
-```bash
-if command -v zsh >/dev/null; then
-  git submodule update --init -- .local/share/zsh
-fi
-if command -v lua >/dev/null || command -v luajit >/dev/null; then
-  git submodule update --init -- .local/share/z.lua
-fi
-```
-
-For Neovim development, initialize its plugins
-when `nvim` is installed with `git submodule update --init -- .config/nvim/pack/plugins/start`.
-Set up the development clone (re-runnable):
-
-```bash
 sh .config/dotfiles/dev-setup.sh
 ```
 
-This links the clone's Git exclude file to `.config/dotfiles/gitignore`,
-copies `.config/dotfiles/dev-miserc.toml` and `.config/dotfiles/dev-mise-local.toml` to ignored root `.miserc.toml`
-and `mise.local.toml`, installs prek with mise, and installs ordinary pre-commit hooks into the clone.
-Run this before invoking mise in the clone:
-the root `.miserc.toml` prevents mise from treating the clone's `.config/mise` as a project config.
-Setup links the ignored root `mise.local.lock` to the tracked `.config/dotfiles/dev-mise.lock`.
-The deployed `.config/dotfiles/mise.lock` is separate; both configurations require locked installs.
-The development config leaves global tools enabled so commands such as `gh` remain available in the clone;
-setup installs only prek explicitly.
-ShellSpec is installed on demand by shell and container test tasks.
-The deployment config declares only prek; development tools are pinned in `dev-mise.lock`, not the deployment lock.
-If either local config already exists with different contents, setup stops rather than overwriting it.
-Compare it with the tracked template and merge changes manually before re-running setup.
-If `mise.local.lock` already exists and points elsewhere, reconcile it manually.
+Run setup before running mise tasks in a clone.
+It creates ignored root development configs, links the tracked development lockfile,
+and installs ordinary pre-commit hooks.
+It stops instead of overwriting different local configs.
+Do not run the bare-repository installer or `install:gitignore`/`install:git-hooks` here.
 
-To build documentation, install Zola and build;
-the docs tasks initialize the required theme submodule when it is missing:
-
-```bash
-mise install zola
-mise run docs:build
-```
-
-The installer's `docs` submodule group is unrelated to this workflow:
-it exists only to build the site from an installed `$HOME`, and the default selection skips it.
-
-## Run tasks
-
-Define installed-dotfiles tasks in `.config/dotfiles/mise.toml` and `.config/dotfiles/mise-tasks/`;
-keep development tasks in `.config/dotfiles/dev-tasks.toml`.
-The clone-local `mise.local.toml` includes those tasks, so run them from the repository root:
+## Check a change
 
 ```bash
 mise tasks ls
-mise run <task>
+mise run lint
+mise run shell:test
+mise run bootstrap:test
+mise run docs:check -- --skip-external-links
+mise run docs:build
 ```
 
-| Task                       | Purpose                                                       |
-| -------------------------- | ------------------------------------------------------------- |
-| `lint`                     | Run all `prek` hooks on tracked files                         |
-| `shell:test`               | Run all ShellSpec unit and startup specs                      |
-| `shell:bench`              | Benchmark isolated warm shell startup                         |
-| `bootstrap:test`           | Test bootstrap in throwaway home directories                  |
-| `bootstrap:test:container` | Test bootstrap and shell specs as non-root in containers      |
-| `shell:test:posix`         | Run POSIX unit and startup specs                              |
-| `shell:test:bash`          | Run Bash unit and startup specs                               |
-| `shell:test:zsh`           | Run Zsh unit and startup specs                                |
-| `docs:serve`               | Preview the documentation site                                |
-| `docs:build`               | Build the documentation site with Git-derived page dates      |
-| `docs:check`               | Check page types and internal links, including anchors        |
-| `docs:lint`                | Check documentation prose against the house style             |
+Run only the checks that apply to your change; `lint` can rewrite files.
+See [Test the dotfiles](https://drts01.github.io/dotfiles/docs/contributing/testing/) for individual shell, doctor,
+container, and smoke tests, and
+[Write documentation](https://drts01.github.io/dotfiles/docs/contributing/documentation/) for page checks.
 
-The `vale` hook runs independently from `.config/dotfiles/prek.toml` and uses the house style in `.config/vale/`.
+## Submit changes
 
-Update tool pins from the root of a configured development clone:
-
-```bash
-mise lock --bump
-MISE_CEILING_PATHS="$PWD/.config" mise --cd .config/dotfiles lock --bump
-mise lock --dry-run --json
-MISE_CEILING_PATHS="$PWD/.config" mise --cd .config/dotfiles lock --dry-run --json
-```
-
-The bump commands update the tracked development lock (`.config/dotfiles/dev-mise.lock`)
-and deployment lock (`.config/dotfiles/mise.lock`) separately.
-Both dry runs should return `[]`; the ceiling path keeps the deployment check from loading clone tasks.
-CI checks both locks before linting.
-
-Preview the lint task command without changing files:
-
-```bash
-mise run --dry-run lint
-```
-
-`lint` applies auto-fixes.
-Commit or stash unrelated work before running it.
-
-## Install Git hooks
-
-`dev-setup.sh` installs hooks into the regular clone.
-To reinstall them without rerunning setup:
-
-```bash
-prek install --config .config/dotfiles/prek.toml
-```
-
-Do not use `mise run install:git-hooks` or `mise run install:gitignore` in a clone:
-these tasks modify the bare repository in `~/.local/share/dotfiles`.
-
-## Ignore local files
-
-Development setup links this clone's `.git/info/exclude` to the tracked `.config/dotfiles/gitignore`.
-The bare-repository bootstrap installs the same link at `~/.local/share/dotfiles/info/exclude`.
-Git reads `info/exclude` only for its own repository, so these rules do not affect other repos under `$HOME`.
-Changes to the tracked list take effect immediately in both installs after a pull; no link update is needed.
-The installer backs up Git's comment-only default file to `exclude.before-dotfiles`.
-If `info/exclude` contains local rules or is already a different symlink, it leaves it unchanged and prints a warning.
-Keep rules specific to a directory in that directory's `.gitignore`,
-and use `~/.config/git/ignore` for rules shared by all repositories.
-Ignore rules do not hide tracked files; untrack them first if necessary.
-
-## Validate changes
-
-Run the checks that match the change:
-
-| Change                       | Run                                                     |
-| ---------------------------- | ------------------------------------------------------- |
-| Any tracked file             | `mise run lint`                                         |
-| `.profile`, `.bashrc`, Zsh   | `mise run shell:test`                                   |
-| Shell unit specs             | `cd .config/dotfiles && shellspec --shell sh spec/unit` |
-| Shell startup specs          | `cd .config/dotfiles && shellspec spec/startup`         |
-| `bootstrap.sh`, `mise-tasks` | `mise run bootstrap:test`                               |
-| `mise-tasks/doctor.sh`       | `sh .config/dotfiles/tests/doctor.sh`                   |
-| Bootstrap portability        | `mise run bootstrap:test:container`                     |
-| Documentation site           | `mise run docs:check && mise run docs:build`            |
-
-CI runs lint and the isolated doctor test, `spec/unit` under `sh`, `bash`, and `zsh` on Ubuntu and macOS,
-`spec/startup` once per host, and bootstrap tests on hosts and in containers on every push.
-Failed ShellSpec jobs upload JUnit reports.
-Container tests mount the mise-installed ShellSpec distribution read-only and run POSIX specs plus Bash specs
-when available (`TEST_BASH=required|skip|auto`).
-See `.github/workflows/ci.yaml`.
-
-## Respect the deployment model
-
-Every tracked file is checked out into `$HOME`.
-
-- Place repository-only files under `.config/dotfiles/` or `.github/`.
-- Avoid tracked top-level files; they land directly in `$HOME`.
-  Development setup creates ignored root configs only in a clone.
-- Keep tool configs that search parent directories
-  (`.taplo.toml`, `tombi.toml`) out of the root; in `$HOME` they apply to every project below it.
-- Start every `.editorconfig` section glob with `/` (for example `[/.config/sh/**]`).
-  Anchored globs match only files tracked here; `[*.sh]` would match scripts in every project under `$HOME`.
-- Add plugins and themes as shallow submodules in `.gitmodules`.
-- Keep `bootstrap.sh` dependent only on Git and a POSIX shell; curl or wget is needed only to fetch optional mise.
-  The one-line install also requires curl to fetch the entrypoint.
-
-## Documentation layout
-
-| File                          | Purpose                                                         |
-| ----------------------------- | --------------------------------------------------------------- |
-| `.github/README.md`           | Repository landing page: install, basic usage, links            |
-| `.github/CONTRIBUTING.md`     | Development workflow for clones                                 |
-| `.config/dotfiles/README.md`  | Map of the tooling directory: scripts, tasks, tests, docs       |
-| `.config/dotfiles/docs/`      | Full reference site, published to GitHub Pages                  |
-| `.config/dotfiles/LICENSE`    | License text                                                    |
-
-GitHub detects `README.md` and `CONTRIBUTING.md` in `.github/`.
-Add reference material to the documentation site, not the README.
-Follow [Write documentation](https://drts01.github.io/dotfiles/docs/contributing/documentation/) for page types,
-front matter, and links.
-Do not add `updated` to page front matter: `docs:build` stamps each page with the author date of its last commit.
-
-## Commit messages
-
-Use [Conventional Commits](https://www.conventionalcommits.org) with a scope:
-
-```text
-feat(zsh): add completion cache
-fix(dotfiles): handle missing mise
-test(shell): assert plugin startup
-ci(ci): checkout submodules
-docs(readme): update bootstrap
-```
+Keep repository-only files under `.config/dotfiles/` or `.github/`;
+every tracked file outside those directories may be deployed into `$HOME`.
+Use [Conventional Commits](https://www.conventionalcommits.org) with a scope,
+for example `fix(dotfiles): handle missing mise`.
+See
+[development guidance](https://drts01.github.io/dotfiles/docs/contributing/development/#protect-the-deployment-model)
+for deployment boundaries, local excludes, tool pins, and hook setup.

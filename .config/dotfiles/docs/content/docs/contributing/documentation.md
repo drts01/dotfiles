@@ -59,6 +59,14 @@ mise run docs:check -- --skip-external-links
 mise run docs:build
 ```
 
+| Task         | Purpose                                  | Page dates               | Link checks                                 |
+| ------------ | ---------------------------------------- | ------------------------ | ------------------------------------------- |
+| `docs:lint`  | Check prose against the Vale house style | None                     | None                                        |
+| `docs:check` | Validate page types, links, and anchors  | None                     | Internal and external by default            |
+| `docs:build` | Build the publishable site               | Git-derived author dates | Zola build checks page targets, not anchors |
+| `docs:serve` | Preview with live reload                 | None                     | None                                        |
+
+Use `--skip-external-links` with `docs:check` for a fast offline-friendly check; omit it to check external links too.
 The Vale hook in `prek.toml` runs independently of `docs:lint`.
 `docs:check` and `docs:build` fail when a page lacks `extra.type` or its type does not match its section.
-Preview with `mise run docs:serve`; the preview shows no dates.
+`docs:build` stamps a temporary copy; it does not change the source files.
