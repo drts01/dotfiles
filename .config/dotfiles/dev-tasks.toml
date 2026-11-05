@@ -73,6 +73,5 @@ run         = "sh run.sh check"
 # Mirrors the deployment task so the clone's lock view retains vale.
 ["docs:lint"]
 description = "Check documentation prose against the house style; pass files or directories"
-tools       = { vale = "latest" }
 dir         = "{{config_root}}"
-run         = "vale --config=.config/dotfiles/docs/.vale.ini"
+run         = "vale --config=.config/vale/.vale.ini"
