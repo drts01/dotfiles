@@ -69,9 +69,3 @@ description = "Check documentation page types and internal links, including anch
 tools       = { zola = "latest" }
 dir         = "{{config_root}}/.config/dotfiles/docs"
 run         = "sh run.sh check"
-
-# Mirrors the deployment task so the clone's lock view retains vale.
-["docs:lint"]
-description = "Check documentation prose against the house style; pass files or directories"
-dir         = "{{config_root}}"
-run         = "vale --config=.config/vale/.vale.ini"

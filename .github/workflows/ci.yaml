@@ -55,9 +55,7 @@ jobs:
           restore-keys: |
             lint-
       - name: Sync Vale styles
-        run: |
-          mise install vale
-          mise exec -- vale --config=.config/vale/.vale.ini sync
+        run: mise exec prek -- prek run --config .config/dotfiles/prek.toml --stage pre-push --all-files vale-sync
       - name: Run prek
         run: mise run lint
 
