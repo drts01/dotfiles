@@ -1,6 +1,6 @@
 +++
 title = "Concepts"
-description = "Understand the bare repository, the installer, shell startup, and the security model."
+description = "Decide whether the approach fits, and understand the bare repository, the installer, shell startup, and security."
 weight = 3
 sort_by = "weight"
 template = "docs.html"
