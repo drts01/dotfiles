@@ -221,11 +221,17 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
-      - name: Install ShellSpec for container tests
+      - name: Install mise for container tests
         if: matrix.image
         uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca  # v5.1.1
         with:
-          install_args: shellspec
+          install: false
+      - name: Set up development lockfile
+        if: matrix.image
+        run: sh .config/dotfiles/dev-setup.sh
+      - name: Install ShellSpec for container tests
+        if: matrix.image
+        run: mise install shellspec
       # Same runner as `mise run bootstrap:test:container` in a configured clone.
       - name: Test bootstrap as non-root (container)
         if: matrix.image
