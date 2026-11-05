@@ -22,6 +22,17 @@ assert_contains() {
   grep -F "$1" "$TMP/output" > /dev/null || fail "expected: $1"
 }
 
+# Keep the links printed by doctor in sync with the published troubleshooting headings.
+grep 'print_status .* FAIL ' "$BASEDIR/mise-tasks/doctor.sh" | while IFS= read -r check; do
+  anchor=${check##* }
+  case "$anchor" in
+    doctor-*) ;;
+    *) fail "missing doctor anchor: $check" ;;
+  esac
+  grep -F "{#$anchor}" "$BASEDIR/docs/content/docs/how-to/troubleshooting.md" > /dev/null ||
+    fail "missing troubleshooting heading: $anchor"
+done
+
 HOME_DIR="$TMP/home"
 REPO="$HOME_DIR/.local/share/dotfiles"
 mkdir -p "$TMP/bin" "$HOME_DIR/.local/share" "$TMP/source"
@@ -54,6 +65,7 @@ printf '#!/bin/sh\n' > "$REPO/hooks/pre-commit"
 chmod +x "$REPO/hooks/pre-commit"
 if run_doctor; then fail 'an installed hook without bare-repo configuration should fail'; fi
 assert_contains 'Bare-repo hook configuration   ... FAIL'
+assert_contains 'see https://drts01.github.io/dotfiles/docs/how-to/troubleshooting/#doctor-hook-missing-override'
 
 printf '#!/bin/sh\nexport GIT_DIR="%s" GIT_WORK_TREE="%s"\n' "$REPO" "$HOME_DIR" > "$REPO/hooks/pre-commit"
 run_doctor || fail 'clean install with a configured hook should pass'
@@ -66,5 +78,6 @@ assert_contains 'Tracked files                  ... WARN (changes present'
 mkdir "$TMP/not-a-repo"
 if run_doctor "$TMP/not-a-repo"; then fail 'a non-repository directory should fail'; fi
 assert_contains 'Bare repository integrity      ... FAIL'
+assert_contains 'see https://drts01.github.io/dotfiles/docs/how-to/troubleshooting/#doctor-repo-not-bare'
 
 printf 'doctor checks passed\n'

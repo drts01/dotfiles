@@ -3,6 +3,7 @@ set -eu
 
 DEST_DIR="${DEST_DIR:-$HOME/.local/share/dotfiles}"
 HOOK_PATH="$DEST_DIR/hooks/pre-commit"
+TROUBLESHOOT_URL=https://drts01.github.io/dotfiles/docs/how-to/troubleshooting/
 FAIL=0
 WARN=0
 
@@ -10,6 +11,7 @@ print_status() {
   _title="$1"
   _status="$2"
   _detail="${3:-}"
+  _anchor="${4:-}"
 
   case "$_status" in
     OK) printf '  - %-30s ... OK%s\n' "$_title" "${_detail:+ ($_detail)}" ;;
@@ -19,6 +21,9 @@ print_status() {
       ;;
     FAIL)
       printf '  - %-30s ... FAIL%s\n' "$_title" "${_detail:+ ($_detail)}" >&2
+      if [ -n "$_anchor" ]; then
+        printf '    see %s#%s\n' "$TROUBLESHOOT_URL" "$_anchor" >&2
+      fi
       FAIL=1
       ;;
   esac
@@ -30,13 +35,13 @@ echo "Required installation checks:"
 if _git=$(command -v git 2> /dev/null); then
   print_status "Binary: git" OK "$_git"
 else
-  print_status "Binary: git" FAIL "git is required"
+  print_status "Binary: git" FAIL "git is required" doctor-git-missing
 fi
 
 if [ -d "$DEST_DIR" ]; then
   print_status "Bare repository path" OK "$DEST_DIR"
 else
-  print_status "Bare repository path" FAIL "missing: $DEST_DIR"
+  print_status "Bare repository path" FAIL "missing: $DEST_DIR" doctor-repo-missing
 fi
 
 if [ -n "${_git:-}" ] && [ -d "$DEST_DIR" ]; then
@@ -46,7 +51,7 @@ if [ -n "${_git:-}" ] && [ -d "$DEST_DIR" ]; then
     if [ "$_untracked_cfg" = no ]; then
       print_status "Git untracked optimization" OK "status.showUntrackedFiles=no"
     else
-      print_status "Git untracked optimization" FAIL "set status.showUntrackedFiles=no (current: ${_untracked_cfg:-unset})"
+      print_status "Git untracked optimization" FAIL "set status.showUntrackedFiles=no (current: ${_untracked_cfg:-unset})" doctor-untracked-setting
     fi
 
     echo "Working-tree status:"
@@ -57,10 +62,10 @@ if [ -n "${_git:-}" ] && [ -d "$DEST_DIR" ]; then
         print_status "Tracked files" WARN "changes present; run dotfiles status"
       fi
     else
-      print_status "Tracked files" FAIL "git status failed"
+      print_status "Tracked files" FAIL "git status failed" doctor-status-failed
     fi
   else
-    print_status "Bare repository integrity" FAIL "not a usable bare Git repository"
+    print_status "Bare repository integrity" FAIL "not a usable bare Git repository" doctor-repo-not-bare
   fi
 fi
 
@@ -82,10 +87,10 @@ if [ -x "$HOOK_PATH" ]; then
   if grep -qF "$_injection" "$HOOK_PATH"; then
     print_status "Bare-repo hook configuration" OK
   else
-    print_status "Bare-repo hook configuration" FAIL "hook missing GIT_DIR/GIT_WORK_TREE overrides"
+    print_status "Bare-repo hook configuration" FAIL "hook missing GIT_DIR/GIT_WORK_TREE overrides" doctor-hook-missing-override
   fi
 elif [ -e "$HOOK_PATH" ] || [ -L "$HOOK_PATH" ]; then
-  print_status "Pre-commit hook" FAIL "present but not executable"
+  print_status "Pre-commit hook" FAIL "present but not executable" doctor-hook-not-executable
 else
   print_status "Pre-commit hook" WARN "not installed; commits run without prek"
 fi

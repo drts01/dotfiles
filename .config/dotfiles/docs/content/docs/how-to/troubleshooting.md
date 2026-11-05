@@ -75,19 +75,52 @@ The dotfiles work without every component in this table.
 
 `sh ~/.config/dotfiles/mise-tasks/doctor.sh` prints one line per check.
 
-| Check                          | Result                                   | Fix                                                                             |
-| ------------------------------ | ---------------------------------------- | ------------------------------------------------------------------------------- |
-| `Binary: git`                  | `FAIL`: `git is required`                | Install Git                                                                     |
-| `Bare repository path`         | `FAIL`: missing                          | [Install](@/docs/start/install.md)                                              |
-| `Bare repository integrity`    | `FAIL`: not a usable bare Git repository | Delete `~/.local/share/dotfiles`, then reinstall                                |
-| `Git untracked optimization`   | `FAIL`: set `status.showUntrackedFiles`  | Rerun `sh ~/.config/dotfiles/mise-tasks/bootstrap.sh`; it sets the value        |
-| `Tracked files`                | `WARN`: changes present                  | Review `dotfiles status`; commit or restore                                     |
-| `Tracked files`                | `FAIL`: `git status failed`              | Run `cd ~ && dotfiles status` to see Git's error                                |
-| `Binary: mise`                 | `WARN`: not installed                    | Optional; the dotfiles work without mise                                        |
-| `Binary: prek`                 | `WARN`: not installed                    | Optional; required only for Git hooks                                           |
-| `Pre-commit hook`              | `WARN`: not installed                    | Optional; [install the hook](@/docs/how-to/git-hooks.md)                        |
-| `Pre-commit hook`              | `FAIL`: present but not executable       | Run `chmod +x ~/.local/share/dotfiles/hooks/pre-commit`                         |
-| `Bare-repo hook configuration` | `FAIL`: hook missing overrides           | [Reinstall the hook](@/docs/how-to/git-hooks.md#install-the-hook)               |
+### Git is missing {#doctor-git-missing}
+
+`Binary: git ... FAIL` means Git is required.
+Install Git, then rerun the installer.
+
+### Bare repository path is missing {#doctor-repo-missing}
+
+`Bare repository path ... FAIL` means the repository has not been created at the configured path.
+[Install the dotfiles](@/docs/start/install.md).
+
+### Repository is not bare {#doctor-repo-not-bare}
+
+`Bare repository integrity ... FAIL` means the directory is not a usable bare Git repository.
+Move it aside for inspection, then [reinstall](@/docs/start/install.md).
+Do not delete it until you have checked it for local commits or other data.
+
+### Untracked-file setting is missing {#doctor-untracked-setting}
+
+`Git untracked optimization ... FAIL` means `status.showUntrackedFiles` is not `no`.
+Run `git --git-dir="$HOME/.local/share/dotfiles" config --local status.showUntrackedFiles no`.
+If you set a custom `DEST_DIR`, use that path instead.
+
+### Git status failed {#doctor-status-failed}
+
+`Tracked files ... FAIL` means Git could not read the working-tree status.
+Run `cd ~ && dotfiles status` to see Git's error.
+
+### Pre-commit hook is not executable {#doctor-hook-not-executable}
+
+`Pre-commit hook ... FAIL` means the installed hook cannot run.
+Run `chmod +x ~/.local/share/dotfiles/hooks/pre-commit`.
+If you set a custom `DEST_DIR`, use that path instead.
+
+### Hook lacks bare-repository overrides {#doctor-hook-missing-override}
+
+`Bare-repo hook configuration ... FAIL` means the installed hook does not set `GIT_DIR` and `GIT_WORK_TREE`.
+[Reinstall the hook](@/docs/how-to/git-hooks.md#install-the-hook).
+
+Warnings do not fail the installation checks:
+
+| Check              | Warning           | Fix                                                        |
+| ------------------ | ----------------- | ---------------------------------------------------------- |
+| `Tracked files`    | changes present   | Review `dotfiles status`; commit or restore                |
+| `Binary: mise`     | not installed     | Optional; the dotfiles work without mise                   |
+| `Binary: prek`     | not installed     | Optional; required only for Git hooks                      |
+| `Pre-commit hook`  | not installed     | Optional; [install the hook](@/docs/how-to/git-hooks.md)   |
 
 ## Related
 
