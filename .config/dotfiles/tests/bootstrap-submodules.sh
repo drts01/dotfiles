@@ -17,7 +17,7 @@ fail() {
   exit 1
 }
 
-mkdir -p "$TMP/plugin" "$TMP/fixture/.config/dotfiles/mise-tasks" "$TMP/home"
+mkdir -p "$TMP/plugin" "$TMP/fixture/.config/dotfiles/mise-tasks/install" "$TMP/home"
 printf 'plugin\n' > "$TMP/plugin/marker"
 git -C "$TMP/plugin" init -q
 git -C "$TMP/plugin" add marker
@@ -34,8 +34,8 @@ done
 cp "$ROOT/.config/nvim/init.lua" "$TMP/fixture/.config/nvim/init.lua"
 cp "$ROOT/.config/dotfiles/gitignore" "$TMP/fixture/.config/dotfiles/gitignore"
 cp "$ROOT/.config/dotfiles/mise-tasks/bootstrap.sh" "$TMP/fixture/.config/dotfiles/mise-tasks/bootstrap.sh"
-cp "$ROOT/.config/dotfiles/mise-tasks/install-ignore.sh" "$TMP/fixture/.config/dotfiles/mise-tasks/install-ignore.sh"
-cp "$ROOT/.config/dotfiles/mise-tasks/install-hooks.sh" "$TMP/fixture/.config/dotfiles/mise-tasks/install-hooks.sh"
+cp "$ROOT/.config/dotfiles/mise-tasks/install/gitignore.sh" "$TMP/fixture/.config/dotfiles/mise-tasks/install/gitignore.sh"
+cp "$ROOT/.config/dotfiles/mise-tasks/install/git-hooks.sh" "$TMP/fixture/.config/dotfiles/mise-tasks/install/git-hooks.sh"
 git -C "$TMP/fixture" add .
 git -C "$TMP/fixture" -c user.name=test -c user.email=test@example.invalid commit -qm fixture
 git clone -q --bare "$TMP/fixture" "$TMP/origin.git"

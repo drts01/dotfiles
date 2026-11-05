@@ -3,7 +3,7 @@
 set -eu
 
 CDPATH=
-BASEDIR=$(cd -- "$(dirname -- "$0")/.." && pwd)
+BASEDIR=$(cd -- "$(dirname -- "$0")/../.." && pwd)
 IGNORE_FILE="$BASEDIR/gitignore"
 GIT_DIR="${1:-$(git -C "$BASEDIR" rev-parse --absolute-git-dir)}"
 EXCLUDE_FILE="$GIT_DIR/info/exclude"

@@ -121,9 +121,9 @@ git --git-dir="$ORIGIN" symbolic-ref HEAD refs/heads/trunk
 # Tests run before changes are committed; publish the files under test to the fixture.
 git clone -q "file://$ORIGIN" "$TMP/fixture"
 cp "$ROOT/.config/dotfiles/gitignore" "$TMP/fixture/.config/dotfiles/gitignore"
-cp "$ROOT/.config/dotfiles/mise-tasks/install-ignore.sh" "$TMP/fixture/.config/dotfiles/mise-tasks/install-ignore.sh"
+cp "$ROOT/.config/dotfiles/mise-tasks/install/gitignore.sh" "$TMP/fixture/.config/dotfiles/mise-tasks/install/gitignore.sh"
 cp "$DEPLOY" "$TMP/fixture/.config/dotfiles/mise-tasks/bootstrap.sh"
-git -C "$TMP/fixture" add .config/dotfiles/gitignore .config/dotfiles/mise-tasks/install-ignore.sh .config/dotfiles/mise-tasks/bootstrap.sh
+git -C "$TMP/fixture" add .config/dotfiles/gitignore .config/dotfiles/mise-tasks/install/gitignore.sh .config/dotfiles/mise-tasks/bootstrap.sh
 git -C "$TMP/fixture" -c user.name=test -c user.email=test@example.invalid \
   commit -q --allow-empty --no-verify -m "test: publish ignore installer"
 git -C "$TMP/fixture" push -q --no-verify origin HEAD:trunk
@@ -246,7 +246,7 @@ INFO_B="$HOME_B/.local/share/dotfiles/info"
 rm "$INFO_B/exclude"
 mv "$INFO_B/exclude.before-dotfiles" "$INFO_B/exclude"
 printf '/.private/\n' >> "$INFO_B/exclude"
-run "$HOME_B" sh "$HOME_B/.config/dotfiles/mise-tasks/install-ignore.sh" "$HOME_B/.local/share/dotfiles" \
+run "$HOME_B" sh "$HOME_B/.config/dotfiles/mise-tasks/install/gitignore.sh" "$HOME_B/.local/share/dotfiles" \
   2> "$TMP/custom-exclude-stderr"
 [ ! -L "$INFO_B/exclude" ] || fail "custom exclude was replaced"
 grep -qF '/.private/' "$INFO_B/exclude" || fail "custom exclude rule was lost"
