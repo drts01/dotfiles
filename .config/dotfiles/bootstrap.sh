@@ -15,6 +15,9 @@ DEST_DIR="${DEST_DIR:-$HOME/.local/share/dotfiles}"
 DOTFILES_REF="${DOTFILES_REF:-HEAD}"
 DOTFILES_SKIP_MISE_INSTALL="${DOTFILES_SKIP_MISE_INSTALL:-}"
 DOTFILES_BRANCH="${DOTFILES_BRANCH-}"
+TROUBLESHOOT_URL=https://drts01.github.io/dotfiles/docs/how-to/troubleshooting/
+
+troubleshoot() { printf '    see %s#%s\n' "$TROUBLESHOOT_URL" "$1" >&2; }
 
 is_commit_id() {
   case "$1" in
@@ -28,6 +31,7 @@ check_repo_url() {
   case "$1" in
     http://* | git://* | ftp://*)
       echo "ERROR: REPO_URL $1 uses an unauthenticated transport; use https://, ssh://, or a local path." >&2
+      troubleshoot installer-transport
       exit 1
       ;;
   esac
@@ -42,6 +46,7 @@ install_mise() {
     fetch() { wget -qO- "$1"; }
   else
     echo "Warning: neither curl nor wget found; continuing without mise." >&2
+    troubleshoot installer-no-downloader
     return 0
   fi
   echo "Installing mise..."
@@ -52,6 +57,7 @@ install_mise() {
     export PATH
   else
     echo "Warning: mise installation failed; continuing without mise." >&2
+    troubleshoot installer-mise-failed
   fi
 }
 
@@ -60,6 +66,7 @@ main() {
   check_repo_url "$REPO_URL"
   if ! command -v git > /dev/null 2>&1; then
     echo "ERROR: git is required." >&2
+    troubleshoot doctor-git-missing
     exit 1
   fi
 
@@ -91,6 +98,7 @@ main() {
   commit="$(git --git-dir="$SOURCE" rev-parse --verify -q "$rev^{commit}")"
   if is_commit_id "$DOTFILES_REF" && [ "$commit" != "$DOTFILES_REF" ]; then
     echo "ERROR: fetched commit $commit does not match DOTFILES_REF $DOTFILES_REF." >&2
+    troubleshoot installer-pin-mismatch
     exit 1
   fi
   echo "Resolved $DOTFILES_REF to commit $commit."
@@ -109,6 +117,7 @@ main() {
   if [ "$installed" != "$commit" ]; then
     echo "ERROR: $DEST_DIR is at ${installed:-an unknown commit}, expected $commit." >&2
     echo "Pinned commits must include DOTFILES_COMMIT support in mise-tasks/bootstrap.sh." >&2
+    troubleshoot installer-pin-unsupported
     exit 1
   fi
 }

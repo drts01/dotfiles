@@ -14,26 +14,45 @@ Rerun the installer after every fix; each step is idempotent and resumes an inte
 
 The installer resolves the commit before it changes `$HOME`, so a failed fetch leaves your files unchanged.
 
-| Message                                          | Fix                                                                                                 |
-| ------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
-| `ERROR: git is required.`                        | Install Git.                                                                                        |
-| `ERROR: REPO_URL ... unauthenticated transport;` | Use an `https://` or `ssh://` URL, or a local path.                                                 |
-| `fatal: unable to access ...`                    | Check network access to `github.com`; behind a proxy, set `https_proxy`.                            |
-| `curl: (6) Could not resolve`                    | Check DNS, or [install with Git only](@/docs/how-to/install-without-mise.md#install-with-git-only). |
+For `ERROR: git is required.`, [install Git](#doctor-git-missing).
+For `fatal: unable to access ...`, check network access to `github.com`; behind a proxy, set `https_proxy`.
+For `curl: (6) Could not resolve`, check DNS,
+or [install with Git only](@/docs/how-to/install-without-mise.md#install-with-git-only).
+
+### Repository transport is unauthenticated {#installer-transport}
+
+For `ERROR: REPO_URL ... uses an unauthenticated transport`, use an `https://` or `ssh://` URL, or a local path.
 
 To install from a mirror, set `REPO_URL` on the `sh` that reads the pipe,
 for example `| REPO_URL=https://git.example.com/dotfiles sh`.
 
 ## Pin errors
 
-| Message                                                    | Cause                                          | Fix                                         |
-| ---------------------------------------------------------- | ---------------------------------------------- | ------------------------------------------- |
-| `fatal: remote error: upload-pack: not our ref`            | The commit does not exist on the remote        | Copy the full ID again from `git ls-remote` |
-| `ERROR: fetched commit ... does not match DOTFILES_REF`    | The ID names a tag object, not a commit        | Pin the commit the tag points to            |
-| `ERROR: ... is at ..., not DOTFILES_COMMIT ...`            | The pin is older than the installed commit     | Pin the installed commit or a later one     |
-| `ERROR: ... is at ..., expected ...`                       | The pinned commit predates pinning support     | Pin a later commit                          |
-| `ERROR: DOTFILES_COMMIT must be a full ... commit ID.`     | The deploy script received a short or bad ID   | Pass the full 40- or 64-character ID        |
-| `ERROR: cannot determine the default branch ...`           | The remote did not report its default branch   | Set `DOTFILES_BRANCH=trunk`                 |
+For `fatal: remote error: upload-pack: not our ref`, the commit does not exist on the remote.
+Copy the full ID again from `git ls-remote`.
+
+### Fetched commit differs from the requested pin {#installer-pin-mismatch}
+
+For `ERROR: fetched commit ... does not match DOTFILES_REF`, the ID may name a tag object rather than a commit.
+Pin the commit the tag points to.
+
+### Installed commit differs from DOTFILES_COMMIT {#installer-pin-behind}
+
+For `ERROR: ... is at ..., not DOTFILES_COMMIT ...`, the installed commit is newer, diverged, or detached.
+Pin the installed commit or a later commit on its branch.
+
+### Pinned commit predates pinning support {#installer-pin-unsupported}
+
+For `ERROR: ... is at ..., expected ...`, the pinned commit may predate pinning support.
+Pin a later commit with `DOTFILES_COMMIT` support in `mise-tasks/bootstrap.sh`.
+
+### Invalid commit ID {#installer-invalid-commit}
+
+For `ERROR: DOTFILES_COMMIT must be a full ... commit ID`, pass the full 40- or 64-character lowercase commit ID.
+
+### Default branch is unknown {#installer-default-branch}
+
+For `ERROR: cannot determine the default branch ...`, set `DOTFILES_BRANCH` to the name of the branch you want to track.
 
 A failed pin leaves the installed checkout unchanged.
 Print the installed commit with `git --git-dir="$HOME/.local/share/dotfiles" rev-parse HEAD`.
@@ -52,7 +71,17 @@ Move that path out of `$HOME`, then rerun the installer.
 | ---------------------------------------------------------- | ----------------------------------------------------------------------- |
 | `fatal: Not possible to fast-forward, aborting.`           | Rebase local commits: `cd ~ && dotfiles pull --rebase origin trunk`     |
 | `Your local changes ... would be overwritten`              | Run `cd ~ && dotfiles stash`, update, then `dotfiles stash pop`         |
-| `Warning: HEAD is detached; skipping pull.`                | Run `cd ~ && dotfiles switch trunk`, then update                        |
+
+### Detached HEAD skips updates {#installer-detached-head}
+
+For `Warning: HEAD is detached; skipping pull.`, run `cd ~ && dotfiles switch trunk`, then update.
+
+## Plugin group selection is invalid {#installer-invalid-groups}
+
+For `ERROR: DOTFILES_SUBMODULES must be a comma-separated list`
+or `ERROR: DOTFILES_SKIP_SUBMODULES must be a comma-separated list`, supply one or more of `zsh,nvim,lua,docs`,
+or use a supported special value.
+See [Choose plugin groups](@/docs/how-to/choose-plugin-groups.md) for the supported values.
 
 ## Plugins are missing
 
@@ -61,15 +90,46 @@ Install the tool, then [add the group](@/docs/how-to/choose-plugin-groups.md#add
 
 ## Optional components are missing
 
-| Message                                                   | Effect                     | Fix                                                                   |
-| --------------------------------------------------------- | -------------------------- | --------------------------------------------------------------------- |
-| `Warning: neither curl nor wget found; continuing ...`    | No mise                    | Install curl or wget, then rerun the installer                        |
-| `Warning: mise installation failed; continuing ...`       | No mise                    | Rerun the installer, or install mise from <https://mise.jdx.dev>      |
-| `Warning: 'prek' not found. Skipping git hooks ...`       | No pre-commit hook         | [Install the hook](@/docs/how-to/git-hooks.md)                        |
-| `Warning: .../info/exclude contains local rules; ...`     | Shared ignore list unused  | Move the rules to `~/.config/git/ignore`, delete the file, then rerun |
-| `Warning: .../info/exclude is already a symlink; ...`     | Shared ignore list unused  | Delete the symlink, then rerun                                        |
+The dotfiles work without mise, prek, or the shared ignore list.
 
-The dotfiles work without every component in this table.
+### No downloader for mise {#installer-no-downloader}
+
+For `Warning: neither curl nor wget found; continuing without mise.`, install curl or wget, then rerun the installer.
+
+### Mise installation failed {#installer-mise-failed}
+
+For `Warning: mise installation failed; continuing without mise.`, rerun the installer,
+or install mise from <https://mise.jdx.dev>.
+
+### Prek is missing {#installer-prek-missing}
+
+For `Warning: 'prek' not found. Skipping git hooks installation.`, [install the hook](@/docs/how-to/git-hooks.md).
+
+### Hook file was not generated {#installer-hook-not-generated}
+
+For `ERROR: Hook file was not generated`,
+check that `prek install` can write to the bare repository's `hooks` directory,
+then [reinstall the hook](@/docs/how-to/git-hooks.md#install-the-hook).
+
+### Ignore list is missing {#installer-ignore-missing}
+
+For `ERROR: Missing tracked ignore list`, restore `.config/dotfiles/gitignore` from the repository,
+then rerun the installer.
+
+### Git exclude contains local rules {#installer-exclude-local-rules}
+
+For `Warning: .../info/exclude contains local rules`, move the rules to `~/.config/git/ignore`,
+then move the exclude file aside and rerun the installer.
+
+### Git exclude is another symlink {#installer-exclude-symlink}
+
+For `Warning: .../info/exclude is already a symlink`, inspect the symlink target.
+Move it aside only if you want the shared ignore list, then rerun the installer.
+
+### Git exclude backup already exists {#installer-exclude-backup-exists}
+
+For `Warning: .../info/exclude.before-dotfiles already exists`,
+inspect the existing backup and `info/exclude` before moving either file; rerun the installer to link the shared list.
 
 ## Doctor output
 

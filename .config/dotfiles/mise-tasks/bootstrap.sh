@@ -16,6 +16,9 @@ DOTFILES_SKIP_SUBMODULES="${DOTFILES_SKIP_SUBMODULES-}"
 DOTFILES_COMMIT="${DOTFILES_COMMIT-}"
 DOTFILES_BRANCH="${DOTFILES_BRANCH-}"
 TAB="$(printf '\t')"
+TROUBLESHOOT_URL=https://drts01.github.io/dotfiles/docs/how-to/troubleshooting/
+
+troubleshoot() { printf '    see %s#%s\n' "$TROUBLESHOOT_URL" "$1" >&2; }
 
 is_commit_id() {
   case "$1" in
@@ -26,6 +29,7 @@ is_commit_id() {
 
 if [ -n "$DOTFILES_COMMIT" ] && ! is_commit_id "$DOTFILES_COMMIT"; then
   echo "ERROR: DOTFILES_COMMIT must be a full 40- or 64-character lowercase commit ID." >&2
+  troubleshoot installer-invalid-commit
   exit 1
 fi
 
@@ -33,6 +37,7 @@ fi
 case "$REPO_URL" in
   http://* | git://* | ftp://*)
     echo "ERROR: REPO_URL $REPO_URL uses an unauthenticated transport; use https://, ssh://, or a local path." >&2
+    troubleshoot installer-transport
     exit 1
     ;;
 esac
@@ -44,6 +49,7 @@ parse_groups() {
   case "$value" in
     '' | ,* | *, | *,,* | auto | all | none)
       printf 'ERROR: %s must be a comma-separated list of zsh,nvim,lua,docs.\n' "$variable" >&2
+      troubleshoot installer-invalid-groups
       exit 1
       ;;
   esac
@@ -90,6 +96,7 @@ df() { git --git-dir="$DEST_DIR" --work-tree="$HOME" "$@"; }
 
 if ! command -v git > /dev/null 2>&1; then
   echo "ERROR: git is required." >&2
+  troubleshoot doctor-git-missing
   exit 1
 fi
 
@@ -105,6 +112,7 @@ elif [ ! -d "$DEST_DIR" ]; then
   fi
   if [ -z "$branch" ]; then
     echo "ERROR: cannot determine the default branch of $REPO_URL; set DOTFILES_BRANCH." >&2
+    troubleshoot installer-default-branch
     exit 1
   fi
   object_format=sha1
@@ -174,6 +182,7 @@ elif [ -n "$BRANCH" ]; then
   df pull --ff-only origin "$BRANCH"
 else
   echo "Warning: HEAD is detached; skipping pull." >&2
+  troubleshoot installer-detached-head
 fi
 
 if [ -n "$DOTFILES_COMMIT" ]; then
@@ -181,6 +190,7 @@ if [ -n "$DOTFILES_COMMIT" ]; then
   if [ "$head" != "$DOTFILES_COMMIT" ]; then
     echo "ERROR: $DEST_DIR is at $head, not DOTFILES_COMMIT $DOTFILES_COMMIT." >&2
     echo "The installed checkout is newer, has diverged, or HEAD is detached." >&2
+    troubleshoot installer-pin-behind
     exit 1
   fi
   echo "Verified dotfiles commit $DOTFILES_COMMIT."
@@ -250,3 +260,5 @@ else
 fi
 
 echo "Dotfiles bootstrap complete."
+echo "Verify: sh ~/.config/dotfiles/mise-tasks/doctor.sh"
+echo "Docs: https://drts01.github.io/dotfiles/"

@@ -32,6 +32,15 @@ fail() {
 
 step() { printf '==> %s\n' "$*"; }
 
+for script in "$ENTRYPOINT" "$DEPLOY" "$ROOT/.config/dotfiles/mise-tasks/install/gitignore.sh" \
+  "$ROOT/.config/dotfiles/mise-tasks/install/git-hooks.sh"; do
+  grep '^[[:space:]]*troubleshoot [a-z-]*$' "$script" | while IFS= read -r hint; do
+    anchor=${hint##* }
+    grep -F "{#$anchor}" "$ROOT/.config/dotfiles/docs/content/docs/how-to/troubleshooting.md" > /dev/null ||
+      fail "missing troubleshooting heading: $anchor"
+  done
+done
+
 # Runs a command against a clean environment rooted at the given $HOME.
 run() {
   _home=$1
@@ -141,7 +150,9 @@ mkdir -p "$TMP/bin"
 printf '%s\n' '#!/bin/sh' ': > "$TEST_FETCH_MARKER"' 'exit 1' > "$TMP/bin/curl"
 chmod +x "$TMP/bin/curl"
 run "$HOME_A" PATH="$TMP/bin:$TEST_PATH" TEST_FETCH_MARKER="$TMP/mise-fetch-called" \
-  DOTFILES_SKIP_MISE_INSTALL=1 sh "$ENTRYPOINT"
+  DOTFILES_SKIP_MISE_INSTALL=1 sh "$ENTRYPOINT" > "$TMP/install-out"
+grep -qF 'Verify: sh ~/.config/dotfiles/mise-tasks/doctor.sh' "$TMP/install-out" || fail 'missing doctor next step'
+grep -qF 'Docs: https://drts01.github.io/dotfiles/' "$TMP/install-out" || fail 'missing docs next step'
 [ ! -e "$TMP/mise-fetch-called" ] || fail "mise download attempted despite DOTFILES_SKIP_MISE_INSTALL"
 assert_deployed "$HOME_A"
 assert_head "$HOME_A" "$PINNED"
@@ -195,6 +206,7 @@ if run "$HOME_A" DOTFILES_SKIP_MISE_INSTALL=1 DOTFILES_REF="$PINNED" sh "$ENTRYP
   fail "pin older than the installed commit was accepted"
 fi
 grep -q 'not DOTFILES_COMMIT' "$TMP/older-out" || fail "missing pin mismatch error"
+grep -qF '#installer-pin-behind' "$TMP/older-out" || fail 'missing pin troubleshooting link'
 assert_head "$HOME_A" "$TIP"
 
 step "Entrypoint: reject an unknown commit before touching \$HOME"
@@ -213,6 +225,7 @@ for script in "$ENTRYPOINT" "$DEPLOY"; do
     fail "$script accepted an http:// REPO_URL"
   fi
   grep -q 'unauthenticated transport' "$TMP/transport-out" || fail "$script: missing transport error"
+  grep -qF '#installer-transport' "$TMP/transport-out" || fail "$script: missing transport troubleshooting link"
 done
 if [ -e "$HOME_C/.local" ] || [ -e "$HOME_C/.config" ]; then fail "http:// REPO_URL modified $HOME_C"; fi
 
@@ -251,5 +264,6 @@ run "$HOME_B" sh "$HOME_B/.config/dotfiles/mise-tasks/install/gitignore.sh" "$HO
 [ ! -L "$INFO_B/exclude" ] || fail "custom exclude was replaced"
 grep -qF '/.private/' "$INFO_B/exclude" || fail "custom exclude rule was lost"
 grep -qF 'contains local rules' "$TMP/custom-exclude-stderr" || fail "missing custom exclude warning"
+grep -qF '#installer-exclude-local-rules' "$TMP/custom-exclude-stderr" || fail 'missing exclude troubleshooting link'
 
 printf 'bootstrap tests: ok\n'

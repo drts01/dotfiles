@@ -4,10 +4,14 @@ set -eu
 BASEDIR="${MISE_PROJECT_ROOT:-$(pwd)}"
 DEST_DIR="${DEST_DIR:-$HOME/.local/share/dotfiles}"
 HOOK_PATH="$DEST_DIR/hooks/pre-commit"
+TROUBLESHOOT_URL=https://drts01.github.io/dotfiles/docs/how-to/troubleshooting/
+
+troubleshoot() { printf '    see %s#%s\n' "$TROUBLESHOOT_URL" "$1" >&2; }
 
 echo "Checking pre-commit hooks execution environment..."
 if ! command -v prek > /dev/null 2>&1; then
   echo "Warning: 'prek' not found. Skipping git hooks installation." >&2
+  troubleshoot installer-prek-missing
   exit 0
 fi
 
@@ -15,6 +19,7 @@ prek install --config "$BASEDIR/prek.toml" --git-dir "$DEST_DIR"
 
 if [ ! -f "$HOOK_PATH" ]; then
   echo "ERROR: Hook file was not generated at $HOOK_PATH" >&2
+  troubleshoot installer-hook-not-generated
   exit 1
 fi
 
