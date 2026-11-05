@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title description">
+  <title id="title">drts01/dotfiles</title>
+  <desc id="description">Personal dotfiles managed via a Git bare repository</desc>
+  <rect width="1280" height="640" fill="#101827"/>
+  <rect x="72" y="72" width="1136" height="496" rx="28" fill="#192538" stroke="#34465f" stroke-width="2"/>
+  <circle cx="116" cy="116" r="9" fill="#e97979"/>
+  <circle cx="146" cy="116" r="9" fill="#e8bc71"/>
+  <circle cx="176" cy="116" r="9" fill="#79cda7"/>
+  <text x="116" y="254" fill="#77d6bc" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="40">$ git --git-dir=~/.local/share/dotfiles</text>
+  <text x="116" y="344" fill="#f6f8fb" font-family="ui-sans-serif, system-ui, sans-serif" font-weight="700" font-size="74">drts01/dotfiles</text>
+  <text x="116" y="420" fill="#c9d6e6" font-family="ui-sans-serif, system-ui, sans-serif" font-size="34">Personal dotfiles managed via a Git bare repository</text>
+  <text x="116" y="510" fill="#77d6bc" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="25">Git + POSIX shell · No root · Real files in $HOME</text>
+</svg>
