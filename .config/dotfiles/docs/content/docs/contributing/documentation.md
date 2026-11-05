@@ -51,22 +51,22 @@ or today for uncommitted edits.
 
 ## Verify
 
-From a configured development clone (the installed deployment has no `docs:lint` task):
+From a configured development clone:
 
 ```bash
-mise run docs:lint -- .config/dotfiles/docs/content
+prek run --config .config/dotfiles/prek.toml --all-files vale
 mise run docs:check -- --skip-external-links
 mise run docs:build
 ```
 
 | Task         | Purpose                                  | Page dates               | Link checks                                 |
 | ------------ | ---------------------------------------- | ------------------------ | ------------------------------------------- |
-| `docs:lint`  | Check prose against the Vale house style | None                     | None                                        |
+| Vale hook    | Check prose against the Vale house style | None                     | None                                        |
 | `docs:check` | Validate page types, links, and anchors  | None                     | Internal and external by default            |
 | `docs:build` | Build the publishable site               | Git-derived author dates | Zola build checks page targets, not anchors |
 | `docs:serve` | Preview with live reload                 | None                     | None                                        |
 
 Use `--skip-external-links` with `docs:check` for a fast offline-friendly check; omit it to check external links too.
-The Vale hook in `prek.toml` runs independently of `docs:lint`.
+The Vale hook runs on staged documentation before each commit; `--all-files` checks every tracked file.
 `docs:check` and `docs:build` fail when a page lacks `extra.type` or its type does not match its section.
 `docs:build` stamps a temporary copy; it does not change the source files.

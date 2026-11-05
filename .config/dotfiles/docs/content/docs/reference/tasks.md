@@ -25,4 +25,4 @@ mise run --cd ~/.config/dotfiles <task>
 | `doctor`            | `sh ~/.config/dotfiles/mise-tasks/doctor.sh`                                    | Check the bare repository, tracked changes, and optional tools and hooks |
 
 The deploy step installs only `prek`, pinned in `~/.config/dotfiles/mise.lock`.
-`docs:lint` is a development-only task in `dev-tasks.toml`; the Vale hook runs independently from `prek.toml`.
+Development clones run Vale through the hook in `.config/dotfiles/prek.toml`; Vale is not a mise tool.
