@@ -75,10 +75,14 @@ jobs:
       - name: Install Zsh
         if: runner.os == 'Linux'
         run: sudo apt-get install --yes zsh
-      - name: Install ShellSpec
+      - name: Install mise
         uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca  # v5.1.1
         with:
-          install_args: shellspec
+          install: false
+      - name: Set up development lockfile
+        run: sh .config/dotfiles/dev-setup.sh
+      - name: Install ShellSpec
+        run: mise install shellspec
       - name: Test unit specs
         working-directory: .config/dotfiles
         run: mise exec shellspec@latest -- shellspec --output junit --shell "${{ matrix.shell }}" spec/unit
@@ -109,10 +113,14 @@ jobs:
         run: sudo apt-get install --yes zsh
       - name: Initialize Zsh plugins for startup specs
         run: git submodule update --init -- .local/share/zsh
-      - name: Install ShellSpec
+      - name: Install mise
         uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca  # v5.1.1
         with:
-          install_args: shellspec
+          install: false
+      - name: Set up development lockfile
+        run: sh .config/dotfiles/dev-setup.sh
+      - name: Install ShellSpec
+        run: mise install shellspec
       - name: Test startup specs
         working-directory: .config/dotfiles
         run: mise exec shellspec@latest -- shellspec --output junit --shell /bin/sh spec/startup
