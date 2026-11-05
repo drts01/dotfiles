@@ -1,0 +1,32 @@
+---
+name: Documentation issue
+description: A page is wrong, unclear, out of date, or missing.
+labels: [documentation]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      description: URL or file path of the page.
+      placeholder: https://drts01.github.io/dotfiles/docs/start/install/
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Problem
+      options:
+        - Incorrect or out of date
+        - Unclear
+        - Missing information
+        - Broken link
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Quote the text, then describe what is wrong and what you expected to find.
+    validations:
+      required: true

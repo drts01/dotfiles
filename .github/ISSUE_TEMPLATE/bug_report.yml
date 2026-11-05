@@ -1,0 +1,74 @@
+---
+name: Bug report
+description: The installer, an update, the doctor, or shell startup does not work as documented.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        Check the [troubleshooting guide](https://drts01.github.io/dotfiles/docs/how-to/troubleshooting/) first.
+        Report security issues [privately](https://github.com/drts01/dotfiles/security/advisories/new) instead.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: Describe the problem and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Commands you ran, in order, and any environment variables you set (for example `DOTFILES_REF`).
+      placeholder: |
+        1. curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfiles/bootstrap.sh | sh
+        2. exec zsh -l
+    validations:
+      required: true
+  - type: textarea
+    id: doctor
+    attributes:
+      label: Doctor output
+      description: Output of `sh ~/.config/dotfiles/mise-tasks/doctor.sh`. Write "not installed" if the install failed.
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: commit
+    attributes:
+      label: Installed commit
+      description: Output of `dotfiles rev-parse HEAD`, or the `DOTFILES_REF` you used.
+    validations:
+      required: true
+  - type: dropdown
+    id: install-method
+    attributes:
+      label: Install method
+      options:
+        - One-line installer
+        - One-line installer with a pinned commit
+        - Git only, without mise
+        - Development clone
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Operating system and shell
+      placeholder: macOS 26, zsh 5.9
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Other output
+      description: Installer or shell error messages.
+      render: text
+  - type: checkboxes
+    id: redaction
+    attributes:
+      label: Privacy
+      options:
+        - label: I removed tokens, hostnames, usernames, and other private data from the output above.
+          required: true

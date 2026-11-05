@@ -1,0 +1,35 @@
+---
+name: Feature request
+description: Propose a new configuration, task, or capability.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        The installer and shell startup must keep working with only Git and a POSIX shell;
+        optional tools must stay optional.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What you are trying to do and why the current dotfiles do not support it.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: The change you suggest, including which tool or file it affects.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: Constraints
+      options:
+        - label: The change works without root access.
+        - label: The change does not add a required dependency beyond Git and a POSIX shell.

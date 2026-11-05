@@ -1,0 +1,12 @@
+---
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/drts01/dotfiles/security/advisories/new
+    about: Report privately; do not open a public issue.
+  - name: Troubleshooting guide
+    url: https://drts01.github.io/dotfiles/docs/how-to/troubleshooting/
+    about: Look up installer, update, and doctor messages before filing a bug.
+  - name: Documentation
+    url: https://drts01.github.io/dotfiles/
+    about: Install, customize, and contribute.
