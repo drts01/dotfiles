@@ -1,6 +1,9 @@
 # Dotfiles
 
-Manage system environment configurations via a Git bare repository.
+[![CI](https://github.com/drts01/dotfiles/actions/workflows/ci.yaml/badge.svg?branch=trunk)](https://github.com/drts01/dotfiles/actions/workflows/ci.yaml?query=branch%3Atrunk)
+[![Documentation](https://github.com/drts01/dotfiles/actions/workflows/docs.yml/badge.svg?branch=trunk)](https://github.com/drts01/dotfiles/actions/workflows/docs.yml?query=branch%3Atrunk)
+
+Personal dotfiles managed via a Git bare repository.
 
 ## Features
 
@@ -80,6 +83,10 @@ Source: [`.config/dotfiles/docs/`](../.config/dotfiles/docs/).
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for developing from a clone, running tasks, and validating changes.
+
+## Security
+
+Report vulnerabilities privately; see [SECURITY.md](SECURITY.md).
 
 ## License
 
