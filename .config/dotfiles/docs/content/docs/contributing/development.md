@@ -44,14 +44,15 @@ and `git submodule update --init -- .config/nvim/pack/plugins/start` for Neovim 
    mise tasks ls
    ```
 
-Setup links the clone's Git exclude file to `.config/dotfiles/gitignore`,
-copies ignored root `.miserc.toml` and `mise.local.toml` from tracked development templates,
-and links `mise.local.lock` to `.config/dotfiles/dev-mise.lock`.
+Setup links the clone's Git exclude file to `.config/dotfiles/gitignore` and links ignored root `.miserc.toml`,
+`mise.local.toml`, and `mise.local.lock` to their tracked development files.
 It trusts the maintenance tasks, installs prek, and installs regular-clone pre-commit hooks.
 Run setup before using mise in the clone so the machine configuration at `.config/mise/` does not load
 as project configuration.
-If a local configuration differs from its template or the lockfile already links elsewhere,
-setup stops rather than overwriting it.
+Setup replaces unchanged copies of `.miserc.toml` and `mise.local.toml`
+(including a mise config with the former `locked = true` setting)
+with symlinks; it stops rather than overwriting custom content or links to other targets.
+It also stops if the lockfile already links elsewhere.
 The deployed `.config/dotfiles/mise.lock` is separate; development tasks install ShellSpec on demand.
 
 Do not run the installer, `mise-tasks/bootstrap.sh`, `install:gitignore`, or `install:git-hooks` in a clone;

@@ -18,8 +18,8 @@ Bootstrap deploys this directory to `~/.config/dotfiles`.
 | `dev-mise.lock`       | Development tool lockfile; linked as `mise.local.lock` in a clone         |
 | `dev-setup.sh`        | One-time setup for a regular development clone                            |
 | `dev-tasks.toml`      | Development tasks: lint, tests, benchmarks, documentation builds          |
-| `dev-miserc.toml`     | Template for the clone's ignored root `.miserc.toml`                      |
-| `dev-mise-local.toml` | Template for the clone's ignored root `mise.local.toml`                   |
+| `dev-miserc.toml`     | Target for the clone's ignored root `.miserc.toml`                        |
+| `dev-mise-local.toml` | Target for the clone's ignored root `mise.local.toml`                     |
 | `prek.toml`           | Git hook and lint configuration                                           |
 | `gitignore`           | Ignore rules linked into Git's `info/exclude`                             |
 | `.typos.toml`         | Spell-check configuration                                                 |

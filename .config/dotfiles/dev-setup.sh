@@ -25,21 +25,29 @@ for path in .miserc.toml mise.local.toml mise.local.lock; do
     fail "$path is not ignored; add it to this clone's Git exclude rules first"
 done
 
-copy_local_config() {
-  template=$1
-  path=$2
-  source=$BASEDIR/$template
-  [ -f "$source" ] || fail "missing development config template: $source"
-  if [ -e "$ROOT/$path" ] || [ -L "$ROOT/$path" ]; then
-    if [ ! -f "$ROOT/$path" ] || ! cmp -s "$source" "$ROOT/$path"; then
-      fail "$path already exists with different contents; merge it manually"
+link_local_config() {
+  path=$1
+  target=$2
+  [ -f "$ROOT/$target" ] || fail "missing development config template: $target"
+  if [ -L "$ROOT/$path" ]; then
+    [ "$(readlink "$ROOT/$path")" = "$target" ] ||
+      fail "$path already links elsewhere; reconcile it manually"
+  elif [ -e "$ROOT/$path" ]; then
+    if ! cmp -s "$ROOT/$path" "$ROOT/$target"; then
+      if [ "$path" != mise.local.toml ] ||
+        ! sed '/^locked[[:space:]]*=[[:space:]]*true[[:space:]]*$/d' "$ROOT/$path" | cmp -s "$ROOT/$target" -; then
+        fail "$path differs from the development template; merge it manually"
+      fi
     fi
+    rm "$ROOT/$path"
+    ln -s "$target" "$ROOT/$path"
+  else
+    ln -s "$target" "$ROOT/$path"
   fi
-  cp "$source" "$ROOT/$path"
 }
 
-copy_local_config dev-miserc.toml .miserc.toml
-copy_local_config dev-mise-local.toml mise.local.toml
+link_local_config .miserc.toml .config/dotfiles/dev-miserc.toml
+link_local_config mise.local.toml .config/dotfiles/dev-mise-local.toml
 
 LOCK_TARGET=.config/dotfiles/dev-mise.lock
 [ -f "$ROOT/$LOCK_TARGET" ] || fail 'missing development mise lockfile'
