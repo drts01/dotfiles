@@ -116,6 +116,7 @@ hooks = [
   },
   {
     id      = "vale",
+    alias   = "vale-check",
     # Vale reads the user-level config from XDG_CONFIG_HOME beneath the repository layer;
     # point it at this checkout so clones and CI lint with the tracked styles, not a deployed copy.
     entry   = "sh -c 'XDG_CONFIG_HOME=\"$PWD/.config\" exec vale \"$@\"' --",
