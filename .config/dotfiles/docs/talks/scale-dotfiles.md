@@ -147,8 +147,7 @@ You will learn how to:
 - Layer a private work repository over a public personal base, with both sharing $HOME as their working tree.
 - Keep secrets out of a public repository: commit references instead of values.
 
-Each deployment-only bug appears with the line that failed and the test that caught it.
-The live demo takes a fresh container to a working shell using the same steps CI runs.
+In a live demo, I'll take a fresh container to a working shell using the same steps CI runs.
 You'll also see the problems I haven't solved, and when GNU Stow, chezmoi, yadm, vcsh,
 or Nix home-manager is the better choice.
 You'll leave with a five-level maturity model for rating your own setup
