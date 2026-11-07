@@ -37,6 +37,7 @@ hooks = [
     args   = [
       "--config=.config/dotfiles/.typos.toml",
       "--format=brief",
+      "--force-exclude",
     ],
     stages = [ "pre-commit", "commit-msg" ],
   },
