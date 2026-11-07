@@ -12,7 +12,7 @@ Everbridge
 fd
 fnox
 [Gg]itlinks?
-[Hh]some directory
+[Hh]ome directory
 Meza
 myrepos
 Neovim
