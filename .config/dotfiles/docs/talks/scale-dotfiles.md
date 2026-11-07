@@ -115,10 +115,10 @@ Alternatives: Systems & Infrastructure (configuration management) or the co-loca
 Do your dotfiles pass validation tests?
 Do they deploy?
 This talk treats $HOME as a small production system.
-It bootstraps with only Git and a POSIX shell: no sudo, symlinks, or templating.
-It tests installs as a non-root user in clean Linux containers, proves startup survives missing tools,
-and keeps secrets out of the repository.
-Live demo: fresh container to working shell.
+The setup bootstraps with only Git and a POSIX shell: no sudo, symlinks, or templating.
+Clean Linux containers test installs as a non-root user and check that the shell starts when tools are missing.
+The repository stores references to secrets, not secret values.
+Watch a fresh container become a working shell in the live demo.
 
 ### Long abstract (online)
 
@@ -131,16 +131,16 @@ An installer re-downloaded itself forever, a shell errored when a plugin was mis
 and every new shell started with a failing exit status and no error.
 
 AI-assisted tinkering made trying a new editor or terminal an afternoon's work.
-Tools now arrive in, and leave, my $HOME faster than my setup could handle, often on machines I don't control.
+I now add and remove tools in $HOME faster than my setup can handle, often on machines I don't control.
 
-This talk picks up where the widely copied bare-Git-repository dotfiles tutorial stops.
+This talk picks up where the popular bare-Git-repository dotfiles tutorial stops.
 The base needs only Git and POSIX sh; everything else is an optional layer.
 You will learn how to:
 
 - Use Git as the installer: no sudo, no symlink farm, no runtime templating, no new configuration language,
   and a bootstrap that is safe to run twice.
 - Pin plugins with Git submodules and install optional user-space tools with mise,
-  then prove Zsh still starts with no errors and exit status 0 when either is missing.
+  then prove Zsh still starts with no errors and exit status 0 when optional components are not available.
 - Test deployment, not only syntax: install as a non-root user in clean Debian (dash), Alpine
   (BusyBox sh), and Fedora (Bash) containers in CI.
   Run the same matrix locally with Podman or Docker.
