@@ -9,5 +9,5 @@ extend-ignore-re = [
 
 [files]
 extend-exclude = [
-  "**/vale/styles/*/vocabularies/*/accept.txt",
+  "**/vale/**/vocabularies/*/accept.txt",
 ]
