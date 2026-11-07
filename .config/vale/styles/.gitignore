@@ -1,2 +1,5 @@
-*/
-!House/
+/*/
+!/House/
+!/config/
+/config/*/
+!/config/vocabularies/
