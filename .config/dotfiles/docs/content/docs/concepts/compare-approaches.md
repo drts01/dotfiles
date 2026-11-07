@@ -33,7 +33,7 @@ The approach suits some setups and not others; this page states both.
   and untracked local files such as `~/.config/sh/sh.d/95_local.sh`.
   Formats without includes or conditionals are harder to vary per machine.
 - **Rollback is Git.**
-  Revert or check out an earlier commit; there is no generation history for installed packages.
+  Revert or check out an earlier commit; installed packages have no generation history.
 - **No secret management.**
   The repository keeps credentials out of commits but does not store, encrypt, or fetch them;
   see [Security model](@/docs/concepts/security.md#secrets).
@@ -61,7 +61,7 @@ The approach suits some setups and not others; this page states both.
 ## Prior art
 
 The bare-repository technique comes from a Hacker News comment by `StreakyCobra`,
-popularized by Atlassian's [Dotfiles: Best way to store in a bare git repository][atlassian].
+popularized by Atlassian's [Dotfiles: Best way to store in a bare Git repository][atlassian].
 This repository adds a pinned, repeatable installer, conflict backups, health checks,
 and installation tests on several platforms; see [How the installer works](@/docs/concepts/bootstrap-flow.md).
 

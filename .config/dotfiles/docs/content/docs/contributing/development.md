@@ -71,7 +71,7 @@ mise run docs:build
 List tasks with `mise tasks ls` and run one with `mise run <task>` from the clone root.
 Installed-dotfiles tasks are defined in `.config/dotfiles/mise.toml` and `.config/dotfiles/mise-tasks/`;
 clone-only tasks live in `.config/dotfiles/dev-tasks.toml`.
-Run `mise run --dry-run lint` to preview lint; `mise run lint` applies auto-fixes,
+Run `mise run --dry-run lint` to preview lint; `mise run lint` applies automatic fixes,
 so review unrelated changes before running it.
 The Vale hook uses the house style in `.config/vale/`.
 

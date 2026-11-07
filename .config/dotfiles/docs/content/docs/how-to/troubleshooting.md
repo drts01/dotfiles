@@ -96,12 +96,12 @@ The dotfiles work without mise, prek, or the shared ignore list.
 
 For `Warning: neither curl nor wget found; continuing without mise.`, install curl or wget, then rerun the installer.
 
-### Mise installation failed {#installer-mise-failed}
+### mise installation failed {#installer-mise-failed}
 
 For `Warning: mise installation failed; continuing without mise.`, rerun the installer,
 or install mise from <https://mise.jdx.dev>.
 
-### Prek is missing {#installer-prek-missing}
+### prek is missing {#installer-prek-missing}
 
 For `Warning: 'prek' not found. Skipping git hooks installation.`, [install the hook](@/docs/how-to/git-hooks.md).
 

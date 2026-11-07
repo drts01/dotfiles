@@ -1,6 +1,6 @@
 +++
 title = "ADR-0007: Private vulnerability reporting"
-description = "Accept security reports only through GitHub private vulnerability reporting, governed by .github/SECURITY.md."
+description = "Accept security reports only through GitHub private vulnerability reporting, governed by the repository security policy."
 weight = 7
 
 [extra]

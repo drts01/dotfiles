@@ -50,11 +50,11 @@ mise run bootstrap:test:container -- cgr.dev/chainguard/git:latest-dev fedora:la
 
 The default images are listed in [Platform support](@/docs/reference/support.md#installer).
 
-| Variable           | Default             | Purpose                                                             |
-| ------------------ | ------------------- | ------------------------------------------------------------------- |
-| `CONTAINER_ENGINE` | podman, else docker | Container engine                                                    |
-| `TEST_BASH`        | `auto`              | `required` fails without Bash; `skip` omits Bash specs              |
-| `ALPINE_MIRROR`    | unset               | Alpine mirror, for example `https://mirrors.edge.kernel.org/alpine` |
+| Variable           | Default                 | Purpose                                                             |
+| ------------------ | ----------------------- | ------------------------------------------------------------------- |
+| `CONTAINER_ENGINE` | `podman`, else `docker` | Container engine                                                    |
+| `TEST_BASH`        | `auto`                  | `required` fails without Bash; `skip` omits Bash specs              |
+| `ALPINE_MIRROR`    | unset                   | Alpine mirror, for example `https://mirrors.edge.kernel.org/alpine` |
 
 When `cgr.dev` blob storage is blocked, use `docker.io/chainguard/git:latest-dev`, the same digest.
 

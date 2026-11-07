@@ -4,7 +4,7 @@ Describe the change and why it is needed.
 
 ## Linked issue
 
-Link an issue, or write "None".
+Link an issue, or write `None`.
 
 ## Checklist
 
