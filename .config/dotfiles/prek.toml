@@ -100,13 +100,14 @@ stages   = [ "manual" ]
 
 [[repos]]
 repo  = "https://github.com/vale-cli/vale"
-rev   = "e2d4374b1c66c8a1dd6d912bebc135040d8833fa"                                                                      # frozen: v3.26.0
+rev   = "e2d4374b1c66c8a1dd6d912bebc135040d8833fa"                                                                                       # frozen: v3.26.0
 hooks = [
   {
     id             = "vale",
     alias          = "vale-sync",
     name           = "vale sync",
     pass_filenames = false,
+    # `vale sync` reads one file; Packages live in the user-level config.
     args           = [
       "--config=.config/vale/.vale.ini",
       "sync",
@@ -115,9 +116,15 @@ hooks = [
   },
   {
     id      = "vale",
-    args    = [ "--config=.config/vale/.vale.ini" ],
+    # Vale reads the user-level config from XDG_CONFIG_HOME beneath the repository layer;
+    # point it at this checkout so clones and CI lint with the tracked styles, not a deployed copy.
+    entry   = "sh -c 'XDG_CONFIG_HOME=\"$PWD/.config\" exec vale \"$@\"' --",
+    args    = [ "--config=.config/dotfiles/.vale.ini" ],
     # Agent prompts are instructions to models, not documentation.
     exclude = '^(\.config/zed/AGENTS\.md|Documents/Cline/Rules/global\.md)',
   },
-  { id = "vale-commit-msg", entry = "sh -c 'vale --config=.config/vale/.vale.ini --path=COMMIT_EDITMSG < \"$1\"' --" }
+  {
+    id    = "vale-commit-msg",
+    entry = "sh -c 'XDG_CONFIG_HOME=\"$PWD/.config\" exec vale --config=.config/dotfiles/.vale.ini --path=COMMIT_EDITMSG < \"$1\"' --",
+  },
 ]
