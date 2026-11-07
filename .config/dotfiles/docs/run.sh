@@ -5,7 +5,8 @@
 #   sh run.sh serve [zola serve options]  Serve the source tree with live reload (no dates).
 # Pages never carry a hand-maintained `updated` field: the build stamps each page with the
 # date of the last commit that touched it, or today for uncommitted edits.
-# The build also fails when a docs page lacks the Diátaxis `type` its section requires.
+# The build also fails when a docs page lacks the Diátaxis `type` its section requires,
+# when a {{<source>}} link points at an untracked path, or when a tracked .config entry lacks a file-layout row.
 set -eu
 
 CDPATH=
@@ -108,9 +109,42 @@ check_types() {
   }
 }
 
+LAYOUT_PAGE="$DOCS_DIR/content/docs/reference/file-layout.md"
+
+source_paths() {
+  grep -rhoE '\{\{< *source path="[^"]+"' "$@" | sed 's/.*path="//; s/"$//' | sort -u
+}
+
+# Source links must resolve on the forge, and file-layout.md must list every tool under .config.
+# An installed $HOME has no work tree to compare against, so the check runs only in a clone.
+check_sources() {
+  if ! in_clone; then
+    echo "Warning: not a git work tree; skipping source link checks." >&2
+    return 0
+  fi
+  root=$(git -C "$DOCS_DIR" rev-parse --show-toplevel)
+  layout=$(source_paths "$LAYOUT_PAGE")
+  failed=0
+  for path in $(source_paths "$DOCS_DIR/content"); do
+    # Submodules are gitlinks: match them without the trailing slash.
+    if [ -z "$(git -C "$root" ls-files -- "${path%/}")" ]; then
+      echo "ERROR: {{<source>}} links to untracked path '$path'." >&2
+      failed=1
+    fi
+  done
+  for entry in $(git -C "$root" ls-files -- .config | awk -F/ 'NF > 2 { print $1 "/" $2 "/"; next } { print }' | sort -u); do
+    if ! printf '%s\n' "$layout" | grep -qxF -- "$entry"; then
+      echo "ERROR: ${LAYOUT_PAGE#"$DOCS_DIR"/} has no {{<source path=\"$entry\" />}} row." >&2
+      failed=1
+    fi
+  done
+  return "$failed"
+}
+
 build() {
   ensure_theme
   check_types
+  check_sources
   stage=$(mktemp -d "${TMPDIR:-/tmp}/dotfiles-docs.XXXXXX")
   trap 'rm -rf "$stage"' EXIT
   trap 'exit 1' HUP INT TERM
@@ -126,6 +160,7 @@ build() {
 check() {
   ensure_theme
   check_types
+  check_sources
   cd "$DOCS_DIR"
   exec zola check "$@"
 }
