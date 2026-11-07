@@ -1,0 +1,83 @@
+---
+extends: conditional
+message: "'%s' has no definition."
+link: https://learn.microsoft.com/en-us/style-guide/acronyms
+level: suggestion
+ignorecase: false
+# Fork of Microsoft.Acronyms. Microsoft's pattern only accepts Title Case
+# expansions, which contradicts its own guide (lowercase unless a proper noun).
+first: \b([A-Z]{3,5})\b
+second: (?:\b[A-Za-z][a-z]+(?:-[A-Za-z][a-z]+)? )+\(([A-Z]{3,5})\)
+exceptions:
+  # Microsoft.Acronyms defaults.
+  - API
+  - ASP
+  - CLI
+  - CPU
+  - CSS
+  - CSV
+  - DEBUG
+  - DOM
+  - DPI
+  - FAQ
+  - GCC
+  - GDB
+  - GET
+  - GPU
+  - GTK
+  - GUI
+  - HTML
+  - HTTP
+  - HTTPS
+  - IDE
+  - JAR
+  - JSON
+  - JSX
+  - LESS
+  - LLDB
+  - NET
+  - NOTE
+  - NVDA
+  - OSS
+  - PATH
+  - PDF
+  - PHP
+  - POST
+  - RAM
+  - REPL
+  - RSA
+  - SCM
+  - SCSS
+  - SDK
+  - SQL
+  - SSH
+  - SSL
+  - SVG
+  - TBD
+  - TCP
+  - TODO
+  - URI
+  - URL
+  - USB
+  - UTF
+  - XML
+  - XSS
+  - YAML
+  - ZIP
+  # Standards, protocols, and formats a Unix audience already knows.
+  - AWS
+  - CDN
+  - DNS
+  - GNU
+  - HDMI
+  - PEM
+  - PGP
+  - POSIX
+  - SHA
+  - TLS
+  - TOML
+  - TTY
+  - XDG
+  # Environment variables and Git refs, written bare in plain-text abstracts.
+  - HEAD
+  - HOME
