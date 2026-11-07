@@ -110,8 +110,10 @@ hooks = [
     stages         = [ "pre-push" ]
   },
   {
-    id   = "vale",
-    args = [ "--config=.config/vale/.vale.ini" ],
+    id      = "vale",
+    args    = [ "--config=.config/vale/.vale.ini" ],
+    # Agent prompts and talk drafts are not published documentation.
+    exclude = '^(\.config/zed/AGENTS\.md|Documents/Cline/Rules/global\.md|\.config/dotfiles/docs/talks/)',
   },
   { id = "vale-commit-msg", entry = "sh -c 'vale --config=.config/vale/.vale.ini --path=COMMIT_EDITMSG < \"$1\"' --" }
 ]
