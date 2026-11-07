@@ -45,6 +45,20 @@ Pages outside `contributing/` state user requirements only: Git and a POSIX `sh`
 
 3. Link other pages by source path, for example `@/docs/how-to/update.md#verify`.
    `docs:check` fails on a missing page or anchor; `docs:build` checks pages only.
+4. Link a tracked repository file or directory with the `source` component; end a directory with `/`:
+
+   {% raw %}
+
+   ```jinja
+   {{<source path=".config/helix/" />}}
+   ```
+
+   {% endraw %}
+
+   Link to complete configuration files; do not paste them into pages.
+   Quote a setting only beside the text that explains it.
+   Add a page for a tool only when it has behavior to explain;
+   otherwise its row in [File layout](@/docs/reference/file-layout.md) is enough.
 
 Do not add `updated`; the build stamps each page with the author date of its last commit,
 or today for uncommitted edits.
@@ -69,4 +83,6 @@ mise run docs:build
 Use `--skip-external-links` with `docs:check` for a fast offline-friendly check; omit it to check external links too.
 The Vale hook runs on staged documentation before each commit; `--all-files` checks every tracked file.
 `docs:check` and `docs:build` fail when a page lacks `extra.type` or its type does not match its section.
+In a clone, they also fail when a `source` link points at an untracked path,
+or when a tracked entry under `.config/` has no row in File layout.
 `docs:build` stamps a temporary copy; it does not change the source files.

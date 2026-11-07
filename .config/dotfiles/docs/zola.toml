@@ -18,6 +18,11 @@ include_content     = true
 light_theme = "github-light"
 dark_theme  = "github-dark"
 
+# Base for {{<source />}} links; pages never hard-code forge URLs.
+[extra.source]
+repo   = "https://github.com/drts01/dotfiles"
+branch = "trunk"
+
 [extra.devlab.brand]
 logo_text      = "dotfiles"
 footer_text    = "digitalroots"

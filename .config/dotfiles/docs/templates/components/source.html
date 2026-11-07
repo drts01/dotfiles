@@ -1,0 +1,11 @@
+{# Link a repository path to its source on the forge. A trailing slash marks a directory. #}
+{# Components cannot read `config`; load the site configuration to keep the forge URL in zola.toml. #}
+{% component source(path: string, label: string = "") -%}
+{%- set site_config = load_data(path="zola.toml") -%}
+{%- set source = site_config.extra.source -%}
+{%- set source_kind = "blob" -%}
+{%- if path is ending_with(pat="/") -%}{%- set source_kind = "tree" -%}{%- endif -%}
+{%- set source_label = path -%}
+{%- if label -%}{%- set source_label = label -%}{%- endif -%}
+<a href="{{ source.repo }}/{{ source_kind }}/{{ source.branch }}/{{ path | escape }}"><code>{{ source_label | escape }}</code></a>
+{%- endcomponent source %}

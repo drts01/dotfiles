@@ -16,3 +16,4 @@ page_template = "doc-page.html"
 | Remove the dotfiles                   | [Uninstall and restore backups](@/docs/how-to/uninstall.md)              |
 | Know what the installer trusts        | [Security model](@/docs/concepts/security.md)                            |
 | Change or test the dotfiles           | [Set up a development clone](@/docs/contributing/development.md)         |
+| See which tools are configured        | [File layout](@/docs/reference/file-layout.md#tracked-configuration)     |
