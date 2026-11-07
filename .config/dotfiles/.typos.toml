@@ -6,3 +6,8 @@ extend-ignore-re = [
   # Bypasses the line immediately AFTER "// typos: ignore-next-line"
   "(?m)^.*(//|#)\\s*typos:\\s*ignore-next-line.*\\n.*$"
 ]
+
+[files]
+extend-exclude = [
+  "**/vale/styles/*/vocabularies/*/accept.txt",
+]
