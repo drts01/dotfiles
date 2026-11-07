@@ -1,0 +1,52 @@
+---
+# Vocabulary that language models overuse and that carries no technical content.
+extends: existence
+message: "'%s' reads as generated prose; name the concrete effect instead."
+level: error
+ignorecase: true
+tokens:
+  - bolster(?:s|ed|ing)?
+  - bustling
+  - commendable
+  - comprehensive
+  - crucial(?:ly)?
+  - cutting-edge
+  - delv(?:e|es|ed|ing)
+  - elevat(?:e|es|ed|ing)
+  - embark(?:s|ed|ing)?
+  - empower(?:s|ed|ing)?
+  - ever-(?:changing|evolving)
+  - foster(?:s|ed|ing)?
+  - game-chang(?:er|ers|ing)
+  - garner(?:s|ed|ing)?
+  - groundbreaking
+  - holistic(?:ally)?
+  - intricac(?:y|ies)
+  - intricate
+  - invaluable
+  - journey
+  - landscape
+  - meticulous(?:ly)?
+  - multifaceted
+  - myriad
+  - noteworthy
+  - nuanced
+  - paramount
+  - pivotal
+  - plethora
+  - realm
+  - revolutioni[sz](?:e|es|ed|ing)
+  - robust(?:ly|ness)?
+  - showcas(?:e|es|ed|ing)
+  - streamlin(?:e|es|ed|ing)
+  - supercharg(?:e|es|ed|ing)
+  - synerg(?:y|ies|istic)
+  - tapestry
+  - testament
+  - transformative
+  - underscor(?:e|es|ed|ing)
+  - unleash(?:es|ed|ing)?
+  - unlock(?:s|ed|ing)?
+  - unparalleled
+  - vibrant
+  - vital

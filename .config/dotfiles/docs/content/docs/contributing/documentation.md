@@ -137,7 +137,11 @@ mise run docs:build
 | `docs:serve` | Preview with live reload                 | None                     | None                                        |
 
 Use `--skip-external-links` with `docs:check` for a fast offline-friendly check; omit it to check external links too.
-The Vale hook runs on staged documentation before each commit; `--all-files` checks every tracked file.
+The Vale hook runs on staged documentation before each commit;
+`--all-files` checks every tracked Markdown file except agent prompts and talk notes.
+The `House` style also rejects patterns common in generated text: stock phrases, hype vocabulary,
+sentence-opening connectives, `not just X, but Y` framing, em dashes, and emoji.
+Add terms that Vale reports as misspelled to `.config/vale/styles/config/vocabularies/House/accept.txt`.
 `docs:check` and `docs:build` fail when a page lacks `extra.type` or its type does not match its section.
 In a clone, they also fail when a `source` link points at an untracked path,
 or when a tracked entry under `.config/` has no row in File layout.

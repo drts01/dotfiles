@@ -1,0 +1,35 @@
+---
+# Stock phrases from chat assistants: preambles, sign-offs, and empty framing.
+extends: existence
+message: Remove '%s'; it is filler that signals generated text.
+level: error
+ignorecase: true
+tokens:
+  - (?:a|an) testament to
+  - (?:i )?hope (?:this|that) helps
+  - at its core
+  - (?:deep )?dive (?:into|deeper)
+  - feel free to
+  - great question
+  - happy (?:coding|hacking)
+  - harness(?:es|ing)? the (?:full )?(?:power|potential)
+  - here(?:'s| is) (?:how|what|why|the)
+  - in conclusion
+  - in essence
+  - in summary
+  - in the (?:world|realm|landscape) of
+  - in today's
+  - it(?:'s| is) (?:important|worth) (?:to )?not(?:e|ing)
+  - let(?:'s| us) (?:dive|explore|look|take a look|walk through|break (?:it|this) down)
+  - look no further
+  - plays? (?:a|an) (?:central|critical|crucial|essential|important|key|pivotal|vital) role
+  - rest assured
+  - serves as (?:a|an|the)
+  - stands as (?:a|an|the)
+  - take (?:it|this|your \w+) to the next level
+  - the power of
+  - to summarize
+  - when it comes to
+  - whether you(?:'re| are) (?:a|an|new|just)
+  - wide (?:array|range|variety) of
+  - without further ado

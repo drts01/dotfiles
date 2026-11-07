@@ -1,0 +1,10 @@
+---
+# "Not just X, but Y" sets up a contrast nobody asserted; state Y.
+extends: existence
+message: State the claim directly instead of '%s'.
+level: error
+ignorecase: true
+nonword: true
+tokens:
+  - \bnot (?:just|only|merely|simply) [^.;:!?]{1,60}?,?\s+(?:but|it(?:'s| is)|they(?:'re| are))\b
+  - \bit(?:'s| is) not (?:about|just) [^.;:!?]{1,60}?[,;]\s+it(?:'s| is)\b

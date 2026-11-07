@@ -1,0 +1,21 @@
+---
+# Sentence-opening connectives that pad generated prose; case-sensitive so only sentence starts match.
+extends: existence
+message: Remove '%s'; start with the subject.
+level: error
+ignorecase: false
+nonword: true
+tokens:
+  - \bAdditionally,
+  - \bConsequently,
+  - \bCrucially,
+  - \bEssentially,
+  - \bFurthermore,
+  - \bImportantly,
+  - \bIndeed,
+  - \bInterestingly,
+  - \bMoreover,
+  - \bNotably,
+  - \bOverall,
+  - \bThat said,
+  - \bUltimately,

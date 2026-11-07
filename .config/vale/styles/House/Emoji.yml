@@ -1,0 +1,8 @@
+---
+# Emoji decorate generated headings and lists; they carry no technical content.
+extends: existence
+message: Remove the emoji '%s'.
+level: error
+nonword: true
+tokens:
+  - "[\U0001F300-\U0001FAFF\u2600-\u27BF]"

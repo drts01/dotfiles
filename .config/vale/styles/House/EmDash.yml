@@ -1,0 +1,8 @@
+---
+# Em dashes are frequent in generated text and absent from this house style.
+extends: existence
+message: Replace the em dash with a period, semicolon, colon, or parentheses.
+level: error
+nonword: true
+tokens:
+  - "\u2014"
