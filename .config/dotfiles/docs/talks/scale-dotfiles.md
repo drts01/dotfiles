@@ -1,4 +1,4 @@
-# SCaLE talk notes: Production-Grade `$HOME`
+# SCaLE talk notes: production-grade `$HOME`
 
 ## Working title
 
@@ -6,16 +6,16 @@
 
 Alternative: **`$HOME` in Production: Tested, Sudo-Free Dotfiles with Only Git and a Shell**
 
-"Only" makes the minimal dependency set a constraint; without it, "with Git" reads as a truism.
+"Only" turns the minimal dependency set into a constraint; without it, "with Git" reads as a truism.
 
 Use `$HOME`, not `HOME_DIR`; `$HOME` is the standard variable the audience recognizes.
 Hyphenate "Production-Grade" (compound modifier).
 Do not use "The Missing Manual" in the title or abstracts: O'Reilly Media, Inc. holds the registered trademark.
 Drop "the DevOps Way": it reads as a buzzword and does not state the differentiator (tested, sudo-free).
 
-## SCaLE 24x CFP facts
+## SCaLE 24x call for proposals
 
-Source: <https://www.socallinuxexpo.org/scale/24x/cfp> (retrieved 2026-10-26).
+Source: the call for proposals (CFP) page, <https://www.socallinuxexpo.org/scale/24x/cfp> (retrieved 2026-10-26).
 
 - Conference: April 1–4, 2027, Pasadena Convention Center.
 - **Submission deadline: November 1, 2026.**
@@ -84,7 +84,7 @@ Alternatives: Systems & Infrastructure (configuration management) or the co-loca
       `mise run bootstrap:test:container` runs the same script locally.
 - [ ] Inventory the checks that hooks and CI enforce.
 
-### P3: after acceptance (December–March)
+### P3: after acceptance, before the talk
 
 - [ ] Decide the secrets workflow; mise is the integration point.
       Choose the resolver (Bitwarden Rust client `rbw` or `bws`, age, fnox) and the mise mechanism
@@ -100,9 +100,9 @@ Alternatives: Systems & Infrastructure (configuration management) or the co-loca
 - [ ] Save the latest passing workflow run offline
       (screenshots or downloaded logs); the fallback must work without conference Wi-Fi.
 - [ ] Decide whether the Zed limitation stays unresolved or receives a tested mitigation.
-- [ ] Test home-manager under `nix-portable` in a non-root Debian container and an Ubuntu 24.04 container:
-      activate a minimal config, then open a fresh login shell outside `nix-portable`;
-      record whether `~/.zshrc` resolves and how long the first activation takes.
+- [ ] Test home-manager under `nix-portable` in non-root Debian and Ubuntu 24.04 containers.
+      Activate a minimal config, then open a fresh login shell outside `nix-portable`.
+      Record whether `~/.zshrc` resolves and how long the first activation takes.
       Replace the "verify" caveats in [Rootless Nix and home-manager](#rootless-nix-and-home-manager) with the result.
 - [ ] Write slides in an open format; fit them to 45 minutes.
 - [ ] Rehearse with a timer; dry run at a local meetup or user group if possible.
@@ -112,37 +112,38 @@ Alternatives: Systems & Infrastructure (configuration management) or the co-loca
 
 ### Short abstract (print)
 
-Do your dotfiles pass validation test?
+Do your dotfiles pass validation tests?
 Do they deploy?
-This talk treats $HOME as a small production system: bootstrap with only Git and a POSIX shell
-(no sudo, symlinks, or templating),
-test installs as a non-root user in clean Linux containers, prove startup survives missing tools,
-and keep secrets out of the repository.
+This talk treats $HOME as a small production system.
+It bootstraps with only Git and a POSIX shell: no sudo, symlinks, or templating.
+It tests installs as a non-root user in clean Linux containers, proves startup survives missing tools,
+and keeps secrets out of the repository.
 Live demo: fresh container to working shell.
 
 ### Long abstract (online)
 
 Keeping dotfiles in Git solves storage, not deployment.
-A passing lint check proves the files parse;
-it doesn't prove that a fresh machine without sudo ends up with a working shell,
+A passing lint check proves the files parse.
+It doesn't prove that a fresh machine without sudo ends up with a working shell,
 or that uninstalling a tool leaves startup clean.
-My dotfiles passed every lint check while hiding bugs that only appeared on deployment:
-an installer that re-downloaded itself forever, a shell that errored when a plugin was missing,
-and a startup that silently returned a failing exit status.
+My dotfiles passed every lint check while hiding bugs that only appeared on deployment.
+An installer re-downloaded itself forever, a shell errored when a plugin was missing,
+and every new shell started with a failing exit status and no error.
 
-AI-assisted tinkering made trying a new editor or terminal an afternoon's work, so tools now arrive in, and leave,
-my $HOME faster than my setup could handle, often on machines I don't control.
+AI-assisted tinkering made trying a new editor or terminal an afternoon's work.
+Tools now arrive in, and leave, my $HOME faster than my setup could handle, often on machines I don't control.
 
 This talk picks up where the widely copied bare-Git-repository dotfiles tutorial stops.
 The base needs only Git and POSIX sh; everything else is an optional layer.
 You will learn how to:
 
-- Use Git as the installer: no sudo, no symlink farm, no runtime templating, no new DSL,
+- Use Git as the installer: no sudo, no symlink farm, no runtime templating, no new configuration language,
   and a bootstrap that is safe to run twice.
 - Pin plugins with Git submodules and install optional user-space tools with mise,
-  then prove Zsh still starts silently with exit status 0 when either is missing.
+  then prove Zsh still starts with no errors and exit status 0 when either is missing.
 - Test deployment, not only syntax: install as a non-root user in clean Debian (dash), Alpine
-  (BusyBox sh), and Fedora (Bash) containers in CI, and run the same matrix locally with Podman or Docker.
+  (BusyBox sh), and Fedora (Bash) containers in CI.
+  Run the same matrix locally with Podman or Docker.
 - Layer a private work repository over a public personal base, with both sharing $HOME as their working tree.
 - Keep secrets out of a public repository: commit references instead of values.
 
@@ -159,7 +160,7 @@ Assumes comfort with Git and a Unix shell; no Nix, Ansible, or dotfiles-manager 
 **Abstract policy:** The short abstract names only Git and POSIX sh.
 The long abstract names open-source projects and Linux distributions: reviewers score open-source relevance,
 and naming the comparison set signals depth and fairness.
-Frame mise and submodules as optional; "No third-party requirement" describes the *minimum bootstrap path*,
+Frame mise and submodules as optional; "only Git and a shell" describes the *minimal bootstrap path*,
 not the fully provisioned environment.
 AI is the motivation, not the subject; keep it to one sentence and never open with it.
 The AI sentence must stay concrete (what got cheaper); "faster than ever" without a cause reads as filler.
@@ -168,9 +169,9 @@ so "the shell" would claim more than the test covers.
 The secrets bullet frames "secret zero" as a problem, not a solved bootstrap;
 the limitations slide states that bootstrap cannot make credentials appear on an untrusted machine.
 The work-overlay bullet does not promise enforced path exclusivity until the docs describe the mechanism (P3).
-The secrets bullet promises a tool-agnostic pattern
-(references, not values; use-time resolution; "secret zero"),
-not a specific tool or a solved bootstrap; mise is the integration point used on stage.
+The secrets bullet promises a tool-agnostic pattern rather than a specific tool or a solved bootstrap:
+references instead of values, use-time resolution, and "secret zero."
+On stage, mise is the integration point.
 Keep "AI agents inherit the shell environment" for the slides: mise `[env]` still exports to every shell in the project,
 so the abstract cannot promise agent isolation.
 Do not state how people currently test their dotfiles; no data exists, and any prevalence claim invites challenge.
@@ -185,10 +186,10 @@ Keep rootless Nix out of the abstract until the container test (P3) verifies it.
 
 > Repository: https://github.com/drts01/dotfiles (public since 2019).
 >
-> CI runs linting, Zsh startup tests (including startup with submodules and mise absent), and a deployment test that
-> installs the dotfiles as a non-root user in fresh containers, then runs again to check idempotency. At submission,
-> the Debian, Alpine, and Fedora container jobs pass. The live demo runs the same steps as CI, and a saved passing run
-> is the offline fallback if conference networking fails. Standard HDMI is enough.
+> CI runs linting, Zsh startup tests (including startup with submodules and mise absent), and a deployment test.
+> The deployment test installs the dotfiles as a non-root user in fresh containers, then runs again to check
+> idempotency. At submission, the Debian, Alpine, and Fedora container jobs pass. The live demo runs the same steps as
+> CI, and a saved passing run is the offline fallback if conference networking fails. Standard HDMI is enough.
 >
 > Outline (45 min): problem and prior art (9), dependencies (4), guardrails and the deployment-only bug table (8),
 > secrets pattern (5), work overlay (3), live demo (7), limitations (3), maturity model and starter template (3),
@@ -197,8 +198,8 @@ Keep rootless Nix out of the abstract until the container test (P3) verifies it.
 > The talk positions the approach against the Atlassian bare-repository tutorial, GNU Stow, chezmoi, yadm, vcsh, and
 > Nix home-manager, including where each is the better choice. AI is a one-sentence motivation, not the subject.
 > Everything covered is open source: Git submodules, mise, prek, a POSIX shell test matrix, a tool-agnostic secrets
-> pattern, and dotfiles-starter, a Copier template released under [LICENSE] with the talk. Copier runs once at
-> creation; the deployed dotfiles need no templating. Slides will be in an open format. No product pitch.
+> pattern, and dotfiles-starter. The starter is a Copier template released under [LICENSE] with the talk. Copier runs
+> once at creation; the deployed dotfiles need no templating. Slides will be in an open format. No product pitch.
 >
 > Previous SCaLE talk recording: [URL]
 
@@ -213,15 +214,15 @@ Replace `[LICENSE]` and `[URL]` before submitting; do not submit placeholders.
 
 Source: `~/git/tmp/CFP-pinned-but-mutable/presentation/scale-24x-speaker-bios.md`
 (Variant 1 + formal dotfiles hook, with "profiled" replaced by "reproducible").
-Plain text for the CFP form; 760 characters.
+Plain text for the CFP form; 788 characters.
 
 > Carlos Meza is a Senior Software Engineer at UnitedHealthcare, where he works on CI/CD, platform automation, and
 > developer experience on AWS. He found his way into tech through Linux user groups, local meetups, and SCaLE. His
 > ten-plus years include engineering roles at Verizon, Everbridge, and The Walt Disney Studios. At Disney, he designed
 > and built a Policy-as-Code service that enforced cloud compliance automatically. He chaired DevOpsDays LA, served on
-> the Interop NOC team, and now leads a team on the SCaLE A/V crew. He has spoken at SCaLE five times since SCaLE 14x.
-> He has kept his dotfiles in a public Git repository since 2019 and treats $HOME like a small production system:
-> versioned, tested, and reproducible. GitHub: drts01 · LinkedIn: cmeza99
+> the Interop network operations center (NOC) team, and now leads a team on the SCaLE A/V crew. He has spoken at SCaLE
+> five times since SCaLE 14x. He has kept his dotfiles in a public Git repository since 2019 and treats $HOME like a
+> small production system: versioned, tested, and reproducible. GitHub: drts01 · LinkedIn: cmeza99
 
 ## Premise
 
@@ -294,12 +295,9 @@ Re-verify before the talk; the numbers date from 2026-10-26.
   and commit messages contain `grammer` and `managment`. <!-- # typos: ignore -->
 - Submodule commits: 15 across `fix(submodules)`, `fix(submodule)`, and `feat(submodules)`.
 - Cold open: the bootstrap script downloads and executes itself (`curl | sh | curl | sh …`).
-- Writing the bootstrap test exposed more bugs than the recursion: an inverted `SKIP_MISE_INSTALL`,
-  a conflict-backup parser that never matched
-  (`read` strips the leading tab Git uses to mark paths),
-  a missing fetch refspec, a detached HEAD aborting under `set -e`, and `git submodule` run outside the work tree.
-  Use as evidence for "test deployment, not syntax";
+- Writing the bootstrap test exposed five bugs besides the recursion;
   see [Bugs only deployment tests find](#bugs-only-deployment-tests-find).
+  Use them as evidence for "test deployment, not syntax."
 - The Atlassian tutorial's own conflict-backup one-liner parses `git checkout` output with `egrep`:
   the same class of fragile parser that broke here.
 - A corporate network blocked or intercepted three of four test images' sources
@@ -311,7 +309,7 @@ Re-verify before the talk; the numbers date from 2026-10-26.
 
 - No sudo for the portable path.
 - Only Git and a shell required to get started.
-- No new tool-specific knowledge: no configuration language, DSL, or manager to learn;
+- No new tool-specific knowledge: no configuration language or manager to learn;
   leaving the approach means deleting one alias, and the files stay where they are.
 - No runtime templating.
 - Integrations compose through each tool's own config and shell hooks
@@ -336,7 +334,7 @@ Do not claim a bare repository is universally best.
 | Approach            | Examples         | New knowledge required       | Strength                                              | Cost                                                                      |
 | ------------------- | ---------------- | ---------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------- |
 | Bare repository     | This talk        | Git, POSIX shell             | Git and shell are enough; no relink or render step    | `$HOME` is a hazardous working tree; host differences harder              |
-| Multiple bare repos | vcsh + myrepos   | Git + vcsh                   | Prior art for the work overlay                        | Another tool for what two Git aliases do                                  |
+| Split bare repos    | vcsh + myrepos   | Git + vcsh                   | Prior art for the work overlay                        | Another tool for what two Git aliases do                                  |
 | Symlink manager     | GNU Stow         | Stow package layout          | Repository and home directory stay separate           | Link creation and maintenance become deployment steps                     |
 | Templating manager  | chezmoi, yadm    | Template syntax, manager CLI | Strong host-specific config; built-in secret managers | Another dependency; source and target can drift                           |
 | Declarative         | Nix home-manager | Nix language, store, flakes  | Packages and config together; atomic rollback         | Steep learning curve; installing Nix normally needs root to create `/nix` |
@@ -448,14 +446,14 @@ Neither repository may track a file the other tracks.
 
 Fit to a 45-minute slot; times are targets.
 
-1. **The problem and the `vimrc` gag (0–4):** Same environment everywhere; AI changed how quickly I can experiment.
-2. **Git is the beginning, not the end (4–9):** Start from the Atlassian tutorial and show what it leaves out;
-   comparison table including Stow, chezmoi/yadm, vcsh, and Nix home-manager; the "new knowledge required" argument.
+1. **The problem and the `vimrc` gag (0–4):** Same environment everywhere; AI changed how fast I can experiment.
+2. **Git is the beginning, not the end (4–9):** Start from the Atlassian tutorial and show what it leaves out.
+   Compare Stow, chezmoi/yadm, vcsh, and Nix home-manager; make the "new knowledge required" argument.
 3. **Dependencies (9–13):** Submodules keep third-party source in Git; mise for packages without sudo.
 4. **Guardrails (13–21):** Pre-commit checks, CI linting, shell tests, bootstrap tests, absence tests.
    Centerpiece: [Bugs only deployment tests find](#bugs-only-deployment-tests-find).
    One slide on startup time: a single measured before/after and the tool used; skip detailed profiling.
-5. **Secrets (21–27):** Bitwarden as the source of truth; evaluate the Rust CLI client, age,
+5. **Secrets (21–27):** Bitwarden as the source of truth; compare the Rust CLI client, age,
    and fnox for retrieval or injection.
    Explain what remains on disk and in the process environment.
 6. **Work and home (27–30):** Portable base plus private work overlay.
@@ -531,7 +529,7 @@ Ask the audience to pick their level and one step to the next.
 | 4     | Operated   | CI matrix across OSes and shells; pinned dependencies; secrets policy; work overlay |
 
 Keep the criteria observable (a command or a CI job proves each), not aspirational.
-The Atlassian tutorial lands at level 2 by hand; the cold-open poll maps roughly to levels 1–3.
+The Atlassian tutorial lands at level 2 by hand; the cold-open poll questions map to levels 1–3.
 
 ## Demo and verification plan
 
@@ -550,7 +548,7 @@ The Atlassian tutorial lands at level 2 by hand; the cold-open poll maps roughly
 ## Secrets questions to resolve
 
 - Confirm which Bitwarden Rust CLI client to use and how it handles local vault data.
-- Decide whether age and/or fnox solve a concrete problem here; avoid adding them solely to fill a slide.
+- Decide whether age, fnox, or both solve a concrete problem here; avoid adding them solely to fill a slide.
 - mise mechanisms (<https://mise.jdx.dev/templates.html>, retrieved 2026-11-01):
   - `[env]` with `exec(command=...)`: resolves when the config renders and exports to every shell in the project,
     including AI agents started there.
@@ -590,7 +588,7 @@ The issue is an honest example of where the chosen architecture strains.
 
 Keep the first version small: bare-repo bootstrap, a minimal shell configuration, optional mise integration,
 an extension point for private overrides, tests, CI, documentation, and a safe secrets policy.
-Copier is a **creation-time convenience**, not a requirement for deploying the generated repository.
+Copier is a **creation-time convenience**, not a deployment dependency of the generated repository.
 
 Notes:
 
@@ -600,7 +598,7 @@ Notes:
 
 ## Evidence to collect before writing slides
 
-- A reproducible old and current shell-startup measurement, including machine and measurement method.
+- Reproducible old and current shell-startup measurements that record the machine and the method.
 - A passing `Bootstrap` CI run (all matrix jobs) saved offline; the procedure and idempotency test exist.
 - The current CI checks and what they do *not* cover
   (for example, the bootstrap test runs without mise, so CI does not test `update` or `mise bootstrap`).
