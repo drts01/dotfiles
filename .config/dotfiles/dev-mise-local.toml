@@ -6,6 +6,7 @@ minimum_release_age = "3d"
 hyperfine = "latest"
 prek      = "latest"
 shellspec = "latest"
+vale      = "latest"
 zola      = "latest"
 
 [task_config]
