@@ -73,7 +73,9 @@ Installed-dotfiles tasks are defined in `.config/dotfiles/mise.toml` and `.confi
 clone-only tasks live in `.config/dotfiles/dev-tasks.toml`.
 Run `mise run --dry-run lint` to preview lint; `mise run lint` applies automatic fixes,
 so review unrelated changes before running it.
-The Vale hook uses the house style in `.config/vale/`.
+The Vale hook reads the user-level style in `.config/vale/`
+and lays the repository rules in `.config/dotfiles/.vale.ini` over it;
+see [Adjust prose rules](@/docs/contributing/documentation.md#adjust-prose-rules).
 
 Update pins from the configured clone root:
 

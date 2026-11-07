@@ -66,13 +66,13 @@ This site explains behavior that needs it; the linked files hold the complete se
 
 ### Linters and formatters
 
-| Path                                   | Tool    | Contents                          |
-| -------------------------------------- | ------- | --------------------------------- |
-| {{<source path=".config/vale/" />}}    | Vale    | Prose rules and the `House` style |
-| {{<source path=".config/rumdl/" />}}   | rumdl   | Markdown lint rules               |
-| {{<source path=".config/ryl/" />}}     | ryl     | YAML lint rules                   |
-| {{<source path=".config/yamlfmt/" />}} | yamlfmt | YAML formatting                   |
-| {{<source path=".config/tombi/" />}}   | Tombi   | TOML formatting                   |
+| Path                                   | Tool    | Contents                                                          |
+| -------------------------------------- | ------- | ----------------------------------------------------------------- |
+| {{<source path=".config/vale/" />}}    | Vale    | User-level rules and the `House`, `Generated`, `Technical` styles |
+| {{<source path=".config/rumdl/" />}}   | rumdl   | Markdown lint rules                                               |
+| {{<source path=".config/ryl/" />}}     | ryl     | YAML lint rules                                                   |
+| {{<source path=".config/yamlfmt/" />}} | yamlfmt | YAML formatting                                                   |
+| {{<source path=".config/tombi/" />}}   | Tombi   | TOML formatting                                                   |
 
 ### Git and SSH
 
@@ -110,5 +110,6 @@ This site explains behavior that needs it; the linked files hold the complete se
 | `mise.toml`, `mise.lock`    | Installed tasks and deployment lock (prek only)                         |
 | `dev-mise.lock`             | Development lock; linked as `mise.local.lock` in a clone                |
 | `prek.toml`                 | Hook configuration                                                      |
+| `.vale.ini`                 | Vale rules for this repository, layered over `.config/vale/`            |
 | `gitignore`                 | Ignore rules linked into `info/exclude`                                 |
 | `docs/`                     | Source of this site                                                     |

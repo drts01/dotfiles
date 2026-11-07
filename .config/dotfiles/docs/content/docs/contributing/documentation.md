@@ -138,11 +138,38 @@ mise run docs:build
 
 Use `--skip-external-links` with `docs:check` for a fast offline-friendly check; omit it to check external links too.
 The Vale hook runs on staged documentation before each commit;
-`--all-files` checks every tracked Markdown file except agent prompts and talk notes.
-The `House` style also rejects patterns common in generated text: stock phrases, hype vocabulary,
-sentence-opening connectives, `not just X, but Y` framing, em dashes, and emoji.
-Add terms that Vale reports as misspelled to `.config/vale/styles/config/vocabularies/House/accept.txt`.
+`--all-files` checks every tracked Markdown file except agent prompts.
+Add terms that Vale reports as misspelled to `.config/vale/styles/config/vocabularies/General/accept.txt`
+if they apply across projects, or to `.config/vale/styles/config/vocabularies/House/accept.txt`
+if they are specific to this repository.
+
 `docs:check` and `docs:build` fail when a page lacks `extra.type` or its type does not match its section.
 In a clone, they also fail when a `source` link points at an untracked path,
 or when a tracked entry under `.config/` has no row in File layout.
 `docs:build` stamps a temporary copy; it does not change the source files.
+
+## Adjust prose rules
+
+Vale reads both files.
+The repository vocabulary adds terms to the user-level vocabulary.
+
+| File                         | Scope                                                       | Contents                                                          |
+| ---------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------------- |
+| `.config/vale/.vale.ini`     | Every project: deploys to `~/.config/vale/.vale.ini`        | Packages, styles, general vocabulary, prose and commit rules      |
+| `.config/dotfiles/.vale.ini` | This repository: the hooks pass it with `--config`          | Repository vocabulary, Zola markup ignores, talk-specific rules   |
+
+The hooks set `XDG_CONFIG_HOME` to the checkout's `.config/`,
+so a clone and CI read the tracked user-level file instead of the installed copy.
+
+The custom styles live in `.config/vale/styles/`:
+
+| Style       | Runs on                           | Checks                                                                                                 |
+| ----------- | --------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `House`     | Documentation and commit messages | Latin abbreviations, wordy phrases, weasel words, `there is` openings, repeated words                  |
+| `Generated` | Documentation and commit messages | Stock phrases, hype vocabulary, sentence-opening connectives, `not just X, but Y`, em dashes, emoji    |
+| `Technical` | Documentation                     | Product name casing; acronyms without a definition                                                     |
+
+To relax a rule for one kind of document,
+add a section to `.config/dotfiles/.vale.ini` that sets the rule and omits `BasedOnStyles`;
+a section that names styles runs those styles alone.
+Talk notes use this for first-person voice.
