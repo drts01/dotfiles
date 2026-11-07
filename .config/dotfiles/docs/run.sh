@@ -65,6 +65,8 @@ stamp_dates() {
 # Each docs page declares its Diátaxis type as `type` under `[extra]`; its section fixes the allowed types.
 allowed_types() {
   case "$1" in
+    docs/contributing/decisions/*/*) ;;
+    docs/contributing/decisions/*) echo explanation ;;
     docs/start/*/* | docs/how-to/*/* | docs/concepts/*/* | docs/reference/*/* | docs/contributing/*/*) ;;
     docs/start/*) echo tutorial ;;
     docs/how-to/*) echo how-to ;;
@@ -92,7 +94,7 @@ check_types() {
       relative=${page#"$DOCS_DIR"/content/}
       allowed=$(allowed_types "$relative")
       if [ -z "$allowed" ]; then
-        echo "ERROR: $relative must sit directly in docs/start, how-to, concepts, reference, or contributing." >&2
+        echo "ERROR: $relative must sit directly in docs/start, how-to, concepts, reference, contributing, or contributing/decisions." >&2
         failed=1
         continue
       fi
