@@ -3,6 +3,7 @@ Atuin
 Bitwarden
 chezmoi
 Codeberg
+[Aa]gents?
 deinitialize
 Docsy
 [Dd]otfiles?
@@ -11,15 +12,18 @@ Everbridge
 fd
 fnox
 [Gg]itlinks?
+[Hh]some directory
 Meza
 myrepos
 Neovim
+[Nn]ix
 O'Reilly
 prek
 refspec
 ripgrep
 rumdl
 ryl
+SCaLE
 Starship
 Tombi
 uv
