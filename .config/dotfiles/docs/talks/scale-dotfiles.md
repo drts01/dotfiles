@@ -131,7 +131,8 @@ An installer re-downloaded itself forever, a shell errored when a plugin was mis
 and every new shell started with a failing exit status and no error.
 
 AI-assisted tinkering made trying a new editor or terminal an afternoon's work.
-I now add and remove tools in $HOME faster than my setup can handle, often on machines I don't control.
+I change tools more often now, but my shell must keep working when I add one, remove one,
+or use a machine I don't control.
 
 This talk picks up where the popular bare-Git-repository dotfiles tutorial stops.
 The base needs only Git and POSIX sh; everything else is an optional layer.
