@@ -1,5 +1,4 @@
 [settings]
-locked              = true
 lockfile_mode       = "generate"
 http_timeout        = "10s"
 minimum_release_age = "3d"

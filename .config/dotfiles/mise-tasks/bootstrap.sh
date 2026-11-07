@@ -253,7 +253,7 @@ echo "Running post-clone setup..."
 if command -v mise > /dev/null 2>&1; then
   # A fresh machine has not trusted this config; mise refuses to load it otherwise.
   mise trust "$BASEDIR/mise.toml"
-  mise --cd "$BASEDIR" task run install:git-hooks
+  MISE_ENABLE_TOOLS=prek mise --cd "$BASEDIR" task run --locked install:git-hooks
 else
   echo "mise not found; skipping mise-managed tools."
   (cd "$BASEDIR" && sh ./mise-tasks/install/git-hooks.sh)
