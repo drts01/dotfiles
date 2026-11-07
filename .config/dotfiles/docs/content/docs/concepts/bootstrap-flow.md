@@ -104,3 +104,6 @@ The script body runs inside one function, so `curl | sh` never executes a partia
 - [Review the installer and pin a commit](@/docs/how-to/pin-a-commit.md)
 - [Environment variables](@/docs/reference/environment.md)
 - [Security model](@/docs/concepts/security.md)
+
+Decisions: [ADR-0002](@/docs/contributing/decisions/0002-minimal-requirements.md),
+[ADR-0003](@/docs/contributing/decisions/0003-plugin-submodules.md).

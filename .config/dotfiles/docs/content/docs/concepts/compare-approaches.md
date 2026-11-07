@@ -71,6 +71,9 @@ and installation tests on several platforms; see [How the installer works](@/doc
 - [Security model](@/docs/concepts/security.md)
 - [Platform support](@/docs/reference/support.md)
 
+Decisions: [ADR-0001](@/docs/contributing/decisions/0001-bare-repository.md),
+[ADR-0002](@/docs/contributing/decisions/0002-minimal-requirements.md).
+
 [atlassian]: https://www.atlassian.com/git/tutorials/dotfiles
 [chezmoi]: https://www.chezmoi.io/why-use-chezmoi/
 [hm]: https://nix-community.github.io/home-manager/

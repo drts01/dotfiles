@@ -62,3 +62,5 @@ so mise pins it without a Python runtime.
 - [Install and run Git hooks](@/docs/how-to/git-hooks.md)
 - [How the installer works](@/docs/concepts/bootstrap-flow.md)
 - [File layout](@/docs/reference/file-layout.md)
+
+Decisions: [ADR-0001](@/docs/contributing/decisions/0001-bare-repository.md).

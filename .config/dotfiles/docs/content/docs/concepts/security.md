@@ -74,3 +74,5 @@ Three controls keep credentials out of commits:
 - [Review the installer and pin a commit](@/docs/how-to/pin-a-commit.md)
 - [Customize the shell](@/docs/how-to/customize-shell.md)
 - [Security policy and private vulnerability reporting](https://github.com/drts01/dotfiles/security/policy)
+
+Decisions: [ADR-0007](@/docs/contributing/decisions/0007-security-reporting.md).
