@@ -1,0 +1,7 @@
+[tools]
+"npm:agent-skill-manager" = { version = "latest", lazy = true, lazy_bins = [ "asm" ] }  # universal skill manager for AI coding agents.
+
+# --- AI coding assistants ---
+[tools.opencode]
+version = "latest"
+lazy    = true

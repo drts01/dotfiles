@@ -32,8 +32,3 @@ harper-ls                  = "latest"  # English grammar checker
 # --- VCS / Git ---
 delta = "latest"  # Syntax-highlighted side-by-side terminal git diff pager
 gh    = "latest"  # GitHub CLI
-
-# --- AI coding assistants ---
-[tools.opencode]
-version = "latest"
-lazy    = true
