@@ -3,6 +3,7 @@ Atuin
 Bitwarden
 chezmoi
 Codeberg
+Chainguard
 [Aa]gents?
 deinitialize
 Docsy

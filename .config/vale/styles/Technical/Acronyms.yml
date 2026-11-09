@@ -16,6 +16,7 @@ exceptions:
   - CPU
   - CSS
   - CSV
+  - CVE
   - DEBUG
   - DOM
   - DPI
