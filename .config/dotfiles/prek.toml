@@ -1,5 +1,5 @@
 default_install_hook_types = [ "commit-msg", "pre-commit", "pre-push" ]
-exclude                    = "\\.lock"
+exclude                    = "(\\.lock|^\\.agents)"
 
 [[repos]]
 repo  = "meta"
