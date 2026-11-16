@@ -22,6 +22,7 @@ export TFENV_ROOT="$XDG_DATA_HOME/tfenv" TOFUENV_ROOT="$XDG_DATA_HOME/tofu" TENV
 export VAGRANT_HOME="$XDG_DATA_HOME/vagrant" VAGRANT_ALIAS_FILE="$XDG_DATA_HOME/vagrant/aliases" _ZL_DATA="$XDG_DATA_HOME/zlua"
 
 has rg && export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgreprc"
+has zig && export CC='zig cc' CXX='zig c++'
 
 if has hx; then
   VISUAL="hx"
@@ -33,11 +34,19 @@ else VISUAL="vi"; fi
 
 EDITOR="$VISUAL"
 
-has bat && export PAGER="bat --plain"
+has bat && export MANPAGER="sh -c 'col -bx | bat -l man -p --paging=always'" MANROFFOPT="-c" BAT_PAGER="less -FgiMRSwz-4"
 
 if has less; then
   [ -z "${PAGER-}" ] && PAGER='less'
-  export LESSCHARSET="UTF-8" LESSHISTFILE='-' LESS=-FXgiMRSwz-4 PAGER
+  export LESSCHARSET="UTF-8" LESSHISTFILE='-' LESS=-FgiMRSwz-4 PAGER
 fi
 
 export VISUAL EDITOR
+
+# TODO: Move to better location
+# Pipe any command into 'fp' (fuzzy pager) to filter with fzf/skim and preview context
+if has sk; then
+  fp() { sk --ansi --no-sort --reverse --tiebreak=index --bind "ctrl-m:execute:echo {} | less -R"; }
+elif has fzf; then
+  fp() { fzf --ansi --no-sort --reverse --tiebreak=index --bind "ctrl-m:execute:echo {} | less -R"; }
+fi
