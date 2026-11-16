@@ -18,7 +18,7 @@ if has eza; then
   }
 
   ll() { ls --long --header "$@"; }
-  tree() { eza --tree --header --all --icons "$@"; }
+  tree() { eza --tree --header --all --icons=auto "$@"; }
 else
   alias ls='ls -FA --color=auto'
 fi
