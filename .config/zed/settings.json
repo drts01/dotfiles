@@ -76,8 +76,8 @@
     },
     "default_model": {
       "effort": "medium",
-      "provider": "copilot_chat",
-      "model": "claude-opus-5.5",
+      "provider": "openai-subscribed",
+      "model": "gpt-6-luna",
       "enable_thinking": true
     },
     "default_profile": "write",
@@ -139,7 +139,7 @@
     ],
     "model_parameters": [],
     "tool_permissions": {
-      "default": "confirm",
+      "default": "allow",
       "tools": {
         "fetch": {
           "always_allow": [
@@ -272,6 +272,10 @@
     "multi_buffer_hide_symbols": false
   },
   "terminal": {
+    "env": {
+      "EDITOR": "zed --wait",
+      "VISUAL": "zed --wait"
+    },
     "font_size": 11.0,
     "show_count_badge": false
   },
@@ -308,7 +312,7 @@
   "icon_theme": {
     "mode": "dark",
     "light": "Zed (Default)",
-    "dark": "Zed (Default)"
+    "dark": "Catppuccin Frappé Monochrome"
   },
   "agent_servers": {
     "github-copilot-cli": {
@@ -335,7 +339,6 @@
       "preferred_line_length": 120
     },
     "Markdown": {
-      "format_on_save": "on",
       "language_servers": ["rumdl", "harper-ls", "!codebook", "..."],
       "formatter": {
         "language_server": {
@@ -344,7 +347,6 @@
       }
     },
     "Shell Script": {
-      "format_on_save": "on",
       "formatter": {
         "external": {
           "command": "shfmt",
@@ -355,7 +357,6 @@
       }
     },
     "TOML": {
-      "format_on_save": "on",
       "language_servers": ["tombi", "!taplo", "..."],
       "formatter": {
         "language_server": {
@@ -364,7 +365,6 @@
       }
     },
     "YAML": {
-      "format_on_save": "on",
       "formatter": {
         "external": {
           "command": "ryl",
