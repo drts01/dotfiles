@@ -1,2 +1,2 @@
 [tools]
-imagemagick = "latest"
+imagemagick = { version = "latest", lazy = true }
