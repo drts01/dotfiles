@@ -30,5 +30,9 @@ ty          = "latest"  # Python type-checker
 harper-ls                  = "latest"  # English grammar checker
 
 # --- VCS / Git ---
-delta = "latest"  # Syntax-highlighted side-by-side terminal git diff pager
-gh    = "latest"  # GitHub CLI
+delta   = "latest"                             # Syntax-highlighted side-by-side terminal git diff pager
+gh      = "latest"                             # GitHub CLI
+lazygit = { version = "latest", lazy = true }  # Simple Git TUI
+
+# --- Build tools ---
+zig = { version = "latest", lazy = true }
