@@ -1,6 +1,13 @@
+exclude = [
+  "AGENTS.md",
+]
+
 [files]
 yaml     = [ "*.yaml", "*.yml", ".yamllint", ".yamlfmt" ]
 markdown = [ "**/*.md" ]
+
+[lint]
+strict = true
 
 [lint.rules]
 anchors                 = "enable"
