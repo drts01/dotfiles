@@ -1,2 +1,3 @@
 [tools]
 imagemagick = { version = "latest", lazy = true }
+ffmpeg      = { version = "latest", lazy = true }
