@@ -31,6 +31,7 @@ POSIX `sh` therefore gets portable aliases, environment variables, mise shims, s
   ├─ source .profile
   └─ configure Homebrew paths
 .config/zsh/.zshrc                    interactive shells only
+  ├─ source .profile, including in non-login shells
   ├─ configure Homebrew completions and run compinit
   ├─ source $ENV → .config/sh/.shrc (all shared modules in order)
   └─ source .config/zsh/zsh.d/*.zshrc in lexical order

@@ -5,6 +5,9 @@ case "$-" in
   *) return 0 2> /dev/null || exit 0 ;;
 esac
 
+# shellcheck source=/dev/null
+. "$HOME/.profile"
+
 zmodload zsh/parameter
 
 if [[ -n ${HOMEBREW_PREFIX-} ]]; then

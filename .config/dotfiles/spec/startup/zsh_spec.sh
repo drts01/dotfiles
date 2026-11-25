@@ -51,6 +51,13 @@ When run run_isolated zsh -d -lic '[[ $HISTFILE == $XDG_STATE_HOME/.zsh_history 
 The status should be success
 End
 
+It 'initializes profile environment in cold non-login interactive Zsh'
+When run run_isolated zsh -d -ic '[[ ! -o login && $_PROFILE_SOURCED == 1 && $_shell == zsh && $XDG_CONFIG_HOME == $HOME/.config && $ENV == $HOME/.config/sh/.shrc && $HISTFILE == $HOME/.local/state/.zsh_history && -n $EDITOR && -o vi ]] && (( ${+functions[compdef]} )) && alias dotfiles >/dev/null'
+The status should be success
+The output should be blank
+The error should be blank
+End
+
 It 'enables vi mode in non-login interactive Zsh'
 When run run_isolated env XDG_CONFIG_HOME="$HOME_DIR/.config" XDG_DATA_HOME="$HOME_DIR/.local/share" XDG_STATE_HOME="$HOME_DIR/.local/state" XDG_CACHE_HOME="$HOME_DIR/.cache" ENV="$HOME_DIR/.config/sh/.shrc" zsh -d -ic '[[ -o vi ]]'
 The status should be success
