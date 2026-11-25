@@ -75,6 +75,7 @@ so every module parses in every shell.
 ## History
 
 Each shell writes its own file under `$XDG_STATE_HOME`.
+Interactive startup creates this directory if it is missing and reports a failure if it cannot create it.
 Zsh extended history uses a format that Bash cannot read, so a shared file would corrupt both.
 `sh.d/10_interactive.sh` sets the capacity for every interactive shell, including non-login children;
 each shell's native file sets its own controls. macOS `/bin/sh` is Bash in POSIX mode and
