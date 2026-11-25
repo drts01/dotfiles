@@ -55,7 +55,7 @@ jobs:
       - name: Checkout trusted trunk
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
-          ref: trunk
+          ref: ${{ github.sha }}
           persist-credentials: false
       - name: Verify trusted revision
         env:
@@ -103,7 +103,7 @@ jobs:
       - name: Checkout trusted trunk for archive
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
-          ref: trunk
+          ref: ${{ github.sha }}
           persist-credentials: true
       - name: Verify trusted revision
         env:
@@ -131,7 +131,7 @@ jobs:
       - name: Checkout trusted chart generator
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
-          ref: trunk
+          ref: ${{ github.sha }}
           persist-credentials: false
       - name: Verify trusted revision
         env:
