@@ -47,6 +47,13 @@ Downloads from outside the commit rely on TLS alone.
   A commit ID proves that content did not change after you reviewed it; it does not prove authorship.
   The repository does not sign its commits yet.
 
+## SSH agent forwarding
+
+Agent forwarding is disabled by default.
+Enable it only for a trusted connection with `ssh -A host`.
+A server with access to a forwarded agent can authenticate as you while that access remains available,
+even though it cannot read your private keys.
+
 ## Secrets
 
 The repository tracks configuration, never credentials.
