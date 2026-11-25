@@ -1,4 +1,4 @@
-"""Regression checks for history charts generated from sanitized hyperfine data."""
+"""Regression checks for archiving and charting sanitized hyperfine data."""
 
 import importlib.util
 import json
@@ -6,12 +6,96 @@ import tempfile
 import unittest
 import xml.etree.ElementTree as ET
 from pathlib import Path
+from unittest import mock
 
 
 SCRIPT = Path(__file__).resolve().parents[1] / "bench" / "profile-data.py"
 SPEC = importlib.util.spec_from_file_location("profile_data", SCRIPT)
 profile_data = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(profile_data)
+
+
+class ProfileArchiveTest(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.artifacts = Path(self.tmp.name) / "artifacts"
+        self.repository = Path(self.tmp.name) / "repository"
+        self.sha = "a" * 40
+        self.environment = {
+            "GITHUB_REF": "refs/heads/trunk",
+            "GITHUB_RUN_ID": "100",
+            "GITHUB_RUN_ATTEMPT": "1",
+        }
+        for slug, os_name, arch, runner in (
+            ("linux-x64", "Linux", "X64", "ubuntu-26.04"),
+            ("macos-arm64", "macOS", "ARM64", "macos-26"),
+        ):
+            directory = self.artifacts / f"shell-profile-{slug}"
+            profile_data.save(directory / "metadata.json", {
+                "run_id": "100",
+                "run_attempt": "1",
+                "git_sha": self.sha,
+                "runner_os": os_name,
+                "runner_arch": arch,
+                "runner_label": runner,
+                "scenario": "isolated-system-path-no-mise-tools",
+                "runs": 1,
+            })
+            profile_data.save(directory / "results.json", {
+                "results": [
+                    {
+                        "name": name,
+                        "command": command,
+                        "measurements": [{"exit_code": 0}],
+                    }
+                    for name, command in profile_data.COMMANDS.items()
+                ],
+            })
+        self.git = self.enterContext(mock.patch.object(
+            profile_data, "git", side_effect=[self.sha, ""],
+        ))
+        self.run = self.enterContext(mock.patch.object(profile_data.subprocess, "run"))
+        self.enterContext(mock.patch.dict(profile_data.os.environ, self.environment))
+
+    def test_archive_accepts_both_current_runner_identities(self):
+        profile_data.archive(self.artifacts, self.repository)
+        for slug in ("linux-x64", "macos-arm64"):
+            with self.subTest(slug=slug):
+                source = self.artifacts / f"shell-profile-{slug}"
+                archived = self.repository / "results" / slug
+                self.assertEqual(
+                    (archived / "100-1.json").read_bytes(),
+                    (source / "results.json").read_bytes(),
+                )
+                self.assertEqual(
+                    (archived / "100-1.meta.json").read_bytes(),
+                    (source / "metadata.json").read_bytes(),
+                )
+
+    def test_archive_rejects_identity_mismatches_for_both_runners(self):
+        for slug in ("linux-x64", "macos-arm64"):
+            path = self.artifacts / f"shell-profile-{slug}" / "metadata.json"
+            original = profile_data.load(path)
+            for key, value in (
+                ("run_id", "101"),
+                ("run_attempt", "2"),
+                ("git_sha", "b" * 40),
+                ("runner_os", "unexpected"),
+                ("runner_arch", "unexpected"),
+                ("runner_label", "ubuntu-24.04" if slug == "linux-x64" else "macos-15"),
+            ):
+                with self.subTest(slug=slug, key=key):
+                    profile_data.save(path, {**original, key: value})
+                    self.git.reset_mock(side_effect=True)
+                    self.git.return_value = self.sha
+                    identity = "artifact" if key in ("run_id", "run_attempt", "git_sha") else "runner"
+                    with self.assertRaisesRegex(ValueError, f"{identity} identity mismatch: {slug}"):
+                        profile_data.archive(self.artifacts, self.repository)
+                    self.git.assert_called_once_with(self.repository, "rev-parse", "HEAD")
+                    self.run.assert_not_called()
+                    self.assertFalse(self.repository.exists())
+                profile_data.save(path, original)
 
 
 class ProfileChartTest(unittest.TestCase):

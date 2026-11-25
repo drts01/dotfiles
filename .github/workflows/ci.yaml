@@ -52,6 +52,8 @@ jobs:
         run: sh .config/dotfiles/tests/gitignore.sh
       - name: Test editor whitespace preservation
         run: python3 -m unittest discover -s .config/dotfiles/tests -p 'test_editor_whitespace.py'
+      - name: Test shell profile archiving and charts
+        run: python3 -m unittest discover -s .config/dotfiles/tests -p 'test_profile_data.py'
 
       - name: Cache prek environments
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
