@@ -6,7 +6,8 @@ CDPATH=
 BASEDIR=$(cd -- "$(dirname -- "$0")/../.." && pwd)
 IGNORE_FILE="$BASEDIR/gitignore"
 GIT_DIR="${1:-$(git -C "$BASEDIR" rev-parse --absolute-git-dir)}"
-EXCLUDE_FILE="$GIT_DIR/info/exclude"
+# Resolve the common directory, not the leaf: absolute git-path can dereference symlinks.
+EXCLUDE_FILE="$(git --git-dir="$GIT_DIR" rev-parse --path-format=absolute --git-path info)/exclude"
 BACKUP_FILE="$EXCLUDE_FILE.before-dotfiles"
 TROUBLESHOOT_URL=https://drts01.github.io/dotfiles/docs/how-to/troubleshooting/
 
@@ -42,5 +43,5 @@ if [ -e "$EXCLUDE_FILE" ]; then
   mv "$EXCLUDE_FILE" "$BACKUP_FILE"
 fi
 
-mkdir -p "$GIT_DIR/info"
+mkdir -p "$(dirname -- "$EXCLUDE_FILE")"
 ln -s "$IGNORE_FILE" "$EXCLUDE_FILE"
