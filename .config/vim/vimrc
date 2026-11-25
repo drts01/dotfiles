@@ -142,6 +142,9 @@ nnoremap <C-l> <C-w>l
 
 " Trim trailing whitespace on save
 function! s:StripTrailingWhitespaces()
+  if &filetype ==# 'markdown'
+    return
+  endif
   let l = line(".")
   let c = col(".")
   %s/\s\+$//e
