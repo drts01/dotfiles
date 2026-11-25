@@ -46,10 +46,12 @@ and `git submodule update --init -- .config/nvim/pack/plugins/start` for Neovim 
 
 Setup links the clone's Git exclude file to `.config/dotfiles/gitignore` and links ignored root `.miserc.toml`,
 `mise.local.toml`, and `mise.local.lock` to their tracked development files.
+It also links ignored root `AGENTS.md` to `.config/dotfiles/AGENTS.md` for agent discovery in the clone.
+Keep this root link untracked to avoid deploying instructions to `~/AGENTS.md`.
 It trusts the maintenance tasks, installs prek, and installs regular-clone pre-commit hooks.
 Run setup before using mise in the clone so the machine configuration at `.config/mise/` does not load
 as project configuration.
-Setup replaces unchanged copies of `.miserc.toml` and `mise.local.toml`
+Setup replaces unchanged copies of `AGENTS.md`, `.miserc.toml`, and `mise.local.toml`
 (including a mise config with the former `locked = true` setting)
 with symlinks; it stops rather than overwriting custom content or links to other targets.
 It also stops if the lockfile already links elsewhere.
@@ -71,8 +73,8 @@ mise run docs:build
 List tasks with `mise tasks ls` and run one with `mise run <task>` from the clone root.
 Installed-dotfiles tasks are defined in `.config/dotfiles/mise.toml` and `.config/dotfiles/mise-tasks/`;
 clone-only tasks live in `.config/dotfiles/dev-tasks.toml`.
-Run `mise run --dry-run lint` to preview lint; `mise run lint` applies automatic fixes,
-so review unrelated changes before running it.
+Run `mise run --dry-run lint` to preview lint; `mise run lint` applies automatic fixes.
+Review unrelated changes before running it.
 The Vale hook reads the user-level style in `.config/vale/`
 and lays the repository rules in `.config/dotfiles/.vale.ini` over it;
 see [Adjust prose rules](@/docs/contributing/documentation.md#adjust-prose-rules).

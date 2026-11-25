@@ -17,7 +17,7 @@ command -v mise > /dev/null 2>&1 || fail 'mise is required for development setup
   fail 'run development setup from a regular clone, not the installed dotfiles'
 
 sh "$BASEDIR/mise-tasks/install/gitignore.sh"
-for path in .miserc.toml mise.local.toml mise.local.lock; do
+for path in AGENTS.md .miserc.toml mise.local.toml mise.local.lock; do
   if git -C "$ROOT" ls-files --error-unmatch -- "$path" > /dev/null 2>&1; then
     fail "$path is tracked; refusing to set up development-only configuration"
   fi
@@ -46,6 +46,7 @@ link_local_config() {
   fi
 }
 
+link_local_config AGENTS.md .config/dotfiles/AGENTS.md
 link_local_config .miserc.toml .config/dotfiles/dev-miserc.toml
 link_local_config mise.local.toml .config/dotfiles/dev-mise-local.toml
 
