@@ -2,7 +2,7 @@
 alias dotfiles='git --git-dir=$HOME/.local/share/dotfiles --work-tree=$HOME -c diff.relative=false'
 
 if has eza; then
-  ls() {
+  ls() (
     eza_icons=""
     for arg in "$@"; do
       case "$arg" in
@@ -14,8 +14,7 @@ if has eza; then
     done
 
     eza --across --all --git --group-directories-first $eza_icons "$@"
-    unset eza_icons arg
-  }
+  )
 
   ll() { ls --long --header "$@"; }
   tree() { eza --tree --header --all --icons=auto "$@"; }
