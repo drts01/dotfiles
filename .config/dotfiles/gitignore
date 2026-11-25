@@ -13,4 +13,5 @@
 /.config/mise/mise.lock
 
 # Development-only files symlinked in regular clones
+/AGENTS.md
 /*mise*
