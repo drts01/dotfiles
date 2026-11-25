@@ -24,7 +24,7 @@ When curl or wget is available, the installer uses it to fetch mise; the dotfile
 The installer changes your home directory:
 
 - Moves existing files that conflict with tracked files to `~/.df-bak`, created with mode `700`.
-  A later backup of the same path overwrites the earlier one.
+  If that directory already exists, retain later backups in a separate `~/.df-bak/reinstall.XXXXXX/` directory.
 - Installs mise to `~/.local/bin/mise` if it is missing.
   To skip it, [install without mise](@/docs/how-to/install-without-mise.md).
 - Installs a pre-commit hook in the bare repository when mise or `prek` is available.

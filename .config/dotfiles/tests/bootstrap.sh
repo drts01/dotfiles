@@ -121,6 +121,96 @@ if env -i PATH="$TEST_PATH" sh -c 'command -v mise' > /dev/null; then
   fail "mise found in $TEST_PATH; the test requires a mise-free PATH"
 fi
 
+# Keep the data-loss regression runnable without submodules or network access.
+backup_tests() {
+  fixture="$TMP/backup-fixture"
+  home="$TMP/backup-home"
+  mkdir -p "$fixture/.config/dotfiles/mise-tasks/install" "$home"
+  cp "$ROOT/.config/dotfiles/gitignore" "$fixture/.config/dotfiles/gitignore"
+  cp "$ROOT/.config/dotfiles/mise-tasks/install/gitignore.sh" "$fixture/.config/dotfiles/mise-tasks/install/gitignore.sh"
+  printf '#!/bin/sh\nexit 0\n' > "$fixture/.config/dotfiles/mise-tasks/install/git-hooks.sh"
+  for name in .bashrc .profile .zshenv; do
+    printf 'tracked\n' > "$fixture/$name"
+    printf 'original\n' > "$home/$name"
+  done
+  git init -q "$fixture"
+  git -C "$fixture" add .
+  git -C "$fixture" -c user.name=test -c user.email=test@example.invalid \
+    commit -q --no-verify -m 'test: backup fixture'
+  git clone -q --bare "$fixture" "$home/.local/share/dotfiles"
+  backup_deploy() {
+    env -i HOME="$home" PATH="$TEST_PATH" DOTFILES_SUBMODULES=none \
+      sh "$DEPLOY" > "$TMP/backup-out" 2>&1
+  }
+
+  step "Backup: retain first-run layout"
+  backup_deploy || {
+    cat "$TMP/backup-out"
+    fail 'first backup failed'
+  }
+  [ "$(cat "$home/.df-bak/.bashrc")" = original ] || fail 'first backup layout changed'
+  [ -n "$(find "$home/.df-bak" -prune -perm 700)" ] || fail 'backup directory is not private'
+
+  # Existing directories and dangling links must not become move destinations.
+  rm "$home/.df-bak/.profile" "$home/.df-bak/.zshenv"
+  mkdir "$home/.df-bak/.profile" "$TMP/backup-outside"
+  printf 'directory backup\n' > "$home/.df-bak/.profile/keep"
+  ln -s "$TMP/missing" "$home/.df-bak/.zshenv"
+  ln -s "$TMP/backup-outside" "$home/.df-bak/.config"
+  for content in second third; do
+    step "Backup: preserve earlier backups on $content no-index checkout"
+    rm "$home/.local/share/dotfiles/index"
+    for name in .bashrc .profile .zshenv; do
+      printf '%s\n' "$content" > "$home/$name"
+    done
+    backup_deploy || {
+      cat "$TMP/backup-out"
+      fail 'repeat backup failed'
+    }
+    found=false
+    for backup in "$home"/.df-bak/reinstall.*; do
+      [ -d "$backup" ] || continue
+      if [ "$(cat "$backup/.bashrc")" = "$content" ]; then
+        found=true
+        [ -n "$(find "$backup" -prune -perm 700)" ] || fail 'repeat backup is not private'
+        for name in .profile .zshenv; do
+          [ "$(cat "$backup/$name")" = "$content" ] || fail 'new conflict was not retained'
+        done
+      fi
+    done
+    [ "$found" = true ] || fail "$content conflict was not retained separately"
+    [ "$(cat "$home/.df-bak/.bashrc")" = original ] || fail 'original backup was overwritten'
+    [ "$(cat "$home/.df-bak/.profile/keep")" = 'directory backup' ] || fail 'backup directory was clobbered'
+    [ ! -e "$home/.df-bak/.profile/.profile" ] || fail 'conflict moved into existing backup directory'
+    [ "$(readlink "$home/.df-bak/.zshenv")" = "$TMP/missing" ] || fail 'backup symlink was clobbered'
+    [ -z "$(ls -A "$TMP/backup-outside")" ] || fail 'backup followed an existing parent symlink'
+  done
+  [ "$(cat "$home/.df-bak"/reinstall.*/.bashrc | LC_ALL=C sort)" = "$(printf 'second\nthird')" ] ||
+    fail 'an intermediate backup was lost'
+
+  for kind in symlink file; do
+    step "Backup: refuse a $kind backup root"
+    home="$TMP/backup-root-$kind"
+    mkdir "$home"
+    git clone -q --bare "$fixture" "$home/.local/share/dotfiles"
+    printf 'conflict\n' > "$home/.bashrc"
+    if [ "$kind" = symlink ]; then
+      ln -s "$TMP/backup-outside" "$home/.df-bak"
+    else
+      printf 'keep\n' > "$home/.df-bak"
+    fi
+    if backup_deploy; then fail "accepted $kind backup root"; fi
+    [ "$(cat "$home/.bashrc")" = conflict ] || fail 'refusal moved the conflicting file'
+    [ -z "$(ls -A "$TMP/backup-outside")" ] || fail 'refusal modified symlink target'
+  done
+}
+
+backup_tests
+if [ "${1-}" = --backups-only ]; then
+  printf 'bootstrap backup tests: ok\n'
+  exit 0
+fi
+
 step "Creating fixture origin"
 git init -q --bare "$ORIGIN"
 # CI checkouts are shallow; accept their truncated history.

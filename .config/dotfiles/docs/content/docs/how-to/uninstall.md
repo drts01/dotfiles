@@ -41,14 +41,19 @@ Restoring `~/.df-bak` brings back only the files that the installer replaced.
    command rm -rf ~/.local/share/dotfiles
    ```
 
-4. Restore the backups, then delete the backup directory:
-
-   ```bash
-   cp -Rp ~/.df-bak/. ~/ && command rm -rf ~/.df-bak
-   ```
+4. Restore the files you need from the backups:
 
    Skip this step if `~/.df-bak` does not exist; the installer replaced no files.
-   A path backed up twice holds only the later copy.
+   The first backup is directly under `~/.df-bak`.
+   Later backups are in separate `~/.df-bak/reinstall.XXXXXX/` directories; select the generation you want.
+   Copy individual files from that generation, for example:
+
+   ```bash
+   cp -p ~/.df-bak/.bashrc ~/.bashrc
+   ```
+
+   Keep `~/.df-bak` until you have checked the restored files.
+   Do not copy the whole directory into `$HOME`; it can contain later backup generations.
 
 5. Optional: delete the generated shell caches:
 

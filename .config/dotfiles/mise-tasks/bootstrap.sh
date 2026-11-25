@@ -150,10 +150,19 @@ fi
 if [ ! -f "$DEST_DIR/index" ]; then
   echo "Checking out dotfiles..."
   if ! df checkout > /dev/null 2>&1; then
+    # Replaced files may hold credentials; never follow an existing backup symlink.
+    if [ -L "$BACKUP_DIR" ] || { [ -e "$BACKUP_DIR" ] && [ ! -d "$BACKUP_DIR" ]; }; then
+      echo "ERROR: $BACKUP_DIR is not a real directory; refusing to back up dotfiles." >&2
+      exit 1
+    fi
+    if [ -d "$BACKUP_DIR" ]; then
+      chmod 700 "$BACKUP_DIR"
+      # Isolate later backups from existing files, directories, and parent symlinks.
+      BACKUP_DIR=$(mktemp -d "$BACKUP_DIR/reinstall.XXXXXX")
+    else
+      (umask 077 && mkdir "$BACKUP_DIR")
+    fi
     echo "Backing up pre-existing dotfiles to $BACKUP_DIR..."
-    # Replaced files may hold credentials (shell history, tokens in rc files).
-    (umask 077 && mkdir -p "$BACKUP_DIR")
-    chmod 700 "$BACKUP_DIR"
     # Walk tracked blobs instead of parsing checkout errors (localized, and
     # `read` strips the leading tab that marks conflicting paths).
     df -c core.quotePath=false ls-tree -r HEAD | while IFS="$TAB" read -r meta f; do
