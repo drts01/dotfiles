@@ -21,7 +21,7 @@ zsh_compdef() {
 
 zsh_nested_plugins() {
   zsh_home
-  run_isolated zsh -d -lic 'zsh -d -ic '\''(( ${+functions[compdef]} && ${+functions[_zsh_autosuggest_accept]} && ${+functions[_zsh_highlight]} )) && zle -l autosuggest-accept >/dev/null && bindkey -M viins | grep -q autosuggest-accept'\'''
+  run_isolated zsh -d -lic 'zsh -d -ic '\''(( ${+functions[compdef]} && ${+functions[_zsh_autosuggest_accept]} && ${+functions[_zsh_highlight]} )) && zle -l autosuggest-accept >/dev/null && [[ $(bindkey -M viins "^[[C") == *" vi-forward-char" ]]'\'''
 }
 
 zsh_without_submodules() {
@@ -41,7 +41,7 @@ When run zsh_compdef
 The status should be success
 End
 
-It 'loads completion, plugins, widget, and viins binding in nested interactive Zsh'
+It 'loads plugins and preserves Right Arrow movement and suggestion acceptance in nested Zsh'
 When run zsh_nested_plugins
 The status should be success
 End
