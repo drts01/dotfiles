@@ -1,0 +1,26 @@
+{
+  "scenario": "isolated-system-path-no-mise-tools",
+  "timestamp_utc": "2026-11-25T03:34:54.274107+00:00",
+  "git_sha": "13940ffef17c45f0a3d49aca6ebe47180e41e2ec",
+  "run_id": "45540924058",
+  "run_attempt": "1",
+  "runner_os": "Linux",
+  "runner_arch": "X64",
+  "runner_label": "ubuntu-26.04",
+  "runner_image": "ubuntu26",
+  "runner_image_version": "20261116.202.1",
+  "shell_versions": {
+    "zsh": "zsh 5.9 (x86_64-ubuntu-linux-gnu)",
+    "sh": "dash 0.5.12-12ubuntu3"
+  },
+  "mise_version": "2026.11.13 linux-x64 (2026-11-23)",
+  "hyperfine_version": "hyperfine 2.0.0",
+  "warmup": 3,
+  "runs": 20,
+  "submodules_initialized": true,
+  "workload": [
+    "zsh login",
+    "POSIX sh interactive"
+  ],
+  "path_scenario": "/usr/bin:/bin"
+}

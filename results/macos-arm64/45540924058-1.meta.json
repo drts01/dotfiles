@@ -1,0 +1,26 @@
+{
+  "scenario": "isolated-system-path-no-mise-tools",
+  "timestamp_utc": "2026-11-25T03:34:56.900074+00:00",
+  "git_sha": "13940ffef17c45f0a3d49aca6ebe47180e41e2ec",
+  "run_id": "45540924058",
+  "run_attempt": "1",
+  "runner_os": "macOS",
+  "runner_arch": "ARM64",
+  "runner_label": "macos-26",
+  "runner_image": "macos26",
+  "runner_image_version": "20261117.0516.1",
+  "shell_versions": {
+    "zsh": "zsh 5.9 (arm64-apple-darwin25.0)",
+    "sh": "3.2.57(1)-release"
+  },
+  "mise_version": "2026.11.13 macos-arm64 (2026-11-23)",
+  "hyperfine_version": "hyperfine 2.0.0",
+  "warmup": 3,
+  "runs": 20,
+  "submodules_initialized": true,
+  "workload": [
+    "zsh login",
+    "POSIX sh interactive"
+  ],
+  "path_scenario": "/usr/bin:/bin"
+}
