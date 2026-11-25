@@ -28,6 +28,15 @@ When run bash_syntax
 The status should be success
 End
 
+Context 'noninteractive login Bash'
+It 'loads profile environment without interactive configuration'
+When run run_isolated bash -lc 'shopt -q login_shell && [ "$_PROFILE_SOURCED" = 1 ] && [ "$_shell" = bash ] && [ "$XDG_CONFIG_HOME" = "$HOME/.config" ] && [ "$ENV" = "$HOME/.config/sh/.shrc" ] && [ -n "$EDITOR" ] && has bash && [ -z "${HISTCONTROL-}" ] && ! alias dotfiles >/dev/null 2>&1'
+The status should be success
+The output should be blank
+The error should be blank
+End
+End
+
 Context 'interactive login Bash'
 It 'loads the login profile'
 When run bash_startup login 'shopt -q login_shell'

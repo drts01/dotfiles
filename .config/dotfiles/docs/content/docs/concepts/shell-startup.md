@@ -42,8 +42,9 @@ Atuin loads after `zsh-autosuggestions`.
 ## Bash
 
 ```text
-.bash_profile                         interactive login shells
-  └─ source .bashrc
+.bash_profile                         all login Bash shells
+  ├─ source .profile
+  └─ source .bashrc only when interactive
 .bashrc                               all interactive Bash shells
   ├─ source .profile
   ├─ source .config/sh/.shrc
