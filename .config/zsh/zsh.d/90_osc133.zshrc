@@ -10,7 +10,8 @@ if [[ -n ${ZELLIJ-} || ${TERM_PROGRAM-} == Ghostty || ${TERM_PROGRAM-} == WezTer
 
   _inject_osc133_b() {
     # Preserve prompt width when adding the marker after prompt framework hooks.
-    PS1="${PROMPT-}%{\e]133;B\a%}"
+    local marker=$'%{\e]133;B\a%}'
+    [[ ${PROMPT-} == *"$marker" ]] || PROMPT+="$marker"
   }
 
   autoload -Uz add-zsh-hook
