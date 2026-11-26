@@ -203,3 +203,9 @@
 	shallow = true
 	ignore = dirty
 	update = rebase
+[submodule "vim-repeat"]
+	path = .config/vim/pack/plugins/start/vim-repeat
+	url = https://github.com/tpope/vim-repeat.git
+	shallow = true
+	ignore = dirty
+	update = rebase
