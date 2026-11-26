@@ -8,7 +8,13 @@ load_vim_env() {
   HOME=$HOME_DIR
   XDG_CONFIG_HOME="$TEST_TMP/config with spaces"
   XDG_DATA_HOME="$TEST_TMP/data"
+  PATH="$BIN:/usr/bin:/bin"
   mkdir -p "$XDG_CONFIG_HOME/vim"
+  # The fake executables read their own environment, not the test shell's.
+  # shellcheck disable=SC2016
+  fake_bin vim 'printf "%s\n" "${VIMINIT-unset}"'
+  # shellcheck disable=SC2016
+  fake_bin nvim 'printf "%s\n" "${VIMINIT-unset}"'
   case $1 in
     missing) unset VIMINIT ;;
     unset)
@@ -17,14 +23,24 @@ load_vim_env() {
       ;;
     *)
       VIMINIT=$1
+      export VIMINIT
       : > "$XDG_CONFIG_HOME/vim/vimrc"
       ;;
   esac
-  has() { return 1; }
+  has() { [ "$1" = vim ] || [ "$1" = nvim ]; }
   path_add() { :; }
   # shellcheck disable=SC1090
   . "$ROOT/.config/sh/profile.d/20_env.sh"
-  printf '%s\n' "${VIMINIT-unset}"
+  # The wrapper deliberately receives no arguments in these environment probes.
+  # shellcheck disable=SC2119
+  case ${2-vim} in
+    parent)
+      vim > /dev/null
+      printf '%s\n' "${VIMINIT-unset}"
+      ;;
+    nvim) command nvim ;;
+    *) vim ;;
+  esac
 }
 
 It 'sources the XDG configuration without shell-expanding its path'
@@ -46,6 +62,16 @@ End
 
 It 'does not point Vim at a missing configuration'
 When call load_vim_env missing
+The output should equal unset
+End
+
+It 'does not export VIMINIT to the parent environment'
+When call load_vim_env unset parent
+The output should equal unset
+End
+
+It 'does not override Neovim initialization'
+When call load_vim_env unset nvim
 The output should equal unset
 End
 End
