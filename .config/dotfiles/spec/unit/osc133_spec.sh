@@ -6,9 +6,10 @@ Before 'setup_home' 'require_shell zsh'
 After 'cleanup_home'
 
 osc133_prompt() {
-  run_isolated zsh -dfc '
-    TERM_PROGRAM=rio
+  run_isolated zsh -dfic '
+    TERM_PROGRAM=$2
     unset ZELLIJ
+    [[ -n $TERM_PROGRAM ]] || unset TERM_PROGRAM
     PROMPT="plain> "
     source "$1"
     marker=$(printf "\033]133;B\007")
@@ -23,7 +24,7 @@ osc133_prompt() {
     PROMPT="replacement> "
     _inject_osc133_b
     [[ $PROMPT == "replacement> %{$marker%}" ]]
-  ' zsh "$ROOT/.config/zsh/zsh.d/90_osc133.zshrc"
+  ' zsh "$ROOT/.config/zsh/zsh.d/90_osc133.zshrc" "$1"
 }
 
 osc133_disabled() {
@@ -36,14 +37,14 @@ osc133_disabled() {
 }
 
 It 'supports standalone Rio and appends actual ESC/BEL bytes exactly once'
-When run osc133_prompt
+When run osc133_prompt rio
 The status should be success
 The output should be blank
 The error should be blank
 End
 
 osc133_lifecycle() {
-  run_isolated zsh -dfc '
+  run_isolated zsh -dfic '
     source "$1"
     _osc133_precmd > "$2"
     [[ $(<"$2") == $'"'"'\e]133;A\a'"'"' ]] || exit 1
@@ -58,7 +59,7 @@ osc133_lifecycle() {
 }
 
 osc133_opt_out() {
-  run_isolated zsh -dfc '
+  run_isolated zsh -dfic '
     DOTFILES_OSC133=0
     source "$1"
     (( ! ${+functions[_osc133_precmd]} )) || exit 1
@@ -83,7 +84,21 @@ The output should be blank
 The error should be blank
 End
 
-It 'does not install markers for an unsupported terminal'
+It 'installs markers for an unrecognized terminal'
+When run osc133_prompt unknown
+The status should be success
+The output should be blank
+The error should be blank
+End
+
+It 'installs markers without terminal identification'
+When run osc133_prompt ''
+The status should be success
+The output should be blank
+The error should be blank
+End
+
+It 'does not install markers when sourced non-interactively'
 When run osc133_disabled
 The status should be success
 The output should be blank
@@ -96,7 +111,8 @@ Before 'setup_home'
 After 'cleanup_home'
 
 osc133_sh_prompt() {
-  run_isolated env -u ZELLIJ TERM_PROGRAM="$1" /bin/sh -uc '
+  without_job_control_noise run_isolated env -u ZELLIJ TERM_PROGRAM="$1" /bin/sh -uic '
+    [ -n "$TERM_PROGRAM" ] || unset TERM_PROGRAM
     _shell=sh
     PS1="plain> "
     # An inherited Starship variable must not replace the prompt or require Starship.
@@ -104,33 +120,43 @@ osc133_sh_prompt() {
     . "$1"
     a=$(printf "\033]133;A\033\134")
     b=$(printf "\033]133;B\033\134")
-    if [ "$2" = enabled ]; then
-      expected="${a}plain> ${b}"
-    else
-      expected="plain> "
-    fi
+    expected="${a}plain> ${b}"
     [ "$PS1" = "$expected" ] || exit 1
     . "$1"
     [ "$PS1" = "$expected" ]
-  ' sh "$ROOT/.config/sh/sh.d/90_prompt_osc133.sh" "$2"
+  ' sh "$ROOT/.config/sh/sh.d/90_prompt_osc133.sh"
 }
 
 It 'supports standalone Rio without duplicating markers or replacing the prompt'
-When run osc133_sh_prompt rio enabled
+When run osc133_sh_prompt rio
 The status should be success
 The output should be blank
 The error should be blank
 End
 
-It 'leaves standalone Alacritty prompts unchanged'
-When run osc133_sh_prompt Alacritty disabled
+It 'adds markers for standalone Alacritty'
+When run osc133_sh_prompt Alacritty
+The status should be success
+The output should be blank
+The error should be blank
+End
+
+It 'adds markers without terminal identification'
+When run osc133_sh_prompt ''
+The status should be success
+The output should be blank
+The error should be blank
+End
+
+It 'does not initialize a prompt when sourced non-interactively'
+When run run_isolated /bin/sh -uc 'unset PS1; _shell=sh; . "$1"; [ "${PS1+set}" != set ]' sh "$ROOT/.config/sh/sh.d/90_prompt_osc133.sh"
 The status should be success
 The output should be blank
 The error should be blank
 End
 
 It 'honors the opt-out inside Zellij'
-When run run_isolated env DOTFILES_OSC133=0 /bin/sh -uc '_shell=sh; PS1="plain> "; . "$1"; [ "$PS1" = "plain> " ]' sh "$ROOT/.config/sh/sh.d/90_prompt_osc133.sh"
+When run without_job_control_noise run_isolated env DOTFILES_OSC133=0 /bin/sh -uic '_shell=sh; PS1="plain> "; . "$1"; [ "$PS1" = "plain> " ]' sh "$ROOT/.config/sh/sh.d/90_prompt_osc133.sh"
 The status should be success
 The output should be blank
 The error should be blank

@@ -81,8 +81,8 @@ When run run_isolated zsh -d -lic '(( ${+functions[_osc133_precmd]} && ${+functi
 The status should be success
 End
 
-It 'does not install OSC 133 without a supported terminal'
-When run run_isolated env -u ZELLIJ zsh -d -lic '(( ! ${+functions[_osc133_precmd]} && ! ${+functions[_osc133_preexec]} ))'
+It 'installs OSC 133 without terminal identification'
+When run run_isolated env -u ZELLIJ zsh -d -lic '(( ${+functions[_osc133_precmd]} && ${+functions[_osc133_preexec]} ))'
 The status should be success
 End
 End
@@ -100,8 +100,8 @@ When run without_job_control_noise run_isolated env XDG_CONFIG_HOME="$HOME_DIR/.
 The status should be success
 End
 
-It 'does not add OSC 133 without a supported terminal'
-When run without_job_control_noise run_isolated env -u ZELLIJ XDG_CONFIG_HOME="$HOME_DIR/.config" ENV="$HOME_DIR/.config/sh/.shrc" /bin/sh -ic 'case $PS1 in *"133;B"*) exit 1 ;; esac'
+It 'adds OSC 133 without terminal identification except in Bash with its separate integration'
+When run without_job_control_noise run_isolated env -u ZELLIJ XDG_CONFIG_HOME="$HOME_DIR/.config" ENV="$HOME_DIR/.config/sh/.shrc" /bin/sh -ic 'case ${BASH_VERSION-} in ?*) : ;; *) case $PS1 in *"133;B"*) : ;; *) exit 1 ;; esac ;; esac'
 The status should be success
 End
 End
