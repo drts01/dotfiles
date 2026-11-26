@@ -35,9 +35,26 @@ Both scripts reject `http://`, `git://`, and `ftp://` URLs; those transports do 
 | ------ | ----------------- | --------------------------------- | ------------------------------ | ----------------- |
 | `zsh`  | `zsh`             | `.local/share/zsh`                | Zsh plugins and prompt         | `auto`, `all`     |
 | `nvim` | `nvim`            | `.config/nvim/pack/plugins/start` | Legacy Neovim plugins          | `auto`, `all`     |
+| `vim`  | `vim`             | `.config/vim/pack/plugins`        | Vim packages in `start/` and `opt/` | `auto`, `all` |
 | `lua`  | `lua` or `luajit` | `.local/share/z.lua`              | `z.lua`                        | `auto`, `all`     |
 | `docs` | `zola`            | `.config/dotfiles/docs/themes`    | Documentation site theme       | `all`, explicitly |
 
 - Every group requires its tool, even when selected explicitly.
 - Unknown group names fail before checkout.
 - Helix needs no submodules.
+
+## Vim startup
+
+These variables control Vim startup and recovery storage, not installer group selection.
+The shell defines `vim()` only when the Vim executable and XDG `vimrc` exist.
+Its `VIMINIT` assignment is process-local, not a global export, so `nvim` is unaffected.
+`command vim` bypasses the wrapper and uses native discovery;
+scripts launching older Vim outside the configured shell need an explicit `-u` path.
+
+| Variable | Default | Purpose |
+| -------- | ------- | ------- |
+| `VIMINIT` | Preserved if set, including empty | Otherwise the `vim()` wrapper supplies a process-local expression to source the XDG `vimrc`, escaping its path with `fnameescape()`; supports older Vim without native XDG discovery |
+| `XDG_CONFIG_HOME` | `~/.config` | Locates `vim/vimrc` for the shell's `vim()` wrapper guard |
+| `XDG_STATE_HOME` | `~/.local/state` | Stores private Vim recovery directories under `vim/`, created with mode `0700` |
+
+See [Vim settings](@/docs/reference/vim.md) for packages, mappings, and tool requirements.

@@ -21,7 +21,10 @@ point.
 The documentation theme submodule is required for site builds; `docs:build` and `docs:serve` initialize it.
 Initialize Zsh plugins with `git submodule update --init -- .local/share/zsh` for plugin startup tests,
 `git submodule update --init -- .local/share/z.lua` for Lua tests,
-and `git submodule update --init -- .config/nvim/pack/plugins/start` for Neovim development.
+`git submodule update --init -- .config/nvim/pack/plugins/start` for Neovim development,
+and `git submodule update --init -- .config/vim/pack/plugins` for Vim package tests (both `start/` and `opt/`).
+Vim tests require Python 3 and Vim 8+; LSP coverage requires Vim 9+.
+See [Test Vim](@/docs/contributing/testing.md#test-vim).
 
 ## Steps
 

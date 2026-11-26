@@ -32,7 +32,7 @@ This site explains behavior that needs it; the linked files hold the complete se
 | -------------------------------------------- | ------------ | -------------------------------------------------------------- |
 | {{<source path=".config/helix/" />}}         | Helix        | Primary editor; see [Set up Helix](@/docs/how-to/helix.md)     |
 | {{<source path=".config/nvim/" />}}          | Neovim       | Legacy editor; see [Neovim settings](@/docs/reference/nvim.md) |
-| {{<source path=".config/vim/" />}}           | Vim          | Fallback editor                                                |
+| {{<source path=".config/vim/" />}}           | Vim          | Fallback editor and native packages; see [Vim settings](@/docs/reference/vim.md) |
 | {{<source path=".config/zed/" />}}           | Zed          | Settings and agent rules                                       |
 | {{<source path="Documents/Cline/Rules/" />}} | Cline        | Global agent rules                                             |
 | {{<source path=".editorconfig" />}}          | EditorConfig | Indentation and line endings for every editor                  |
@@ -100,6 +100,7 @@ This site explains behavior that needs it; the linked files hold the complete se
 | `.local/bin/mise`                           | mise, when the installer added it                            |
 | `.cache/shell/`                             | Cached shell initialization code                             |
 | `.local/state/.*_history`                   | Per-shell history files                                      |
+| `.local/state/vim/`                         | Vim backup, swap, and undo; `$XDG_STATE_HOME/vim/` when set; new directories mode `0700` |
 
 ## Tooling directory
 

@@ -79,7 +79,7 @@ For `Warning: HEAD is detached; skipping pull.`, run `cd ~ && dotfiles switch tr
 ## Plugin group selection is invalid {#installer-invalid-groups}
 
 For `ERROR: DOTFILES_SUBMODULES must be a comma-separated list`
-or `ERROR: DOTFILES_SKIP_SUBMODULES must be a comma-separated list`, supply one or more of `zsh,nvim,lua,docs`,
+or `ERROR: DOTFILES_SKIP_SUBMODULES must be a comma-separated list`, supply one or more of `zsh,nvim,vim,lua,docs`,
 or use a supported special value.
 See [Choose plugin groups](@/docs/how-to/choose-plugin-groups.md) for the supported values.
 

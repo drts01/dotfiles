@@ -99,6 +99,25 @@ Add tests in the matching directory:
 
 Write JUnit reports with `shellspec --output junit`.
 
+## Test Vim
+
+Run the isolated Vim tests with Python 3 and Vim 8 or newer:
+
+```bash
+python3 -m unittest discover -s .config/dotfiles/tests -p 'test_vim.py'
+```
+
+Package-dependent tests skip unless the optional Vim submodules are initialized.
+Initialize both package directories before testing plugin behavior:
+
+```bash
+git submodule update --init -- .config/vim/pack/plugins
+```
+
+The suite exercises actual GitGutter hunk preview and staging, plus a local LSP handshake.
+Use Vim 9 or newer for LSP coverage.
+See [Vim settings](@/docs/reference/vim.md) for package version gates and optional executables.
+
 ## Benchmark startup
 
 Run isolated warm-start benchmarks; set `RUNS` to change the sample count:
@@ -156,4 +175,5 @@ If policy blocks it, keep the artifacts or use an approved external archive.
 
 CI runs one installer job per container image, plus the host installer test on Ubuntu and macOS.
 On both hosts, it runs `spec/unit` under `sh`, `bash`, and `zsh`, and `spec/startup` once.
+CI initializes the Vim packages before running `test_vim.py` to exercise plugin behavior rather than skip it.
 Failed ShellSpec jobs upload JUnit reports.

@@ -1,6 +1,6 @@
 +++
 title = "Choose plugin groups"
-description = "Select, exclude, or add the Zsh, Neovim, Lua, and docs plugin submodules."
+description = "Select, exclude, or add the Zsh, Neovim, Vim, Lua, and docs plugin submodules."
 weight = 20
 
 [extra]
@@ -11,10 +11,10 @@ Install only the plugins you use, and add skipped plugins later.
 
 ## Prerequisites
 
-- The tool for each group you want on `PATH`: `zsh`, `nvim`, `lua` or `luajit`, or `zola`.
+- The tool for each group you want on `PATH`: `zsh`, `nvim`, `vim`, `lua` or `luajit`, or `zola`.
   The installer skips a group whose tool is missing, even when you select it.
 
-By default, the installer selects `zsh`, `nvim`, and `lua` when their tools are present.
+By default, the installer selects `zsh`, `nvim`, `vim`, and `lua` when their tools are present.
 See [Plugin groups](@/docs/reference/environment.md#plugin-groups) for every group and its submodules.
 
 ## Exclude groups at install
@@ -26,7 +26,7 @@ curl -fsSL https://raw.githubusercontent.com/drts01/dotfiles/trunk/.config/dotfi
 ```
 
 Use `DOTFILES_SKIP_SUBMODULES=all` to skip every group.
-Zsh and Neovim start without their plugins; plugin features stay unavailable.
+Zsh, Neovim, and Vim start without their plugins; plugin features stay unavailable.
 
 ## Select groups at install
 
@@ -69,3 +69,4 @@ cd ~ && git --git-dir="$HOME/.local/share/dotfiles" --work-tree="$HOME" submodul
 
 - [Environment variables](@/docs/reference/environment.md)
 - [Use the legacy Neovim configuration](@/docs/how-to/nvim.md)
+- [Use Vim as a fallback](@/docs/how-to/vim.md)

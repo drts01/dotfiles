@@ -22,6 +22,6 @@ Terms used across this documentation, in alphabetical order.
 | Machine toolchain | Tools declared in `~/.config/mise/`, installed with mise; separate from the dotfiles and optional.                                                  |
 | mise              | Optional tool version manager; installs the machine toolchain and runs tasks.                                                                       |
 | Pin               | A full commit ID in `DOTFILES_REF`; the installer deploys that commit or fails. See [Pin a commit](@/docs/how-to/pin-a-commit.md).                  |
-| Plugin group      | A set of submodules selected together: `zsh`, `nvim`, `lua`, or `docs`. See [Environment variables](@/docs/reference/environment.md#plugin-groups). |
+| Plugin group      | A set of submodules selected together: `zsh`, `nvim`, `vim`, `lua`, or `docs`. See [Environment variables](@/docs/reference/environment.md#plugin-groups). |
 | prek              | The Git hook runner; reads `~/.config/dotfiles/prek.toml`. See [Hooks](@/docs/reference/hooks.md).                                                  |
 | Work tree         | The directory whose files Git tracks; for the dotfiles, `$HOME`.                                                                                    |
