@@ -34,6 +34,13 @@ else VISUAL="vi"; fi
 
 EDITOR="$VISUAL"
 
+# Older Vim does not discover XDG vimrc files; never override a caller's choice.
+if [ "${VIMINIT+x}" != x ] && [ -f "$XDG_CONFIG_HOME/vim/vimrc" ]; then
+  # Vim interprets this expression, including the environment reference and quotes.
+  # shellcheck disable=SC2016,SC2089,SC2090
+  export VIMINIT='execute "source " . fnameescape($XDG_CONFIG_HOME . "/vim/vimrc")'
+fi
+
 has bat && export MANPAGER="sh -c 'col -bx | bat -l man -p --paging=always'" MANROFFOPT="-c" BAT_PAGER="less -FgiMRSwz-4"
 
 if has less; then
