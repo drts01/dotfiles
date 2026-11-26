@@ -25,20 +25,8 @@ class EditorWhitespaceTest(unittest.TestCase):
                         directory = home / f".{name.lower()}"
                         directory.mkdir()
                         environment[f"XDG_{name}_HOME"] = str(directory)
-                    for name in ("vim", "nvim"):
-                        for kind in ("backup", "swap", "undo"):
-                            (home / ".config" / name / kind).mkdir(parents=True)
-                    # Satisfy the real vimrc's bootstrap without fetching plugins.
-                    plug = home / ".vim" / "autoload" / "plug.vim"
-                    plug.parent.mkdir(parents=True)
-                    plug.write_text(
-                        "function! plug#begin(...)\n"
-                        "  command! -nargs=* Plug \" no-op\n"
-                        "endfunction\n"
-                        "function! plug#end(...)\n"
-                        "endfunction\n",
-                        encoding="utf-8",
-                    )
+                    for kind in ("backup", "swap", "undo"):
+                        (home / ".config" / "nvim" / kind).mkdir(parents=True)
                     target = home / "sample.txt"
                     target.write_bytes(b"hard break  \ntrailing\t \nclean\n\n")
                     script = home / "save.vim"

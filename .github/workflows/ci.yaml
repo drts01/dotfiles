@@ -52,6 +52,10 @@ jobs:
         run: sh .config/dotfiles/tests/gitignore.sh
       - name: Test development clone setup
         run: sh .config/dotfiles/tests/dev-setup.sh
+      - name: Test plugin-free Vim startup and recovery
+        run: |
+          command -v vim
+          python3 -m unittest discover -s .config/dotfiles/tests -p 'test_vim.py'
       - name: Test editor whitespace preservation
         run: python3 -m unittest discover -s .config/dotfiles/tests -p 'test_editor_whitespace.py'
       - name: Test shell profile archiving and charts
