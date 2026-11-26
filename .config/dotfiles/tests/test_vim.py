@@ -144,7 +144,45 @@ class VimTest(unittest.TestCase):
             "call setline(1, 'changed')\nwrite"
         )
 
+    def test_fuzzy_mappings_require_available_executables(self):
+        self.install_packages()
+        for name in ('fzf', 'rg'):
+            executable = self.bin / name
+            executable.write_text('#!/bin/sh\nexit 0\n')
+            executable.chmod(0o700)
+        self.run_vim(
+            "doautocmd VimEnter\n"
+            "call assert_equal(':Files<CR>', maparg('<C-p>', 'n'))\n"
+            "call assert_equal(':Buffers<CR>', maparg(',b', 'n'))\n"
+            "call assert_equal(':Rg<CR>', maparg(',f', 'n'))"
+        )
 
+    def test_gitgutter_previews_and_stages_buffer_changes(self):
+        self.install_packages()
+        commands = (
+            ['git', 'init', '-q'],
+            ['git', 'add', 'sample.txt'],
+            ['git', '-c', 'user.name=Vim test', '-c', 'user.email=vim@example.invalid',
+             '-c', 'commit.gpgsign=false', 'commit', '-qm', 'fixture'],
+        )
+        for command in commands:
+            subprocess.run(command, cwd=self.home, env=self.environment,
+                           check=True, capture_output=True, timeout=15)
+        self.run_vim(
+            "call setline(1, 'changed')\nGitGutter\n"
+            "for attempt in range(100)\n"
+            " if GitGutterGetHunkSummary()[1] == 1 | break | endif\n"
+            " sleep 20m\n"
+            "endfor\n"
+            "call assert_equal([0, 1, 0], GitGutterGetHunkSummary())\n"
+            "GitGutterPreviewHunk\n"
+            "GitGutterStageHunk"
+        )
+        result = subprocess.run(['git', 'show', ':sample.txt'], cwd=self.home,
+                                env=self.environment, check=True,
+                                capture_output=True, text=True, timeout=10)
+        self.assertEqual(result.stdout, 'changed\n')
+        self.assertEqual(self.target.read_text(), 'original\n')
 
     def test_editorconfig_controls_indentation_and_preserves_make_tabs(self):
         self.install_packages()
