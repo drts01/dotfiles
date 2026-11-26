@@ -37,7 +37,7 @@ class VimTest(unittest.TestCase):
         self.target = self.home / "sample.txt"
         self.target.write_text("original\n")
 
-    def run_vim(self, commands, *, explicit=True, environment=None):
+    def run_vim(self, commands, *, explicit=True, environment=None, pre_commands=None):
         script = self.home / "check.vim"
         script.write_text(
             commands + "\n"
@@ -53,6 +53,8 @@ class VimTest(unittest.TestCase):
         ]
         if explicit:
             arguments += ["-es", "-u", str(self.config / "vimrc")]
+        if pre_commands:
+            arguments += ["--cmd", pre_commands]
         result = subprocess.run(
             [*arguments, str(self.target), "-S", str(script)],
             cwd=self.home,
@@ -142,12 +144,16 @@ class VimTest(unittest.TestCase):
             "call setline(1, 'changed')\nwrite"
         )
 
+
+
     def test_editorconfig_controls_indentation_and_preserves_make_tabs(self):
         self.install_packages()
         (self.home / '.editorconfig').write_text(
             'root = true\n[*.sh]\nindent_style = space\nindent_size = 2\n'
+            '[*.py]\nindent_style = tab\nindent_size = 8\n'
         )
         (self.home / 'sample.sh').write_text('echo hello\n')
+        (self.home / 'sample.py').write_text('print("hello")\n')
         (self.home / 'Makefile').write_text('all:\n\techo hello\n')
         self.run_vim(
             "edit sample.sh\n"
@@ -156,6 +162,14 @@ class VimTest(unittest.TestCase):
             "edit Makefile\n"
             "call assert_equal(0, &expandtab)"
         )
+        self.run_vim(
+            "edit sample.py\n"
+            "call assert_equal(8, &shiftwidth)\n"
+            "call assert_equal(0, &expandtab)",
+            pre_commands="set packpath= noloadplugins",
+        )
+
+
 
     def test_viminit_discovery(self):
         environment = self.environment.copy()

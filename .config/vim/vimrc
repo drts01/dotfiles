@@ -99,6 +99,9 @@ let g:ale_fixers = {'python': ['ruff', 'ruff_format'], 'sh': ['shfmt']}
 let g:ale_fix_on_save = 0
 let g:fzf_vim = {'preview_window': ['right,50%', 'ctrl-/']}
 
+" Filetype defaults must run before EditorConfig applies project overrides.
+filetype plugin indent on
+
 " Prefer the bundled implementation rather than loading two EditorConfig copies.
 if !empty(globpath(&packpath, 'pack/*/opt/editorconfig/plugin/editorconfig.vim'))
   packadd editorconfig
@@ -137,7 +140,6 @@ if v:vim_did_enter
 endif
 
 syntax on
-filetype plugin indent on
 set background=dark
 silent! colorscheme desert
 highlight Search ctermbg=yellow ctermfg=black guibg=yellow guifg=black
