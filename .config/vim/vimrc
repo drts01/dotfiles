@@ -131,6 +131,44 @@ function! s:ConfigurePackages() abort
   endif
 endfunction
 
+function! s:EnableLsp() abort
+  if !has('vim9script') || v:version < 900
+    echomsg 'Vim LSP requires Vim 9.0 or newer.'
+    return
+  endif
+  if get(g:, 'dotfiles_lsp_enabled', 0)
+    return
+  endif
+  if !filereadable(s:config . '/pack/plugins/opt/lsp/plugin/lsp.vim')
+    echomsg 'Initialize the Vim lsp submodule before enabling LSP.'
+    return
+  endif
+  let l:servers = []
+  for l:server in [
+        \ {'name': 'bash', 'filetype': ['sh', 'bash'], 'path': 'bash-language-server', 'args': ['start']},
+        \ {'name': 'yaml', 'filetype': ['yaml'], 'path': 'yaml-language-server', 'args': ['--stdio']},
+        \ {'name': 'markdown', 'filetype': ['markdown'], 'path': 'marksman', 'args': ['server']},
+        \ {'name': 'python', 'filetype': ['python'], 'path': 'ty', 'args': ['server']},
+        \ ]
+    if executable(l:server.path)
+      let l:server.path = exepath(l:server.path)
+      call add(l:servers, l:server)
+    endif
+  endfor
+  if empty(l:servers)
+    echomsg 'No configured language servers found on PATH; Vim LSP remains disabled.'
+    return
+  endif
+  packadd lsp
+  call LspDisable()
+  " Route LSP diagnostics through ALE when present; ALE never starts LSP servers.
+  call LspOptionsSet({'aleSupport': get(g:, 'loaded_ale', 0) == 1})
+  call LspAddServer(l:servers)
+  call LspEnable()
+  let g:dotfiles_lsp_enabled = 1
+endfunction
+command! VimLspEnable call <SID>EnableLsp()
+
 augroup dotfiles_vim_packages
   autocmd!
   autocmd VimEnter * call <SID>ConfigurePackages()

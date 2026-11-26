@@ -4,6 +4,7 @@ import os
 import shutil
 import stat
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -207,7 +208,56 @@ class VimTest(unittest.TestCase):
             pre_commands="set packpath= noloadplugins",
         )
 
+    def test_lsp_remains_disabled_without_packages_or_servers(self):
+        self.run_vim("VimLspEnable\ncall assert_equal(0, exists('g:loaded_lsp'))")
+        self.install_packages()
+        self.run_vim("VimLspEnable\ncall assert_equal(0, exists('g:loaded_lsp'))")
 
+    def test_lsp_registers_available_servers_only_once(self):
+        version = subprocess.run([VIM, '--version'], capture_output=True, text=True, timeout=5)
+        if '+vim9script' not in version.stdout:
+            self.skipTest('LSP requires Vim9 script')
+        self.install_packages()
+        server = self.bin / 'ty'
+        server.write_text(f"#!{sys.executable}\n" + '''
+import json
+import sys
+from pathlib import Path
+
+while True:
+    headers = {}
+    while line := sys.stdin.buffer.readline():
+        if line == b"\\r\\n":
+            break
+        name, value = line.decode().split(":", 1)
+        headers[name.lower()] = value.strip()
+    if not headers:
+        break
+    message = json.loads(sys.stdin.buffer.read(int(headers["content-length"])))
+    if message.get("method") == "initialized":
+        Path("lsp-initialized").write_text("ready")
+    if "id" in message:
+        result = {"capabilities": {}} if message.get("method") == "initialize" else None
+        body = json.dumps({"jsonrpc": "2.0", "id": message["id"], "result": result}).encode()
+        sys.stdout.buffer.write(f"Content-Length: {len(body)}\\r\\n\\r\\n".encode() + body)
+        sys.stdout.buffer.flush()
+''')
+        server.chmod(0o700)
+        self.run_vim(
+            "call assert_equal(0, exists('g:loaded_lsp'))\n"
+            "setfiletype python\n"
+            "VimLspEnable\n"
+            "for attempt in range(100)\n"
+            " if filereadable('lsp-initialized') | break | endif\n"
+            " sleep 20m\n"
+            "endfor\n"
+            "call assert_true(filereadable('lsp-initialized'))\n"
+            "call assert_equal(1, g:dotfiles_lsp_enabled)\n"
+            "call assert_equal(2, exists(':LspGotoDefinition'))\n"
+            "call assert_equal(1, LspOptionsGet().aleSupport)\n"
+            "VimLspEnable\n"
+            "call assert_equal(1, g:dotfiles_lsp_enabled)"
+        )
 
     def test_viminit_discovery(self):
         environment = self.environment.copy()
