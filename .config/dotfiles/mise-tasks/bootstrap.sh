@@ -48,7 +48,7 @@ parse_groups() {
   variable=$2
   case "$value" in
     '' | ,* | *, | *,,* | auto | all | none)
-      printf 'ERROR: %s must be a comma-separated list of zsh,nvim,lua,docs.\n' "$variable" >&2
+      printf 'ERROR: %s must be a comma-separated list of zsh,nvim,vim,lua,docs.\n' "$variable" >&2
       troubleshoot installer-invalid-groups
       exit 1
       ;;
@@ -59,9 +59,9 @@ parse_groups() {
     group=${remaining%%,*}
     remaining=${remaining#*,}
     case "$group" in
-      zsh | nvim | lua | docs) ;;
+      zsh | nvim | vim | lua | docs) ;;
       *)
-        printf 'ERROR: %s must be a comma-separated list of zsh,nvim,lua,docs.\n' "$variable" >&2
+        printf 'ERROR: %s must be a comma-separated list of zsh,nvim,vim,lua,docs.\n' "$variable" >&2
         exit 1
         ;;
     esac
@@ -75,8 +75,8 @@ parse_groups() {
 # `auto` covers runtime plugins only; the docs theme is a build dependency of the
 # documentation site, so a deployed $HOME gets it only when explicitly requested.
 case "$DOTFILES_SUBMODULES" in
-  auto) groups=' zsh nvim lua ' ;;
-  all) groups=' zsh nvim lua docs ' ;;
+  auto) groups=' zsh nvim vim lua ' ;;
+  all) groups=' zsh nvim vim lua docs ' ;;
   none) groups=' ' ;;
   *)
     parse_groups "$DOTFILES_SUBMODULES" DOTFILES_SUBMODULES
@@ -85,7 +85,7 @@ case "$DOTFILES_SUBMODULES" in
 esac
 case "$DOTFILES_SKIP_SUBMODULES" in
   '') skips=' ' ;;
-  all) skips=' zsh nvim lua docs ' ;;
+  all) skips=' zsh nvim vim lua docs ' ;;
   *)
     parse_groups "$DOTFILES_SKIP_SUBMODULES" DOTFILES_SKIP_SUBMODULES
     skips=$parsed
@@ -208,7 +208,8 @@ fi
 # Git submodule needs the cwd inside the work tree. Directory pathspecs pick up
 # newly added plugins without a hardcoded per-plugin list.
 set --
-for group in zsh nvim lua docs; do
+vim_selected=false
+for group in zsh nvim vim lua docs; do
   case "$groups" in
     *" $group "*) ;;
     *) continue ;;
@@ -227,6 +228,10 @@ for group in zsh nvim lua docs; do
     nvim)
       tool=nvim
       path=.config/nvim/pack/plugins/start
+      ;;
+    vim)
+      tool=vim
+      path=.config/vim/pack/plugins
       ;;
     lua)
       tool=lua
@@ -247,6 +252,7 @@ for group in zsh nvim lua docs; do
     continue
   fi
   set -- "$@" "$path"
+  if [ "$group" = vim ]; then vim_selected=true; fi
 done
 if [ "$#" -eq 0 ]; then
   echo "Skipping submodules (none selected with available tools)."
@@ -254,6 +260,15 @@ else
   total=$(df ls-files --stage -- "$@" | grep -c '^160000 ' || :)
   echo "Initializing $total submodules (selection: $DOTFILES_SUBMODULES; excluded: ${DOTFILES_SKIP_SUBMODULES:-none})..."
   (cd "$HOME" && df submodule update --init -- "$@")
+  if [ "$vim_selected" = true ]; then
+    # Vim reads the environment variable; shell expansion would corrupt quoted paths.
+    # shellcheck disable=SC2016
+    if ! DOTFILES_VIM_PACKAGE_ROOT="$HOME/.config/vim/pack/plugins" vim -Nu NONE -n -es -i NONE \
+      -c 'for doc in globpath($DOTFILES_VIM_PACKAGE_ROOT, "*/*/doc", 0, 1) | execute "helptags " . fnameescape(doc) | endfor' \
+      -c 'qa!'; then
+      echo "Warning: Vim help tag generation failed; continuing installation." >&2
+    fi
+  fi
 fi
 
 sh "$BASEDIR/mise-tasks/install/gitignore.sh" "$DEST_DIR"

@@ -116,6 +116,47 @@ class VimTest(unittest.TestCase):
             self.skipTest("Vim does not advertise XDG vimrc discovery")
         self.run_vim("call assert_equal(',', g:mapleader)", explicit=False)
 
+    def install_packages(self):
+        packages = ROOT / '.config/vim/pack/plugins'
+        if not (packages / 'start/ale/plugin/ale.vim').is_file():
+            self.skipTest('Initialize Vim package submodules for integration tests')
+        (self.config / 'pack').symlink_to(packages.parent, target_is_directory=True)
+        (self.bin / 'git').unlink()
+        self.environment['PATH'] += os.pathsep + os.defpath
+
+    def test_packages_load_without_optional_executables(self):
+        self.install_packages()
+        self.run_vim(
+            "doautocmd VimEnter\n"
+            "call assert_equal(2, exists(':Git'))\n"
+            "call assert_equal(2, exists(':GitGutter'))\n"
+            "call assert_equal(2, exists(':ALEInfo'))\n"
+            "call assert_equal(2, exists(':Files'))\n"
+            "call assert_equal(0, &showmode)\n"
+            "call assert_equal(0, exists('g:loaded_lsp'))\n"
+            "call assert_equal(1, g:ale_disable_lsp)\n"
+            "call assert_equal(['ruff'], g:ale_linters.python)\n"
+            "call assert_true(g:ale_sign_priority > g:gitgutter_sign_priority)\n"
+            "call assert_equal('', maparg('<C-p>', 'n'))\n"
+            "if has('patch-8.2.5136') | call assert_equal(2, exists(':Fern')) | endif\n"
+            "call setline(1, 'changed')\nwrite"
+        )
+
+    def test_editorconfig_controls_indentation_and_preserves_make_tabs(self):
+        self.install_packages()
+        (self.home / '.editorconfig').write_text(
+            'root = true\n[*.sh]\nindent_style = space\nindent_size = 2\n'
+        )
+        (self.home / 'sample.sh').write_text('echo hello\n')
+        (self.home / 'Makefile').write_text('all:\n\techo hello\n')
+        self.run_vim(
+            "edit sample.sh\n"
+            "call assert_equal(2, &shiftwidth)\n"
+            "call assert_equal(1, &expandtab)\n"
+            "edit Makefile\n"
+            "call assert_equal(0, &expandtab)"
+        )
+
     def test_viminit_discovery(self):
         environment = self.environment.copy()
         environment["VIMINIT"] = (

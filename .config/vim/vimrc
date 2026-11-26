@@ -83,6 +83,59 @@ augroup dotfiles_vim
   autocmd BufWritePre * call <SID>StripTrailingWhitespace()
 augroup END
 
+" Configure packages before Vim loads their startup scripts.
+let g:lightline = {'colorscheme': 'wombat'}
+let g:gitgutter_highlight_lines = 0
+let g:gitgutter_sign_priority = 5
+let g:gitgutter_sign_allow_clobber = 0
+let g:ale_sign_priority = 10
+let g:ale_sign_error = '✗'
+let g:ale_sign_warning = '⚠'
+let g:ale_linters_explicit = 1
+" A separate, opt-in LSP client owns language-server processes.
+let g:ale_disable_lsp = 1
+let g:ale_linters = {'python': ['ruff'], 'sh': ['shellcheck']}
+let g:ale_fixers = {'python': ['ruff', 'ruff_format'], 'sh': ['shfmt']}
+let g:ale_fix_on_save = 0
+let g:fzf_vim = {'preview_window': ['right,50%', 'ctrl-/']}
+
+" Prefer the bundled implementation rather than loading two EditorConfig copies.
+if !empty(globpath(&packpath, 'pack/*/opt/editorconfig/plugin/editorconfig.vim'))
+  packadd editorconfig
+elseif filereadable(s:config . '/pack/plugins/opt/editorconfig-vim/plugin/editorconfig.vim')
+  packadd editorconfig-vim
+endif
+
+function! s:ConfigurePackages() abort
+  if exists('g:loaded_lightline')
+    set noshowmode
+  endif
+  if has('patch-8.2.5136') && filereadable(s:config . '/pack/plugins/opt/vim-fern/plugin/fern.vim')
+    packadd vim-fern
+    nnoremap <silent> <leader>n :Fern . -drawer -toggle -reveal=%<CR>
+  endif
+  if exists(':Files') == 2 && exists('*fzf#run') && executable('fzf')
+    nnoremap <silent> <C-p> :Files<CR>
+    nnoremap <silent> <leader>b :Buffers<CR>
+    if executable('rg')
+      nnoremap <silent> <leader>f :Rg<CR>
+    endif
+  endif
+  if exists(':ALEInfo') == 2
+    nmap <silent> [e <Plug>(ale_previous_wrap)
+    nmap <silent> ]e <Plug>(ale_next_wrap)
+    nnoremap <silent> <leader>a :ALEFix<CR>
+  endif
+endfunction
+
+augroup dotfiles_vim_packages
+  autocmd!
+  autocmd VimEnter * call <SID>ConfigurePackages()
+augroup END
+if v:vim_did_enter
+  call s:ConfigurePackages()
+endif
+
 syntax on
 filetype plugin indent on
 set background=dark

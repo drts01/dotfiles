@@ -149,3 +149,57 @@
 	ignore = dirty
 	update = rebase
 	shallow = true
+[submodule ".config/vim/pack/plugins/start/vim-fugitive"]
+	path = .config/vim/pack/plugins/start/vim-fugitive
+	url = https://github.com/tpope/vim-fugitive.git
+	shallow = true
+	ignore = dirty
+	update = rebase
+[submodule ".config/vim/pack/plugins/start/vim-gitgutter"]
+	path = .config/vim/pack/plugins/start/vim-gitgutter
+	url = https://github.com/airblade/vim-gitgutter.git
+	shallow = true
+	ignore = dirty
+	update = rebase
+[submodule ".config/vim/pack/plugins/start/fzf"]
+	path = .config/vim/pack/plugins/start/fzf
+	url = https://github.com/junegunn/fzf.git
+	shallow = true
+	ignore = dirty
+	update = rebase
+[submodule ".config/vim/pack/plugins/start/fzf.vim"]
+	path = .config/vim/pack/plugins/start/fzf.vim
+	url = https://github.com/junegunn/fzf.vim.git
+	shallow = true
+	ignore = dirty
+	update = rebase
+[submodule ".config/vim/pack/plugins/opt/vim-fern"]
+	path = .config/vim/pack/plugins/opt/vim-fern
+	url = https://github.com/lambdalisue/vim-fern.git
+	shallow = true
+	ignore = dirty
+	update = rebase
+[submodule ".config/vim/pack/plugins/start/lightline.vim"]
+	path = .config/vim/pack/plugins/start/lightline.vim
+	url = https://github.com/itchyny/lightline.vim.git
+	shallow = true
+	ignore = dirty
+	update = rebase
+[submodule ".config/vim/pack/plugins/start/ale"]
+	path = .config/vim/pack/plugins/start/ale
+	url = https://github.com/dense-analysis/ale.git
+	shallow = true
+	ignore = dirty
+	update = rebase
+[submodule ".config/vim/pack/plugins/start/editorconfig-vim"]
+	path = .config/vim/pack/plugins/opt/editorconfig-vim
+	url = https://github.com/editorconfig/editorconfig-vim.git
+	shallow = true
+	ignore = dirty
+	update = rebase
+[submodule ".config/vim/pack/plugins/opt/lsp"]
+	path = .config/vim/pack/plugins/opt/lsp
+	url = https://github.com/yegappan/lsp.git
+	shallow = true
+	ignore = dirty
+	update = rebase

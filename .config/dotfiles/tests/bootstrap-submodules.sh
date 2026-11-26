@@ -28,6 +28,8 @@ for path in \
   .local/share/zsh/plugins/fast-syntax-highlighting \
   .local/share/z.lua \
   .config/nvim/pack/plugins/start/LuaSnip \
+  .config/vim/pack/plugins/start/vim-example \
+  .config/vim/pack/plugins/opt/vim-optional \
   .config/dotfiles/docs/themes/devlab-theme; do
   git -C "$TMP/fixture" submodule add -q "$TMP/plugin" "$path"
 done
@@ -63,6 +65,8 @@ check_groups() {
   check .local/share/z.lua "$2"
   check .config/nvim/pack/plugins/start/LuaSnip "$3"
   check .config/dotfiles/docs/themes/devlab-theme "$4"
+  check .config/vim/pack/plugins/start/vim-example "$5"
+  check .config/vim/pack/plugins/opt/vim-optional "$5"
 }
 
 # Control PATH independently of the host's installed editor, shells and build tools.
@@ -76,6 +80,20 @@ for tool in zsh nvim lua zola; do
   printf '#!/bin/sh\nexit 0\n' > "$TMP/tools-bin/$tool"
   chmod +x "$TMP/tools-bin/$tool"
 done
+cat > "$TMP/tools-bin/vim" << 'EOF'
+#!/bin/sh
+set -eu
+case "$*" in
+  '-Nu NONE -n -es -i NONE '*) ;;
+  *) exit 1 ;;
+esac
+[ "$DOTFILES_VIM_PACKAGE_ROOT" = "$HOME/.config/vim/pack/plugins" ]
+[ -f "$DOTFILES_VIM_PACKAGE_ROOT/start/vim-example/marker" ]
+[ -f "$DOTFILES_VIM_PACKAGE_ROOT/opt/vim-optional/marker" ]
+printf '%s\n' "$DOTFILES_VIM_PACKAGE_ROOT" "$@" >> "$HOME/vim-log"
+[ ! -f "$HOME/vim-fail" ]
+EOF
+chmod +x "$TMP/tools-bin/vim"
 printf '#!/bin/sh\nexit 0\n' > "$TMP/luajit-bin/luajit"
 chmod +x "$TMP/luajit-bin/luajit"
 
@@ -89,9 +107,9 @@ grep -q 'DOTFILES_SKIP_SUBMODULES must be' "$TMP/invalid-out" || fail 'missing e
 # With no related tools, neither auto nor all should fetch a submodule.
 run_auto "$TMP/core-bin" > "$TMP/no-tools-out"
 grep -q 'Skipping submodules' "$TMP/no-tools-out" || fail 'missing no-tools stage'
-check_groups absent absent absent absent
+check_groups absent absent absent absent absent
 run all "$TMP/core-bin" > "$TMP/no-tools-out"
-check_groups absent absent absent absent
+check_groups absent absent absent absent absent
 if command -v nvim > /dev/null 2>&1; then
   # An uninitialized gitlink has a directory, but no plugin entrypoints.
   env -i HOME="$HOME_DIR" XDG_CONFIG_HOME="$HOME_DIR/.config" \
@@ -106,38 +124,69 @@ HOME_DIR="$TMP/home-auto"
 mkdir -p "$HOME_DIR"
 run_auto "$TMP/tools-bin" > "$TMP/auto-out"
 # auto covers runtime plugins only; the docs theme stays opt-in even with zola present.
-grep -q 'Initializing 3 submodules' "$TMP/auto-out" || fail 'auto stage count incorrect'
-check_groups installed installed installed absent
+grep -q 'Initializing 5 submodules' "$TMP/auto-out" || fail 'auto stage count incorrect'
+check_groups installed installed installed absent installed
+[ -f "$HOME_DIR/vim-log" ] || fail 'auto did not generate Vim help tags'
+rm "$HOME_DIR/vim-log"
 run_auto "$TMP/core-bin" all > "$TMP/skip-all-out"
-check_groups installed installed installed absent
+check_groups installed installed installed absent installed
+[ ! -e "$HOME_DIR/vim-log" ] || fail 'skip-all generated Vim help tags'
 run all "$TMP/tools-bin" > "$TMP/all-out"
-grep -q 'Initializing 4 submodules' "$TMP/all-out" || fail 'all stage count incorrect'
-check_groups installed installed installed installed
+grep -q 'Initializing 6 submodules' "$TMP/all-out" || fail 'all stage count incorrect'
+check_groups installed installed installed installed installed
+[ -f "$HOME_DIR/vim-log" ] || fail 'all did not generate Vim help tags'
 
 HOME_DIR="$TMP/home-skip"
 mkdir -p "$HOME_DIR"
-run_auto "$TMP/tools-bin" nvim > "$TMP/skip-out"
-check_groups installed installed absent absent
-run all "$TMP/tools-bin" nvim > "$TMP/skip-out"
-check_groups installed installed absent installed
+run_auto "$TMP/tools-bin" 'nvim,vim' > "$TMP/skip-out"
+check_groups installed installed absent absent absent
+run all "$TMP/tools-bin" 'nvim,vim' > "$TMP/skip-out"
+check_groups installed installed absent installed absent
 run auto "$TMP/tools-bin" all > "$TMP/skip-out"
-check_groups installed installed absent installed
+check_groups installed installed absent installed absent
+[ ! -e "$HOME_DIR/vim-log" ] || fail 'excluded Vim generated help tags'
+
+HOME_DIR="$TMP/home-skip-all"
+mkdir -p "$HOME_DIR"
+run all "$TMP/tools-bin" all > "$TMP/skip-all-out"
+check_groups absent absent absent absent absent
+[ ! -e "$HOME_DIR/vim-log" ] || fail 'skip-all generated Vim help tags'
+
+HOME_DIR="$TMP/home-vim"
+mkdir -p "$HOME_DIR"
+run vim "$TMP/core-bin" > "$TMP/vim-out"
+check_groups absent absent absent absent absent
+run vim "$TMP/tools-bin" vim > "$TMP/vim-out"
+check_groups absent absent absent absent absent
+[ ! -e "$HOME_DIR/vim-log" ] || fail 'explicitly excluded Vim generated help tags'
+run vim "$TMP/tools-bin" > "$TMP/vim-out"
+grep -q 'Initializing 2 submodules' "$TMP/vim-out" || fail 'vim stage count incorrect'
+check_groups absent absent absent absent installed
+[ -f "$HOME_DIR/vim-log" ] || fail 'explicit Vim did not generate help tags'
+rm "$HOME_DIR/vim-log"
+run none "$TMP/tools-bin" > "$TMP/none-out"
+[ ! -e "$HOME_DIR/vim-log" ] || fail 'unselected installed Vim generated help tags'
+touch "$HOME_DIR/vim-fail"
+run vim "$TMP/tools-bin" > "$TMP/vim-fail-out" 2>&1
+grep -q 'Warning: Vim help tag generation failed' "$TMP/vim-fail-out" || fail 'missing Vim help tag warning'
+grep -q 'Dotfiles bootstrap complete' "$TMP/vim-fail-out" || fail 'Vim help tag failure stopped installation'
 
 HOME_DIR="$TMP/home-luajit"
 mkdir -p "$HOME_DIR"
 run_auto "$TMP/luajit-bin" > "$TMP/luajit-out"
-check_groups absent installed absent absent
+check_groups absent installed absent absent absent
 
 HOME_DIR="$TMP/home"
 run nvim "$TMP/core-bin" > "$TMP/nvim-out"
-check_groups absent absent absent absent
+check_groups absent absent absent absent absent
 run nvim "$TMP/tools-bin" > "$TMP/nvim-out"
-check_groups absent absent installed absent
+check_groups absent absent installed absent absent
 run 'zsh,docs' "$TMP/tools-bin" > "$TMP/combined-out"
-check_groups installed absent installed installed
+check_groups installed absent installed installed absent
 run lua "$TMP/tools-bin" > "$TMP/lua-out"
-check_groups installed installed installed installed
+check_groups installed installed installed installed absent
 run none "$TMP/tools-bin" > "$TMP/none-out"
-check_groups installed installed installed installed
+check_groups installed installed installed installed absent
+[ ! -e "$HOME_DIR/vim-log" ] || fail 'unselected Vim generated help tags'
 
 printf 'bootstrap submodule tests: ok\n'
